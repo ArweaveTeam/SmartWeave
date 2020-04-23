@@ -44,7 +44,7 @@ module.exports = {
         return tipTX.get('data', {decode: true, string: true})
     },
 
-    execute: async function(contractSrc, input, state) {
+    execute: async function(contractSrc, input, state, caller) {
         // Load input into a variable accessible in the environment
         var input = input
 
@@ -53,6 +53,7 @@ module.exports = {
 
         // Load network metadata into an accessible var.
         var network = {}
+        var caller = caller
 
         // Execute the contract, catching failures
         try {
@@ -65,7 +66,7 @@ module.exports = {
         return state
     },
 
-    validateStateTransition: async function(contractSrc, state, input, newState) {
+    validateStateTransition: async function(contractSrc, state, input, newState, caller) {
         return this.execute(contractSrc, input, state) == newState
     },
 
@@ -81,9 +82,10 @@ module.exports = {
         const contractSrcTX = await arweave.transactions.get(contractSrcTXID)
         const contractSrc = contractSrcTX.get('data', {decode: true, string: true})
         const state = JSON.parse(tipTX.get('data', {decode: true, string: true}))['newState']
+        const address = await arweave.wallets.jwkToAddress(wallet)
 
         // Calcualte the state after our new TX has been processed.
-        const newState = this.execute(contractSrc, input, state)
+        const newState = this.execute(contractSrc, input, state, caller)
 
         if(!newState)
             return false
@@ -173,8 +175,9 @@ module.exports = {
         let state = contract.initState
         while(transitionsToValidate.length > 0) {
             let nextTX = transitionsToValidate.pop()
+            let caller = await arweave.wallets.ownerToAddress(nextTX.owner)
             let struct = JSON.parse(nextTX.get('data', {decode: true, string: true}))
-            if(!this.validateStateTransition(contract.contractSrc, state, struct.input, struct.newState))
+            if(!this.validateStateTransition(contract.contractSrc, state, struct.input, struct.newState, caller))
                 return false
             state = struct.newState
         }
