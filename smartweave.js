@@ -1,37 +1,34 @@
 module.exports = {
     createContract: async function(arweave, wallet, contractSrc, initState, minDiff) {
+        // Create a TX to store the contract source, then create a contract from that src.
+        // This allows contract source code to be audited seperately to contracts, and for
+        // users to be sure that a contract they are using is executed trusted source code.
         let srcTX = arweave.createTransaction({ data: contractSrc }, wallet)
-
         srcTX.addTag('App-Name', 'SmartWeave')
         srcTX.addTag('Type', 'contractSrc')
         srcTX.addTag('Version', '0.0.1')
-
         await arweave.transactions.sign(srcTX, wallet)
         console.log(srcTX)
 
         const response = await arweave.transactions.post(srcTX)
-        console.log(response.status)
-
         if(response.status != 200)
             return false
 
         return createContractFromTX(arweave, wallet, srcTX.id, initState, minDiff)
     },
 
-    createContractFromTX: async function(arweave, wallet, srcTX, state, minDiff) {
+    createContractFromTX: async function(arweave, wallet, srcTXID, state, minDiff) {
+        // Create a contract from a stored source TXID, setting the default state.
         let contractTX = arweave.createTransaction({ data: state }, wallet)
-
         contractTX.addTag('App-Name', 'SmartWeave')
         contractTX.addTag('Type', 'contract')
-        contractTX.addTag('Contract-Src', srcTX)
+        contractTX.addTag('Contract-Src', srcTXID)
         contractTX.addTag('Version', '0.0.1')
 
         await arweave.transactions.sign(contractSrcTX, wallet)
         console.log(contractTX)
 
         const response = await arweave.transactions.post(contractTX)
-        console.log(response.status)
-
         if(response.status != 200)
             return false
         
@@ -39,6 +36,7 @@ module.exports = {
     },
 
     getState: async function(arweave, contractID) {
+        // Return the current state (as a string) for a contract.
         const tipTX = this.findContractTip(arweave, contractID)
         if(!tipTX)
             return false
@@ -72,6 +70,11 @@ module.exports = {
     },
 
     interact: async function(arweave, wallet, contractID, input) {
+        // Call a contract with new input, storing the resulting TX on-weave.
+        // In order to execute this, the client first locates the top valid tip in the network,
+        // executes the contract, and saves the new resulting contract.
+        // Other clients can then pick-up this new state, validate the state transitions,
+        // and add their own transactions to the top of the chain for the contract.
         const tipTX = await findContractTip(arweave, contractID)
         const contractTX = await arweave.transactions.get(contractID)
         const contractSrcTXID = contractTX.get('tags')['Contract-Src']
@@ -79,13 +82,15 @@ module.exports = {
         const contractSrc = contractSrcTX.get('data', {decode: true, string: true})
         const state = JSON.parse(tipTX.get('data', {decode: true, string: true}))['newState']
 
-        // Call execute
+        // Calcualte the state after our new TX has been processed.
         const newState = this.execute(contractSrc, input, state)
 
         if(!newState)
             return false
 
-        // Generate POW, using last tip TXID as challenge
+        // Generate POW, using last tip TXID as challenge.
+        // This creates a cost to contract submission (controllable by the contract
+        // initiator), discouraging spam (on top of the Arweave TX submission fee).
         const nonce = this.generatePOW(tipTX.id)
 
         // Package new state into new TX, add POW
@@ -112,6 +117,8 @@ module.exports = {
     findContractTip: async function(arweave, contractID) {
         const contract = await this.getContract(arweave, contractID)
 
+        // Find all of the contract interaction transactions, ordered by newest 
+        // first. Currently, block order will determine which transactions are valid.
         let tipQuery =
             {
                 op: 'and',
@@ -128,7 +135,6 @@ module.exports = {
                         expr2: contractID
                     }
             }
-
         const possibleTips = await this.arweave.api.post(`arql`, tipQuery)
         
         // If there are no TXs on the contract yet, return the contract ID.
@@ -144,7 +150,9 @@ module.exports = {
     },
 
     validateContractTip: async function(arweave, contract, contractSrc, tipTXID) {
-        // Validate POWs
+        // Validate POWs, working from the tip towards the contract TX.
+        // Along the way, build up a stack of transactions (and contained state
+        // transitions) to validate.
         let transitionsToValidate = []
         let tipTX = await arweave.transactions.get(tipTXID)
         let currentTX = tipTX
@@ -160,7 +168,7 @@ module.exports = {
                 return false
         }
 
-        // Validate state transitions
+        // Validate state transitions that have been pushed to the stack.
 
         let state = contract.initState
         while(transitionsToValidate.length > 0) {
@@ -176,6 +184,7 @@ module.exports = {
     },
 
     getContract: async function(arweave, contractID) {
+        // Generate an object containing the details about a contract in one place.
         const contractTX = await arweave.transactions.get(contractID)
         const contractSrcTXID = contractTX.get('tags')['Contract-Src']
         const minDiff = contractTX.get('tags')['Min-Diff']
