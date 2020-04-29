@@ -2,7 +2,7 @@
 const fs = require('fs')
 const Arweave = require('arweave/node')
 const argv = require('yargs').argv
-const smartweave = require('smartweave')
+const smartweave = require('./smartweave')
 
 // Set Arweave parameters from commandline or defaults.
 const arweave_port = argv.arweavePort ? argv.arweavePort : 443
@@ -27,7 +27,7 @@ const arweave = Arweave.init({
 if(argv.create) {
     if(!argv.contractSrc) {
         console.log("ERROR: Please specify contract source bundle using argument " +
-            "'--contract-source <PATH>'.")
+            "'--contract-src <PATH>'.")
         process.exit()
     }
     const contractSrc = fs.readFileSync(argv.contractSrc)
@@ -42,10 +42,12 @@ if(argv.create) {
 
     const initState = fs.readFileSync(argv.initState)
 
-    const contractID =
-        smartweave.createContract(Arweave, wallet, contractSrc, initState, minDiff)
-
-    console.log("Contract created in TX " + contractID)
+    smartweave.createContract(arweave, wallet, contractSrc, initState, minDiff).then(
+        (contractID) => {
+            console.log("Contract created in TX " + contractID)
+        }
+    )
+    
 }
 
 if(argv.interact) {
@@ -68,14 +70,16 @@ if(argv.interact) {
         process.exit()
     }
 
-    const TXID = smartweave.interact(Arweave, wallet, contract, input)
-
-    if(!TXID) {
-        console.log("ERROR: Contract execution on input failed.\n\nINPUT:\n" + input)
-    }
-    else {
-        console.log("Contract interaction submitted with TXID: " + TXID)
-    }
+    smartweave.interact(arweave, wallet, contract, input).then(
+        (TXID) => {
+            if(!TXID) {
+                console.log("ERROR: Contract execution on input failed.\n\nINPUT:\n" + input)
+            }
+            else {
+                console.log("Contract interaction submitted with TXID: " + TXID)
+            }
+        }
+    )
 }
 
 if(argv.getState) {
@@ -86,11 +90,13 @@ if(argv.getState) {
     }
     const contractID = argv.contract
 
-    const state = smartweave.getState(Arweave, contractID)
-
-    if(!state) {
-        console.log("ERROR: Failed to get state for contract " + contractID)
-    }
-
-    console.log(state)
+    smartweave.getState(arweave, contractID).then(
+        (state) => {
+            if(!state) {
+                console.log("ERROR: Failed to get state for contract " + contractID)
+            }
+        
+            console.log(state)
+        }
+    )
 }

@@ -3,44 +3,44 @@ module.exports = {
         // Create a TX to store the contract source, then create a contract from that src.
         // This allows contract source code to be audited seperately to contracts, and for
         // users to be sure that a contract they are using is executed trusted source code.
-        let srcTX = arweave.createTransaction({ data: contractSrc }, wallet)
+        let srcTX = await arweave.createTransaction({ data: contractSrc }, wallet)
         srcTX.addTag('App-Name', 'SmartWeave')
         srcTX.addTag('Type', 'contractSrc')
         srcTX.addTag('Version', '0.0.1')
         await arweave.transactions.sign(srcTX, wallet)
-        console.log(srcTX)
 
         const response = await arweave.transactions.post(srcTX)
-        if(response.status != 200)
-            return false
 
-        return createContractFromTX(arweave, wallet, srcTX.id, initState, minDiff)
+        if((response.status == 200) || (response.status == 208))
+            return this.createContractFromTX(arweave, wallet, srcTX.id, initState, minDiff)
+        else
+            return false
     },
 
     createContractFromTX: async function(arweave, wallet, srcTXID, state, minDiff) {
         // Create a contract from a stored source TXID, setting the default state.
-        let contractTX = arweave.createTransaction({ data: state }, wallet)
+        let contractTX = await arweave.createTransaction({ data: state }, wallet)
         contractTX.addTag('App-Name', 'SmartWeave')
         contractTX.addTag('Type', 'contract')
         contractTX.addTag('Contract-Src', srcTXID)
         contractTX.addTag('Version', '0.0.1')
 
-        await arweave.transactions.sign(contractSrcTX, wallet)
-        console.log(contractTX)
+        await arweave.transactions.sign(contractTX, wallet)
 
         const response = await arweave.transactions.post(contractTX)
-        if(response.status != 200)
+        if((response.status == 200) || (response.status == 208))
+            return contractTX.id
+        else
             return false
-        
-        return contractTX.id
     },
 
     getState: async function(arweave, contractID) {
         // Return the current state (as a string) for a contract.
-        const tipTX = this.findContractTip(arweave, contractID)
+        const tipTX = await this.findContractTip(arweave, contractID)
         if(!tipTX)
             return false
         
+        console.log(tipTX)
         return tipTX.get('data', {decode: true, string: true})
     },
 
@@ -199,7 +199,7 @@ module.exports = {
             id: contractID,
             contractSrc: contractSrc,
             initState: state,
-            minDiff = minDiff
+            minDiff: minDiff
         }
     },
 
