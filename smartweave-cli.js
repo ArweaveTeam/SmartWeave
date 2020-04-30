@@ -44,7 +44,7 @@ if(argv.create) {
 
     smartweave.createContract(arweave, wallet, contractSrc, initState, minDiff).then(
         (contractID) => {
-            console.log("Contract created in TX " + contractID)
+            console.log("Contract created in TX: " + contractID)
         }
     )
     
@@ -57,12 +57,13 @@ if(argv.interact) {
         process.exit()
     }
     const contractID = argv.contract
+    let input = undefined
 
     if(argv.inputFile) {
-        const input = fs.readFileSync(argv.inputFile)
+        input = fs.readFileSync(argv.inputFile)
     }
     else if(argv.input) {
-        const input = argv.input
+        input = argv.input
     }
     else {
         console.log("ERROR: Please specify input to the contract using " +
@@ -70,10 +71,10 @@ if(argv.interact) {
         process.exit()
     }
 
-    smartweave.interact(arweave, wallet, contract, input).then(
+    smartweave.interact(arweave, wallet, contractID, input).then(
         (TXID) => {
             if(!TXID) {
-                console.log("ERROR: Contract execution on input failed.\n\nINPUT:\n" + input)
+                console.log("ERROR: Contract execution on input failed.\n\nInput:" + input)
             }
             else {
                 console.log("Contract interaction submitted with TXID: " + TXID)
@@ -93,7 +94,7 @@ if(argv.getState) {
     smartweave.getState(arweave, contractID).then(
         (state) => {
             if(!state) {
-                console.log("ERROR: Failed to get state for contract " + contractID)
+                console.log("ERROR: Failed to get state for contract: " + contractID)
             }
         
             console.log(state)

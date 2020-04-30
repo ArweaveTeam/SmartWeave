@@ -40,7 +40,7 @@ module.exports = {
         if(!tipTX)
             return false
         
-        return tipTX.get('data', {decode: true, string: true})
+        return this.getTXState(tipTX)
     },
 
     execute: async function(contractSrc, input, state, caller) {
@@ -57,7 +57,11 @@ module.exports = {
         // Execute the contract, catching failures
         try {
             eval(contractSrc)
-        } catch (e) {
+        } catch (err) {
+            console.log("Contract execution failed.\n\n" +
+                "Input:\n" + input + "\n" +
+                "State:\n" + state + "\n" +
+                "Error:\n" + err)
             return false
         }
 
@@ -75,23 +79,23 @@ module.exports = {
         // executes the contract, and saves the new resulting contract.
         // Other clients can then pick-up this new state, validate the state transitions,
         // and add their own transactions to the top of the chain for the contract.
-        const tipTX = await findContractTip(arweave, contractID)
+        const tipTX = await this.findContractTip(arweave, contractID)
         const contractTX = await arweave.transactions.get(contractID)
         const contractSrcTXID = this.getTag(contractTX, 'Contract-Src')
         const contractSrcTX = await arweave.transactions.get(contractSrcTXID)
         const contractSrc = contractSrcTX.get('data', {decode: true, string: true})
 
         state = this.getTXState(tipTX)
-        const address = await arweave.wallets.jwkToAddress(wallet)
+        const caller = await arweave.wallets.jwkToAddress(wallet)
 
         // Calcualte the state after our new TX has been processed.
-        const newState = this.execute(contractSrc, input, state, caller)
+        const newState = await this.execute(contractSrc, input, state, caller)
 
         if(!newState)
             return false
 
         // Package new state into new TX, add POW
-        let interactionTX = arweave.createTransaction({
+        let interactionTX = await arweave.createTransaction({
             data: JSON.stringify({newState: newState, input: input})
         }, wallet)
 
@@ -100,6 +104,8 @@ module.exports = {
         interactionTX.addTag('With-Contract', contractID)
         interactionTX.addTag('Previous-TX', tipTX.id)
         interactionTX.addTag('Version', '0.0.1')
+
+        await arweave.transactions.sign(interactionTX, wallet)
 
         const response = await arweave.transactions.post(interactionTX)
 
@@ -113,8 +119,6 @@ module.exports = {
         const contract = await this.getContract(arweave, contractID)
         let current = contract.contractTX
         let state = this.getTXState(current)
-
-        console.log(current)
 
         do {
             last = current
@@ -143,20 +147,22 @@ module.exports = {
                         expr2: currentTX.id
                     }
             }
-        const results = await arweave.api.post(`arql`, successorsQuery)
-        
+        const response = await arweave.api.post(`arql`, successorsQuery)
+        const results = response.data
+
         let successors = (results == '') ? [] : results
 
         for(let i = 0; i < successors.length; i++) {
             let TX = await arweave.transactions.get(successors[i])
-            if(this.validateNextTX(contract, state, TX))
+            if(this.validateNextTX(arweave, contract, state, TX))
                 return TX
         }
 
         return false
     },
 
-    validateNextTX: async function(contract, state, nextTX) {
+    validateNextTX: async function(arweave, contract, state, nextTX) {
+        let struct = JSON.parse(nextTX.get('data', {decode: true, string: true}))
         return this.validateStateTransition(
                     contract.contractSrc,
                     state,
@@ -196,7 +202,7 @@ module.exports = {
 
     getTXState: function(TX) {
         if(!TX) return false
-        if(this.getTag(TX, 'Type') == "Contract")
+        if(this.getTag(TX, 'Type') == "contract")
             return TX.get('data', {decode: true, string: true})
         else
             return JSON.parse(TX.get('data', {decode: true, string: true}))['newState']
