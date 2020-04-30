@@ -40,7 +40,6 @@ module.exports = {
         if(!tipTX)
             return false
         
-        console.log(tipTX)
         return tipTX.get('data', {decode: true, string: true})
     },
 
@@ -78,15 +77,11 @@ module.exports = {
         // and add their own transactions to the top of the chain for the contract.
         const tipTX = await findContractTip(arweave, contractID)
         const contractTX = await arweave.transactions.get(contractID)
-        const contractSrcTXID = contractTX.get('tags')['Contract-Src']
+        const contractSrcTXID = this.getTag(contractTX, 'Contract-Src')
         const contractSrcTX = await arweave.transactions.get(contractSrcTXID)
         const contractSrc = contractSrcTX.get('data', {decode: true, string: true})
 
-        if(tipTX.get('tags')['Type'] == "Contract")
-            const state = tipTX.get('data', {decode: true, string: true})
-        else
-            const state = JSON.parse(tipTX.get('data', {decode: true, string: true}))['newState']
-        
+        state = this.getTXState(tipTX)
         const address = await arweave.wallets.jwkToAddress(wallet)
 
         // Calcualte the state after our new TX has been processed.
@@ -117,10 +112,14 @@ module.exports = {
     findContractTip: async function(arweave, contractID) {
         const contract = await this.getContract(arweave, contractID)
         let current = contract.contractTX
+        let state = this.getTXState(current)
+
+        console.log(current)
 
         do {
             last = current
-            current = this.findNextTX(arweave, contract, current)
+            current = await this.findNextTX(arweave, contract, state, current)
+            state = this.getTXState(current)
         }
         while(current)
 
@@ -144,9 +143,9 @@ module.exports = {
                         expr2: currentTX.id
                     }
             }
-        const results = await this.arweave.api.post(`arql`, successorsQuery)
+        const results = await arweave.api.post(`arql`, successorsQuery)
         
-        let successors = (result == '') ? [] : results
+        let successors = (results == '') ? [] : results
 
         for(let i = 0; i < successors.length; i++) {
             let TX = await arweave.transactions.get(successors[i])
@@ -158,24 +157,19 @@ module.exports = {
     },
 
     validateNextTX: async function(contract, state, nextTX) {
-        if(nextTX.get('tags')['Type'] == "Contract")
-            const newState = nextTX.get('data', {decode: true, string: true})
-        else
-            const newState = JSON.parse(nextTX.get('data', {decode: true, string: true}))['newState']
-
         return this.validateStateTransition(
                     contract.contractSrc,
                     state,
                     struct.input,
-                    newState,
+                    this.getTXState(nextTX),
                     await arweave.wallets.ownerToAddress(nextTX.owner))
     },
 
     getContract: async function(arweave, contractID) {
         // Generate an object containing the details about a contract in one place.
         const contractTX = await arweave.transactions.get(contractID)
-        const contractSrcTXID = contractTX.get('tags')['Contract-Src']
-        const minDiff = contractTX.get('tags')['Min-Diff']
+        const contractSrcTXID = this.getTag(contractTX, 'Contract-Src')
+        const minDiff = this.getTag(contractTX, 'Min-Diff')
         const contractSrcTX = await arweave.transactions.get(contractSrcTXID)
         const contractSrc = contractSrcTX.get('data', {decode: true, string: true})
         const state = contractTX.get('data', {decode: true, string: true})
@@ -187,5 +181,24 @@ module.exports = {
             minDiff: minDiff,
             contractTX: contractTX
         }
+    },
+
+    // Helpers
+    getTag: function(TX, name) {
+        let tags = TX.get('tags')
+
+        for(let i = 0; i < tags.length; i++)
+            if(tags[i].get('name', { decode: true, string: true }) == name)
+                return tags[i].get('value', { decode: true, string: true })
+
+        return false
+    },
+
+    getTXState: function(TX) {
+        if(!TX) return false
+        if(this.getTag(TX, 'Type') == "Contract")
+            return TX.get('data', {decode: true, string: true})
+        else
+            return JSON.parse(TX.get('data', {decode: true, string: true}))['newState']
     }
  }
