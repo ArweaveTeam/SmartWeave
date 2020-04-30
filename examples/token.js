@@ -29,7 +29,7 @@ if(opts.function == "transfer") {
         state = JSON.stringify(wl)
     }
     else {
-        throw "Caller balance not high enough to send " + qty + "token(s)!"
+        throw "Caller balance not high enough to send " + qty + " token(s)!"
     }
 }
 else if(opts.function == "balance") {

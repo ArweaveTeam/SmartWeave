@@ -61,7 +61,7 @@ module.exports = {
             console.log("Contract execution failed.\n\n" +
                 "Input:\n" + input + "\n" +
                 "State:\n" + state + "\n" +
-                "Error:\n" + err)
+                "Error:\n" + err + "\n\n")
             return false
         }
 
