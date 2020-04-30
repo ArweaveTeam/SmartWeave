@@ -69,7 +69,7 @@ module.exports = {
         return this.execute(contractSrc, input, state) == newState
     },
 
-    interact: async function(arweave, wallet, contractID, input) {
+    interact: async function(arweave, wallet, contractID, input, dryRun) {
         // Call a contract with new input, storing the resulting TX on-weave.
         // In order to execute this, the client first locates the top valid tip in the network,
         // executes the contract, and saves the new resulting contract.
@@ -89,6 +89,10 @@ module.exports = {
 
         if(!newState)
             return false
+
+        // If we are in a dry-run, just return the new state and do not commit.
+        if(dryRun)
+            return newState
 
         // Package new state into new TX, add POW
         let interactionTX = await arweave.createTransaction({

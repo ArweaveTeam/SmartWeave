@@ -58,6 +58,7 @@ if(argv.interact) {
     }
     const contractID = argv.contract
     let input = undefined
+    let dryRun = (argv.dryRun) ? true : false
 
     if(argv.inputFile) {
         input = fs.readFileSync(argv.inputFile)
@@ -71,13 +72,15 @@ if(argv.interact) {
         process.exit()
     }
 
-    smartweave.interact(arweave, wallet, contractID, input).then(
-        (TXID) => {
-            if(!TXID) {
-                console.log("ERROR: Contract execution on input failed.\n\nInput:" + input)
+    smartweave.interact(arweave, wallet, contractID, input, dryRun).then(
+        (result) => {
+            if(result) {
+                console.log("Result:\n" + result)
             }
             else {
-                console.log("Contract interaction submitted with TXID: " + TXID)
+                console.log("ERROR: Contract execution on input failed.\n" +
+                    "Input:\n" + input +
+                    "\n")
             }
         }
     )
