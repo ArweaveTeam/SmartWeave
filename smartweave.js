@@ -58,10 +58,6 @@ module.exports = {
         try {
             eval(contractSrc)
         } catch (err) {
-            console.log("Contract execution failed.\n\n" +
-                "Input:\n" + input + "\n" +
-                "State:\n" + state + "\n" +
-                "Error:\n" + err + "\n\n")
             return false
         }
 
