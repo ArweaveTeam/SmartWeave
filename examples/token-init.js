@@ -1,1 +1,1 @@
-[]
+[{"addr":"eamTbADrABJrjr_0dWOTqHU4tUYE7CSICltDZGcYc4o", "balance": 1000}]
