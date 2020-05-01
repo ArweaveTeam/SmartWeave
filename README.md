@@ -6,6 +6,7 @@ to smart contract users. Currently, SmartWeave supports JavaScript, using the
 client's unmodified execution engine.
 
 **Status: 1.0-APLHA-1**
+
 **Use at your own risk!**
 
 ## Usage
