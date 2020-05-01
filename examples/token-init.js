@@ -1,1 +1,11 @@
-[{"addr":"eamTbADrABJrjr_0dWOTqHU4tUYE7CSICltDZGcYc4o", "balance": 1000}]
+{
+    "ticker": "AR2.0",
+    "divisibility": 1000000000000000000,
+    "walletList":
+        [
+            {
+                "addr":"vLRHFqCw1uHu75xqB4fCDW-QxpkpJxBtFD9g4QYUbfw",
+                "balance": 2000000000000000000
+            }
+        ]
+}

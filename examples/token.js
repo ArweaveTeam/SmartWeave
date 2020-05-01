@@ -1,23 +1,24 @@
 // WARNING: DO NOT USE THIS CONTRACT.
-// It has not been tested, let alone audited. Here be dragons of token loss.
+// It has not been tested thoroughly, let alone audited.
+// Here be dragons of token loss.
 
 let opts = JSON.parse(input)
-let wallet_list = JSON.parse(state)
+state = JSON.parse(state)
+let wl = state.walletList
 
 if(opts.function == "transfer") {
     // Welp. Looks like you are ignoring the warnings. YOLO.
     let target = opts.target
-    let qty = opts.quantity
+    let qty = Math.trunc(opts.quantity)
 
-    console.log("Transferring "
-        + qty + " token(s) from "
-        + caller + " to "
-        + target + ".")
+    if((qty <= 0) || (caller == target)) {
+        throw "Invalid token transfer."
+    }
 
     // Don't do anything unless we have enough tokens
     if(getBalance(caller) >= qty) {
         // Lower the token balance of the caller
-        let wl = modifyWallet(wallet_list, caller, -qty)
+        wl = modifyWallet(wl, caller, -qty)
         if(getBalance(target) !== undefined) {
             // Wallet already exists in state, add new tokens
             wl = modifyWallet(wl, target, qty)
@@ -26,7 +27,8 @@ if(opts.function == "transfer") {
             // Wallet is new, set starting balance
             wl.push({"addr": target, "balance": qty})
         }
-        state = JSON.stringify(wl)
+        state.walletList = wl
+        state = JSON.stringify(state)
     }
     else {
         throw "Caller balance not high enough to send " + qty + " token(s)!"
@@ -34,12 +36,18 @@ if(opts.function == "transfer") {
 }
 else if(opts.function == "balance") {
     let target = opts.target
-    console.log(getBalance(target))
+    let ticker = state.ticker
+    let divisibility = state.divisibility
+    let balance = getBalance(target) / divisibility
+    console.log(
+        "The balance of wallet " + target +
+        " is " + balance + " " + ticker + ".")
 }
 else {
     throw "Function not recognised."
 }
 
+// Helpers
 function modifyWallet(wl, addr, mod) {
     for(let i = 0; i < wl.length; i++) {
         if((wl[i].addr == addr)) {
@@ -51,9 +59,9 @@ function modifyWallet(wl, addr, mod) {
 }
 
 function getBalance(addr) {
-    for(let i = 0; i < wallet_list.length; i++) {
-        if((wallet_list[i].addr == addr)) {
-            return wallet_list[i].balance
+    for(let i = 0; i < wl.length; i++) {
+        if((wl[i].addr == addr)) {
+            return wl[i].balance
         }
     }
     return undefined
