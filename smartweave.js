@@ -66,7 +66,7 @@ module.exports = {
     },
 
     validateStateTransition: async function(contractSrc, state, input, newState, caller) {
-        return this.execute(contractSrc, input, state) == newState
+        return this.execute(contractSrc, input, state, caller) == newState
     },
 
     interact: async function(arweave, wallet, contractID, input, dryRun) {
