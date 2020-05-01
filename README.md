@@ -25,7 +25,8 @@ Check its state:
 
 ```
 node smartweave-cli.js --wallet-file [YOUR KEYFILE] \
-        --get-state --contract [CONTRACT TXID]
+        --contract [CONTRACT TXID] \
+        --get-state
 ```
 
 Interact with it:
@@ -33,7 +34,8 @@ Interact with it:
 ```
 node smartweave-cli.js --wallet-file [YOUR KEYFILE] \
         --contract [CONTRACT TXID] \
-        --interact --input "[CONTRACT INPUT STRING HERE]"
+        --interact \
+        --input "[CONTRACT INPUT STRING HERE]"
 ```
 
 To test a contract interaction without writing it to the network, append 
