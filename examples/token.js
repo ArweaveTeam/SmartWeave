@@ -18,7 +18,7 @@ if(opts.function == "transfer") {
     if(getBalance(caller) >= qty) {
         // Lower the token balance of the caller
         let wl = modifyWallet(wallet_list, caller, -qty)
-        if(getBalance(target) > 0) {
+        if(getBalance(target) !== undefined) {
             // Wallet already exists in state, add new tokens
             wl = modifyWallet(wl, target, qty)
         }
@@ -56,5 +56,5 @@ function getBalance(addr) {
             return wallet_list[i].balance
         }
     }
-    return 0
+    return undefined
 }
