@@ -58,6 +58,7 @@ module.exports = {
         try {
             eval(contractSrc)
         } catch (err) {
+            console.error(err);
             return false
         }
 
