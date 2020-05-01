@@ -49,12 +49,12 @@ to environmental differences (for example).
 
 The rules are simple:
 
-- Your entire contract file will be executed as a script when the contract is 
-invoked.
-- The current state of the contract is found in the `state` variable. The value 
-found in the `state` variable after the contract has executed will be written to 
-the Arweave so that it can be imported in the next contract run. The value 
-of the variable should be a string.
+- Your entire contract file will be executed by the local javascript execution 
+environment as a script when the contract is invoked.
+- The current state of the contract is found in the `state` variable upon 
+invocation. The value found in the `state` variable after the contract has 
+executed will be written to the Arweave so that it can be imported in the next 
+contract run. The value of the variable should be a string.
 - The input to the current contract execution is found in the `input` variable, 
 as a string.
 - The address of the wallet that is invoking the contract can be found in the 
