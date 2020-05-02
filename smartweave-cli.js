@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // Include dependencies.
 const fs = require('fs')
 const Arweave = require('arweave/node')
