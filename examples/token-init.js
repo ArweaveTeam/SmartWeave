@@ -1,11 +1,11 @@
 {
     "ticker": "AR2.0",
-    "divisibility": 1000000000000000000,
+    "divisibility": 1000000,
     "walletList":
         [
             {
                 "addr":"vLRHFqCw1uHu75xqB4fCDW-QxpkpJxBtFD9g4QYUbfw",
-                "balance": 2000000000000000000
+                "balance": 2000000
             }
         ]
 }
