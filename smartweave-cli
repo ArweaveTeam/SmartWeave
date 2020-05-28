@@ -26,6 +26,32 @@ const arweave = Arweave.init({
     protocol: arweave_protocol
 })
 
+//create an "instance" of a contract by specifying the contract src TX and the initial state
+if (argv.createFromTx) {
+    if(!argv.contractSrcTx) {
+        console.log("ERROR: Please specify contract source TX using argument " +
+            "'--contract-src-tx <txid>'.")
+        process.exit()
+    }
+
+    if(!argv.initState) {
+        console.log("ERROR: Please specify a file defining an initial state with " +
+            "'--init-state <PATH>'.")
+        process.exit()
+    }
+
+    const minDiff = argv.minDiff ? argv.minDiff : 10
+
+    const initState = fs.readFileSync(argv.initState)
+
+    smartweave.createContractFromTX(arweave, wallet, argv.contractSrcTx, initState, minDiff).then(
+        (contractID) => {
+            console.log("Contract created in TX: " + contractID)
+        }
+    )
+}
+
+//create a new contract from a source file and the initial state
 if(argv.create) {
     if(!argv.contractSrc) {
         console.log("ERROR: Please specify contract source bundle using argument " +

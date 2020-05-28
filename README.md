@@ -13,13 +13,22 @@ client's unmodified execution engine.
 
 Clone this repository and run `npm install`.
 
-You can deploy a contract as follows:
+You can deploy a contract from a local source file:
 
 ```
 node smartweave-cli.js --wallet-file [YOUR KEYFILE] \
         --create --contract-src [SRC LOCATION] \
         --init-state [INITIAL STATE FILE]
 ```
+
+Deploy a new contract instance by contract src TX:
+
+```
+node smartweave-cli.js --wallet-file [YOUR KEYFILE] \
+        --create-from-tx --contract-src-tx [ARWEAVE TXID OF SRC] \
+        --init-state [INITIAL STATE FILE]
+```
+
 
 Check its state:
 
