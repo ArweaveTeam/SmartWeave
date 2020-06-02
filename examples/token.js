@@ -4,7 +4,7 @@
 
 let opts = JSON.parse(input)
 state = JSON.parse(state)
-let wl = state.walletList
+let balances = state.balances
 
 if(opts.function == "transfer") {
     // Welp. Looks like you are ignoring the warnings. YOLO.
@@ -16,18 +16,18 @@ if(opts.function == "transfer") {
     }
 
     // Don't do anything unless we have enough tokens
-    if(getBalance(caller) >= qty) {
+    if(balances[caller] >= qty) {
         // Lower the token balance of the caller
-        wl = modifyWallet(wl, caller, -qty)
-        if(getBalance(target) !== undefined) {
+        balances[caller] -= qty
+        if(target in balances) {
             // Wallet already exists in state, add new tokens
-            wl = modifyWallet(wl, target, qty)
+            balances[target] += qty
         }
         else {
             // Wallet is new, set starting balance
-            wl.push({"addr": target, "balance": qty})
+            balances[target] = qty
         }
-        state.walletList = wl
+        state.balances = balances
         state = JSON.stringify(state)
     }
     else {
@@ -38,31 +38,11 @@ else if(opts.function == "balance") {
     let target = opts.target
     let ticker = state.ticker
     let divisibility = state.divisibility
-    let balance = getBalance(target) / divisibility
+    let balance = balances[target] / divisibility
     console.log(
         "The balance of wallet " + target +
         " is " + balance + " " + ticker + ".")
 }
 else {
     throw "Function not recognised."
-}
-
-// Helpers
-function modifyWallet(wl, addr, mod) {
-    for(let i = 0; i < wl.length; i++) {
-        if((wl[i].addr == addr)) {
-            wl[i].balance += mod
-            return wl
-        }
-    }
-    return false
-}
-
-function getBalance(addr) {
-    for(let i = 0; i < wl.length; i++) {
-        if((wl[i].addr == addr)) {
-            return wl[i].balance
-        }
-    }
-    return undefined
 }
