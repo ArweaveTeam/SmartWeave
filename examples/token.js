@@ -1,13 +1,8 @@
-// WARNING: DO NOT USE THIS CONTRACT.
-// It has not been tested thoroughly, let alone audited.
-// Here be dragons of token loss.
-
 let opts = JSON.parse(input)
 state = JSON.parse(state)
 let wl = state.walletList
 
 if(opts.function == "transfer") {
-    // Welp. Looks like you are ignoring the warnings. YOLO.
     let target = opts.target
     let qty = Math.trunc(opts.quantity)
 
