@@ -163,13 +163,18 @@ module.exports = {
     },
 
     validateNextTX: async function(arweave, contract, state, nextTX) {
-        let struct = JSON.parse(nextTX.get('data', {decode: true, string: true}))
-        return this.validateStateTransition(
-                    contract.contractSrc,
-                    state,
-                    struct.input,
-                    this.getTXState(nextTX),
-                    await arweave.wallets.ownerToAddress(nextTX.owner))
+        try {
+            let struct = JSON.parse(nextTX.get('data', { decode: true, string: true }))
+
+            return this.validateStateTransition(
+                contract.contractSrc,
+                state,
+                struct.input,
+                this.getTXState(nextTX),
+                await arweave.wallets.ownerToAddress(nextTX.owner))
+        } catch (err) {
+            return false
+        }
     },
 
     getContract: async function(arweave, contractID) {
