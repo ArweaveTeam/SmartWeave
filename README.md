@@ -5,7 +5,7 @@ Uses lazy-evaluation to move the burden of contract execution from network nodes
 to smart contract users. Currently, SmartWeave supports JavaScript, using the 
 client's unmodified execution engine.
 
-**Status: 1.0-APLHA-1**
+**Status: 0.1**
 
 **Use at your own risk!**
 
