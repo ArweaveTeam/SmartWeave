@@ -5,9 +5,7 @@ Uses lazy-evaluation to move the burden of contract execution from network nodes
 to smart contract users. Currently, SmartWeave supports JavaScript, using the 
 client's unmodified execution engine.
 
-**Status: 0.1**
-
-**Use at your own risk!**
+**Version: 0.1**
 
 ## Usage
 
@@ -43,7 +41,7 @@ To test a contract interaction without writing it to the network, append
 
 ## Execution Environment
 
-The SmartWeave 1.0-ALPHA-1 execution environment is extremely flexible, but 
+The SmartWeave 0.1 execution environment is extremely flexible, but 
 very basic. There are no safety rails. You can write programs that do far more 
 computation than Ethereum (etc.) smart contracts, make use of GPU rendering 
 facilities, write to the local machine's storage. But you can also trivally 
