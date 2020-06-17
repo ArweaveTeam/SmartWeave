@@ -1,10 +1,9 @@
-let opts = JSON.parse(input)
-state = JSON.parse(state)
 let balances = state.balances
 
-if(opts.function == "transfer") {
-    let target = opts.target
-    let qty = Math.trunc(opts.quantity)
+if(input.function == "transfer") {
+    
+    let target = input.target
+    let qty = Math.trunc(input.quantity)
 
     if((qty <= 0) || (caller == target)) {
         throw "Invalid token transfer."
@@ -23,14 +22,13 @@ if(opts.function == "transfer") {
             balances[target] = qty
         }
         state.balances = balances
-        state = JSON.stringify(state)
     }
     else {
         throw "Caller balance not high enough to send " + qty + " token(s)!"
     }
 }
-else if(opts.function == "balance") {
-    let target = opts.target
+else if(input.function == "balance") {
+    let target = input.target
     let ticker = state.ticker
     let divisibility = state.divisibility
     let balance = balances[target] / divisibility
