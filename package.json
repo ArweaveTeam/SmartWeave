@@ -21,7 +21,8 @@
   },
   "homepage": "https://github.com/samcamwilliams/SmartWeave#readme",
   "dependencies": {
-    "arweave": "^1.6.0",
+    "arweave": "^1.7.1",
+    "promises-tho": "^1.1.0",
     "yargs": "^15.3.1"
   }
 }

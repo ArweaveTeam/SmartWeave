@@ -74,18 +74,28 @@ if(argv.interact) {
         process.exit()
     }
 
-    smartweave.interact(arweave, wallet, contractID, input, dryRun).then(
-        (result) => {
-            if(result) {
-                console.log("Result:\n" + result)
+    if (!dryRun) {
+        smartweave.interactWrite(arweave, wallet, contractID, JSON.parse(input))
+        .then((result) => {
+                if(result) {
+                    console.log("Result:\n" + result)
+                }
+                else {
+                    console.log("ERROR: Contract execution on input failed.\n" +
+                        "Input:\n" + input +
+                        "\n")
+                }
             }
-            else {
-                console.log("ERROR: Contract execution on input failed.\n" +
-                    "Input:\n" + input +
-                    "\n")
-            }
-        }
-    )
+        )
+    }
+
+    if (dryRun) {
+        console.log(`Dry running`)
+        smartweave.interactWriteDryRun(arweave, wallet, contractID, JSON.parse(input))
+        .then((result) => {
+            console.log(result)
+        })
+    } 
 }
 
 if(argv.getState) {
@@ -96,7 +106,7 @@ if(argv.getState) {
     }
     const contractID = argv.contract
 
-    smartweave.getState(arweave, contractID).then(
+    smartweave.replayToState(arweave, contractID).then(
         (state) => {
             if(!state) {
                 console.log("ERROR: Failed to get state for contract: " + contractID)
