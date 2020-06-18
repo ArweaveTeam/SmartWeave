@@ -1,13 +1,19 @@
 
 import Transaction from 'arweave/node/lib/transaction'
 
-export function getTag(TX: Transaction, name: string) {
-  let tags = TX.get('tags') as any
+export function getTag(tx: Transaction, name: string) {
+  let tags = tx.get('tags') as any
 
-  for(let i = 0; i < tags.length; i++)
+  for(let i = 0; i < tags.length; i++) {
+    // decoding tags can throw on invalid utf8 data.
+    try {
       if(tags[i].get('name', { decode: true, string: true }) == name)
-          return tags[i].get('value', { decode: true, string: true })
+        return tags[i].get('value', { decode: true, string: true })
+    } catch (e) {
 
+    }
+  }
+      
   return false
 }
 
