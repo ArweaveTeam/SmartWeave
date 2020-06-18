@@ -6,8 +6,6 @@ import { getTag, arrayToHex } from './utils';
 import { execute } from './execute';
 import { TransactionStatusResponse } from 'arweave/node/transactions';
 
-
-
 interface FullTxInfo {
   tx: Transaction,
   info: TransactionStatusResponse,
@@ -76,7 +74,7 @@ export async function replayToState(arweave: Arweave, contractID: string, height
   console.log(`Replaying ${txInfos.length} confirmed interactions`);
 
   txInfos.sort((a, b) => a.sortKey.localeCompare(b.sortKey));
-
+  
   for (let i = 0; i < txInfos.length; i++) {
       let input;
       try { 
@@ -102,9 +100,8 @@ export async function replayToState(arweave: Arweave, contractID: string, height
 
 // This gets the full Tx Info, and calcutes a sort key.
 // It needs to get the block_height and indep_hash from
-// the status endpoint as well as the tx itself. If the 
-// tx is confirmed it assigns it a sort key, otherwise it
-// does not. 
+// the status endpoint as well as the tx itself. Returns 
+// undefined if the transactions is not confirmed. 
 async function getFullTxInfo(arweave: Arweave, id: string): Promise<FullTxInfo | undefined> {
   const [tx, info] = await Promise.all([
       arweave.transactions.get(id).catch(e => {
@@ -116,7 +113,7 @@ async function getFullTxInfo(arweave: Arweave, id: string): Promise<FullTxInfo |
       arweave.transactions.getStatus(id)
   ])
   
-  if (!tx || !info.confirmed) {
+  if (!tx || !info || !info.confirmed) {
     return undefined;
   }
  
