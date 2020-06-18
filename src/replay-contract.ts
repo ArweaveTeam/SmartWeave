@@ -14,15 +14,24 @@ interface FullTxInfo {
   from: string 
 }
 
-export async function replayToState(arweave: Arweave, contractID: string, height = Number.POSITIVE_INFINITY) {
+/**
+ * Queries all interaction transactions and replays a contract to its latest state. 
+ * 
+ * If height is provided, will replay only to that block height. 
+ * 
+ * @param arweave     an Arweave client instance
+ * @param contractId  the Transaction Id of the contract
+ * @param height      if specified the contract will be replayed only to this block height
+ */
+export async function replayToState(arweave: Arweave, contractId: string, height = Number.POSITIVE_INFINITY) {
         
-  const contractInfo = await getContract(arweave, contractID);
+  const contractInfo = await getContract(arweave, contractId);
 
   let state; 
   try {
       state = JSON.parse(contractInfo.initState);
   } catch (e) {
-      throw new Error(`Unable to parse initial state for contract: ${contractID}`);
+      throw new Error(`Unable to parse initial state for contract: ${contractId}`);
   }
   
   // Load all the interaction txs relevant to this contract. 
@@ -30,7 +39,8 @@ export async function replayToState(arweave: Arweave, contractID: string, height
   // This can be made a lot cleaner with some GraphQL features, 
   // (block info in results, pagination)
   // but for now, we stick with arql and use some utils to help 
-  // with concurency and retry on errors. (we can be firing off thousands of requests here) 
+  // with concurency and retry on errors. 
+  // (we can be firing off thousands of requests here) 
   
   const arql = {
       op: 'and',
@@ -42,7 +52,7 @@ export async function replayToState(arweave: Arweave, contractID: string, height
       expr2: {
           op: 'equals',
           expr1: 'With-Contract',
-          expr2: contractID
+          expr2: contractId
       }
   }
   

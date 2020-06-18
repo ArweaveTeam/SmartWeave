@@ -1,6 +1,12 @@
 import Arweave from 'arweave/node'
 import { getTag } from './utils'
 
+/**
+ * Loads the contract source, initial state and other parameters
+ * 
+ * @param arweave     an Arweave client instance
+ * @param contractID  the Transaction Id of the contract
+ */
 export async function getContract(arweave: Arweave, contractID: string) {
   
   // Generate an object containing the details about a contract in one place.

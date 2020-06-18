@@ -1,6 +1,4 @@
 
-// These imports *should* be stripped out as we never reference any values (only the the types)
-// If they are not we should just reference the .d.ts files instead to grab the types.
 import Arweave from 'arweave/node'
 import { JWKInterface } from 'arweave/node/lib/wallet'
 
