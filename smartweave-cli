@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 
+require('ts-node').register()
+
 // Include dependencies.
 const fs = require('fs')
 const Arweave = require('arweave/node')
 const argv = require('yargs').argv
-const smartweave = require('./smartweave')
+const smartweave = require('./src/index.ts')
 
 // Set Arweave parameters from commandline or defaults.
 const arweave_port = argv.arweavePort ? argv.arweavePort : 443
