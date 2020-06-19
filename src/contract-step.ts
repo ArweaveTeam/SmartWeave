@@ -25,10 +25,11 @@ export async function execute(contractSrc: string, input: object, state: object,
   try {
       eval(contractSrc)
   } catch (err) {
-      console.error(err);
+      console.error(err)
       return false
   }
 
   // Return the modified state
   return state
 }
+

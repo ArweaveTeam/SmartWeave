@@ -1,9 +1,9 @@
 import Arweave from 'arweave/node'
 import Transaction from 'arweave/node/lib/transaction';
-import { getContract } from './get-contract';
+import { getContract } from './contract-load';
 import { retryWithBackoff, batch, softFailWith } from 'promises-tho';
 import { getTag, arrayToHex } from './utils';
-import { execute } from './execute';
+import { execute } from './contract-step';
 import { TransactionStatusResponse } from 'arweave/node/transactions';
 
 interface FullTxInfo {

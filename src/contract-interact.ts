@@ -1,9 +1,9 @@
 
 import Arweave from 'arweave/node'
 import { JWKInterface } from 'arweave/node/lib/wallet'
-import { getContract } from './get-contract'
-import { replayToState } from './replay-contract'
-import { execute } from './execute'
+import { getContract } from './contract-load'
+import { replayToState } from './contract-replay'
+import { execute } from './contract-step'
 
 /**
  * Writes an interaction on the blockchain.
