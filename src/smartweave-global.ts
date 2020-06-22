@@ -46,7 +46,7 @@ export class SmartWeaveGlobal {
     this.transaction = new Transaction(this);
     this.block = new Block(this);
     this.contracts = {
-      getContractState: (contractId: string) => replayToState(arweave, contractId, this.block.height)
+      getContractState: (contractId: string, height?: number) => replayToState(arweave, contractId, height || this.block.height)
     }
   }
 }
