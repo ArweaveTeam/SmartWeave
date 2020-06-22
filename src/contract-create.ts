@@ -8,6 +8,7 @@ export async function createContract(arweave: Arweave, wallet: JWKInterface, con
   srcTx.addTag('App-Name', 'SmartWeave')
   srcTx.addTag('Type', 'contractSrc')
   srcTx.addTag('Version', '0.2.0')
+  srcTx.addTag('Content-Type', 'application/javascript');
   
   await arweave.transactions.sign(srcTx, wallet)
 

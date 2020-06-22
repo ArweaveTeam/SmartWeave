@@ -1,18 +1,9 @@
 import Arweave from 'arweave/node'
-import Transaction from 'arweave/node/lib/transaction';
 import { getContract } from './contract-load';
 import { retryWithBackoff, batch, softFailWith } from 'promises-tho';
-import { getTag, arrayToHex } from './utils';
-import { execute } from './contract-step';
-import { TransactionStatusResponse } from 'arweave/node/transactions';
-
-interface FullTxInfo {
-  tx: Transaction,
-  info: TransactionStatusResponse,
-  id: string 
-  sortKey: string 
-  from: string 
-}
+import { getTag, arrayToHex, unpackTags } from './utils';
+import { execute, ContractInteraction } from './contract-step';
+import { InteractionTx } from './interaction-tx';
 
 /**
  * Queries all interaction transactions and replays a contract to its latest state. 
@@ -27,7 +18,7 @@ export async function replayToState(arweave: Arweave, contractId: string, height
         
   const contractInfo = await getContract(arweave, contractId);
 
-  let state; 
+  let state: any; 
   try {
       state = JSON.parse(contractInfo.initState);
   } catch (e) {
@@ -79,11 +70,13 @@ export async function replayToState(arweave: Arweave, contractId: string, height
       x && 
       x.info.confirmed && 
       x.info.confirmed.block_height <= height
-    ) as FullTxInfo[]
+    ) as InteractionTx[]
   
   console.log(`Replaying ${txInfos.length} confirmed interactions`);
 
   txInfos.sort((a, b) => a.sortKey.localeCompare(b.sortKey));
+
+  const { handler, swGlobal } = contractInfo
   
   for (let i = 0; i < txInfos.length; i++) {
       let input;
@@ -97,12 +90,25 @@ export async function replayToState(arweave: Arweave, contractId: string, height
           continue;
       }
       
-      const nextState: false | object = await execute(contractInfo.contractSrc, input, state, txInfos[i].from);
-      if (!nextState) {
-          console.warn(`Executing of interaction: ${txInfos[i].id} threw exception, skipping`);
-          continue;
+      const interaction: ContractInteraction = {
+        input: input,
+        caller: txInfos[i].from,
       }
-      state = nextState;
+      
+      swGlobal._activeTx = txInfos[i];
+
+      const result = await execute(handler, interaction, state);
+      
+      if (result.type === 'exception') {
+        console.warn(`${result.result}`);
+        console.warn(`Executing of interaction: ${txInfos[i].id} threw exception.`);
+      }
+      if (result.type === 'error') {
+        console.warn(`${result.result}`);
+        console.warn(`Executing of interaction: ${txInfos[i].id} returned error.`);
+      }
+      
+      state = result.state;
   }
 
   return state; 
@@ -112,7 +118,7 @@ export async function replayToState(arweave: Arweave, contractId: string, height
 // It needs to get the block_height and indep_hash from
 // the status endpoint as well as the tx itself. Returns 
 // undefined if the transactions is not confirmed. 
-async function getFullTxInfo(arweave: Arweave, id: string): Promise<FullTxInfo | undefined> {
+async function getFullTxInfo(arweave: Arweave, id: string): Promise<InteractionTx | undefined> {
   const [tx, info] = await Promise.all([
       arweave.transactions.get(id).catch(e => {
         if (e.type === 'TX_PENDING') {
@@ -135,7 +141,7 @@ async function getFullTxInfo(arweave: Arweave, id: string): Promise<FullTxInfo |
   const txIdBytes = arweave.utils.b64UrlToBuffer(id)
   const concatted = arweave.utils.concatBuffers([blockHashBytes, txIdBytes])
   const hashed = arrayToHex(await arweave.crypto.hash(concatted))
-  const block_height = `000000${info.confirmed.block_height}`.slice(-12); 
+  const block_height = `000000${info.confirmed.block_height}`.slice(-12);
 
   const sortKey = `${block_height},${hashed}`
   
