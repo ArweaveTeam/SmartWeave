@@ -53,7 +53,10 @@ export function getContractExecutionEnvironment(arweave: Arweave, contractSrc: s
   
   // Convert from ES Module format to something we can run inside a Function.
   // just replaces `export [async] function handle(` with `[async] function handle(`
-  // and we add a `return
+  // and we add a `return handle` to the end of the snippet. 
+  // We then use `new Function()` which we can call and get back the returned handle function
+  // which has access to the per-instance globals. 
+  
   contractSrc = contractSrc.replace(/export\s+async\s+function\s+handle/gmu, 'async function handle');
   contractSrc = contractSrc.replace(/export\s+function\s+handle\s/gmu, 'function handle');
   const ContractErrorDef = `class ContractError extends Error { constructor(message) { super(message); this.name = 'ContractError' } };`;
