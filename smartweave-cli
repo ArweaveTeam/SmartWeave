@@ -13,13 +13,13 @@ const arweave_port = argv.arweavePort ? argv.arweavePort : 443
 const arweave_host = argv.arweaveHost ? argv.arweaveHost : 'arweave.net'
 const arweave_protocol = argv.arweaveProtocol ? argv.arweaveProtocol : 'https'
 
-if(!argv.walletFile) {
+if(!argv.keyFile || !argv.walletFile) {
     console.log("ERROR: Please specify a wallet file to load using argument " +
-        "'--wallet-file <PATH>'.")
+        "'--key-file <PATH>'.")
     process.exit()
 }
 
-const raw_wallet = fs.readFileSync(argv.walletFile)
+const raw_wallet = fs.readFileSync(argv.keyFile || argv.walletFile)
 const wallet = JSON.parse(raw_wallet)
 
 const arweave = Arweave.init({
