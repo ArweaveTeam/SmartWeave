@@ -3,7 +3,7 @@
 export async function handle(state, input) {
 
   const txId = SmartWeave.transaction.id 
-  const txFrom = SmartWeave.transaction.owner 
+  const txOwner = SmartWeave.transaction.owner 
   const txTarget = SmartWeave.transaction.target  
   const txQuantity = SmartWeave.transaction.quantity 
   const txReward = SmartWeave.transaction.reward
@@ -11,13 +11,14 @@ export async function handle(state, input) {
   const blockHeight = SmartWeave.block.height
   const blockIndepHash = SmartWeave.block.indep_hash 
   
-  const ownerBytes = SmartWeave.arUtils.b64UrlToBuffer(txFrom);
-  const from = await SmartWeave.arCrypto.hash(ownerBytes);
+  const ownerBytes = SmartWeave.arweave.utils.b64UrlToBuffer(txOwner);
+  const from = 
+    SmartWeave.arweave.utils.bufferToB64Url(
+      await SmartWeave.arweave.utils.crypto.hash(ownerBytes)
+    );
+  const from2 = SmartWeave.utils.wallets.ownerToAddress(txOwner);
 
-  if (!state.log) {
-    state.log = [];
-  }
-  state.log = [...state.log, { blockHeight, blockIndepHash, txId, txOwner: txFrom, txTarget,  txQuantity, txReward, txTags, from }]
+  state.log = [...state.log, { blockHeight, blockIndepHash, txId, txOwner: txOwner, txTarget, txQuantity, txReward, txTags, from, from2 }]
   return { state }
 
 }
