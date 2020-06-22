@@ -1,6 +1,6 @@
 
 // Just a simple demo contract to test reading another contracts state.  
-// This lets a user to register as ellible for something, based off 
+// This lets a user to register as elligble for something, based off 
 // whether they are holding a certain amount of some token. 
 
 // WARNING: Using getContractState with a user supplied contract means 
@@ -21,7 +21,7 @@ export async function handle(state, action) {
     const tokenContractState = await SmartWeave.contracts.getContractState(TOKEN_CONTRACT);
     const balance = tokenContractState.balances[action.caller];
     if (balance >= MIN_AMOUNT) {
-      state.ellible[action.caller] = true;
+      state.elligble[action.caller] = true;
       return { state }
     }
 
