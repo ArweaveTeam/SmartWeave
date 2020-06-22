@@ -1,6 +1,7 @@
 import Arweave from "arweave/node";
 import { InteractionTx } from "./interaction-tx";
 import { unpackTags } from "./utils";
+import { replayToState } from "./contract-replay";
 
 /**
  * 
@@ -23,21 +24,32 @@ import { unpackTags } from "./utils";
  */
 export class SmartWeaveGlobal {
 
-  arCrypto: typeof Arweave.crypto
-  arUtils: typeof Arweave.utils 
+
   transaction: Transaction
   block: Block 
   
+  arweave: Pick<Arweave, 'ar' | 'wallets' | 'utils' | 'crypto'>
+
+  contracts: {
+    getContractState(contractId: string): Promise<any>
+  }
+
   _activeTx?: InteractionTx
 
   constructor(arweave: Arweave) {
-    this.arCrypto = arweave.crypto
-    this.arUtils = arweave.utils 
+    this.arweave = {
+      ar: arweave.ar,
+      utils: arweave.utils,
+      wallets: arweave.wallets,
+      crypto: arweave.crypto,
+    }
     this.transaction = new Transaction(this);
     this.block = new Block(this);
+    this.contracts = {
+      getContractState: (contractId: string) => replayToState(arweave, contractId, this.block.height)
+    }
   }
 }
-
 
 class Transaction {
 
