@@ -92,7 +92,7 @@ Clone this repository and run `npm install`.
 You can deploy a contract as follows:
 
 ```
-node smartweave-cli.js --wallet-file [YOUR KEYFILE] \
+node smartweave-cli.js --key-file [YOUR KEYFILE] \
   --create --contract-src [SRC LOCATION] \
   --init-state [INITIAL STATE FILE]
 ```
@@ -100,7 +100,7 @@ node smartweave-cli.js --wallet-file [YOUR KEYFILE] \
 Check its state:
 
 ```
-node smartweave-cli.js --wallet-file [YOUR KEYFILE] \
+node smartweave-cli.js --key-file [YOUR KEYFILE] \
   --contract [CONTRACT TXID] \
   --get-state
 ```
@@ -108,7 +108,7 @@ node smartweave-cli.js --wallet-file [YOUR KEYFILE] \
 Interact with it:
 
 ```
-node smartweave-cli.js --wallet-file [YOUR KEYFILE] \
+node smartweave-cli.js --key-file [YOUR KEYFILE] \
   --contract [CONTRACT TXID] \
   --interact \
   --input "[CONTRACT INPUT STRING HERE]"
