@@ -114,8 +114,7 @@ node smartweave-cli.js --key-file [YOUR KEYFILE] \
   --input "[CONTRACT INPUT STRING HERE]"
 ```
 
-To test a contract interaction without writing it to the network, append 
-`--dry-run` to your `--interact` call.
+To test a contract interaction without writing it to the network, append `--dry-run` to your `--interact` call.
 
 ## License
 
