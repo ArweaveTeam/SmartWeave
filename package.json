@@ -1,6 +1,6 @@
 {
   "name": "SmartWeave",
-  "version": "1.0.0",
+  "version": "0.3.0",
   "description": "Uses lazy-evaluation to move the burden of contract execution from network nodes to smart contract users.",
   "main": "smartweave-cli.js",
   "directories": {
@@ -15,7 +15,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "GPL",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/samcamwilliams/SmartWeave/issues"
   },
