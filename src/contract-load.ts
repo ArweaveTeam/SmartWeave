@@ -52,17 +52,18 @@ export async function getContract(arweave: Arweave, contractID: string) {
 export function getContractExecutionEnvironment(arweave: Arweave, contractSrc: string) {
   
   // Convert from ES Module format to something we can run inside a Function.
-  // just replaces `export [async] function handle(` with `[async] function handle(`
-  // and we add a `return handle` to the end of the snippet. 
+  // just removes the `export` keyword and adds ;return handle to the end of the function.
+  // We also assign the passed in SmartWeaveGlobal to SmartWeave, and declare 
+  // the ContractError exception. 
   // We then use `new Function()` which we can call and get back the returned handle function
   // which has access to the per-instance globals. 
 
   contractSrc = contractSrc.replace(/export\s+async\s+function\s+handle/gmu, 'async function handle');
   contractSrc = contractSrc.replace(/export\s+function\s+handle/gmu, 'function handle');
   const ContractErrorDef = `class ContractError extends Error { constructor(message) { super(message); this.name = 'ContractError' } };`;
-  const returningSrc = `const SmartWeave = svGlobal;\n\n${ContractErrorDef}\n\n${contractSrc}\n\n;return handle;`;
+  const returningSrc = `const SmartWeave = swGlobal;\n\n${ContractErrorDef}\n\n${contractSrc}\n\n;return handle;`;
   const swGlobal = new SmartWeaveGlobal(arweave);
-  const getContractFunction = new Function('svGlobal', returningSrc);
+  const getContractFunction = new Function('swGlobal', returningSrc);
   
   //console.log(returningSrc);
   
