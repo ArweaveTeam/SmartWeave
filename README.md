@@ -124,4 +124,4 @@ To test a contract interaction without writing it to the network, append `--dry-
 
 ## License
 
-Public domain.
+This project is licensed under the terms of the MIT license.

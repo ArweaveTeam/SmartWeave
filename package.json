@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/samcamwilliams/SmartWeave.git"
+    "url": "git+https://github.com/ArweaveTeam/SmartWeave.git"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/samcamwilliams/SmartWeave/issues"
+    "url": "https://github.com/ArweaveTeam/SmartWeave/issues"
   },
-  "homepage": "https://github.com/samcamwilliams/SmartWeave#readme",
+  "homepage": "https://github.com/ArweaveTeam/SmartWeave#readme",
   "dependencies": {
     "arweave": "^1.7.1",
     "promises-tho": "^1.1.0",
