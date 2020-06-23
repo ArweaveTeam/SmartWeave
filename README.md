@@ -36,7 +36,9 @@ The ordering of actions, is determined, firstly, by when they are mined in the c
 ## Writing a contract
 
 A contract is in the format of an ES Module that exports one function `handle`. It is initialized with
-an initial state from a corresponding json file. Both the contract module and the initial state are written to the Arweave blockchain as data transactions. Below is a hello world contract, it waits for people to say the two words 'Hello' and 'World' to it (as inputs) and once it has seen both it sets its state to `happy: true`
+an initial state from a corresponding json file. Both the contract module and the initial state are written to the Arweave blockchain as data transactions. 
+
+Below is a hello world contract, it waits for people to say the two words 'Hello' and 'World' to it (as inputs) and once it has seen both it sets its state to `happy: true`
 
 Contract Source:
 
@@ -68,7 +70,7 @@ Contract initial state:
 
 The contract takes it's latest state and an action argument. The action argument is an object containing two value, "input" and "caller". `input` is the input the contract, it is user controlled, and will be passed through JSON.parse() before the contract handler is executed. `caller` is the wallet address of the user who is calling the contract.
 
-The contract should return an object like one of `{ state: newState }` or `{ result: someResult }`. The latter is used in the case where the action was a read, and did not update any state, it can be any truthy javascript value.
+The contract should return an object like one of `{ state: newState }` or `{ result: someResult }`. The latter is used in the case where the action was a read, and did not update any state. It can be any truthy javascript value.
 
 You can view more contract examples in the [examples/](examples/) folder.
 
@@ -113,6 +115,10 @@ node smartweave-cli.js --key-file [YOUR KEYFILE] \
   --interact \
   --input "[CONTRACT INPUT STRING HERE]"
 ```
+
+When interacting with the contract, the value passed to --input must be valid json. Typically an object is used:
+
+`--input '{ "function": "transfer", "qty": 1984 }'`
 
 To test a contract interaction without writing it to the network, append `--dry-run` to your `--interact` call.
 
