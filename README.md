@@ -15,17 +15,17 @@ is derived from:
 2. A contract function
 3. An ordered list of actions
 
-In functional programming terms this is just a fold or reduce operation. In pseudo-code it looks like this:
+In functional programming terms this is just a fold or reduce operation. In pseudo-code:
 
 ```javascript
 initState = { ... }
-contract = (state, action) => state
+contractFunction = (state, action) => state
 actions = [ action, action, action, ...]
 
 state = initState
 
-foreach (a in actions) {
-  state = contract(state, a)
+foreach (action in actions) {
+  state = contractFunction(state, action)
 }
 
 // state is now the latest contract state.
@@ -36,9 +36,9 @@ The ordering of actions, is determined, firstly, by when they are mined in the c
 ## Writing a contract
 
 A contract is in the format of an ES Module that exports one function `handle`. It is initialized with
-an initial state from a corresponding json file. Both the contract module and the initial state are written to the Arweave blockchain as data transactions. 
+an initial state from a corresponding json file. Both the contract module and the initial state are written to the Arweave blockchain as data transactions.
 
-Below is a hello world contract, it waits for people to say the two words 'Hello' and 'World' to it (as inputs) and once it has seen both it sets its state to `happy: true`
+Below is a hello world contract, it waits for actions that say the two words 'Hello' and 'World' to it (as inputs) and once it has seen both it sets its state to `happy: true`
 
 Contract Source:
 
@@ -68,9 +68,13 @@ Contract initial state:
 }
 ```
 
-The contract takes it's latest state and an action argument. The action argument is an object containing two value, "input" and "caller". `input` is the input the contract, it is user controlled, and will be passed through JSON.parse() before the contract handler is executed. `caller` is the wallet address of the user who is calling the contract.
+The contract takes it's latest state and an action argument.
 
-The contract should return an object like one of `{ state: newState }` or `{ result: someResult }`. The latter is used in the case where the action was a read, and did not update any state. It can be any truthy javascript value.
+The action argument is an object in the form: `{ caller: string, input: any }`.
+
+`caller` is the wallet address of the caller, `input` is the user-controlled input to the contract. `input` will have been passed through JSON.parse() and will be a truthy value (it will never be false, undefined, null, etc).
+
+The contract should return an object like one of `{ state: newState }` or `{ result: someResult }`. The latter is used in the case where the action was a read, and did not update any state. `state` or `result` should be a truthy Js value.
 
 You can view more contract examples in the [examples/](examples/) folder.
 
@@ -78,8 +82,8 @@ You can view more contract examples in the [examples/](examples/) folder.
 
 Contract must be deterministic! As of SmartWeave v0.3 they run in a full Js environment, so can do a lot of things, but it's trivially easy to write a contract that forks due to non-deterministic operations, or environment differences. Some things you should never do inside a contract:
 
-- Any network operation
-- Any random number generation
+- Network calls
+- Random number generation
 - Any operation that would give different results depending on the environment
 - Any operation that would give different results when run at different times.
 
