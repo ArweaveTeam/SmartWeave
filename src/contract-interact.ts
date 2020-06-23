@@ -33,7 +33,7 @@ export async function interactWrite(arweave: Arweave, wallet: JWKInterface, cont
   interactionTx.addTag('App-Name', 'SmartWeave');
   interactionTx.addTag('Type', 'interaction');
   interactionTx.addTag('With-Contract', contractId);
-  interactionTx.addTag('Version', '0.2.0');
+  interactionTx.addTag('Version', '0.3.0');
   interactionTx.addTag('Input', JSON.stringify(input));
 
   await arweave.transactions.sign(interactionTx, wallet);

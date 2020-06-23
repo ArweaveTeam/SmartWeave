@@ -7,7 +7,7 @@ export async function createContract(arweave: Arweave, wallet: JWKInterface, con
   
   srcTx.addTag('App-Name', 'SmartWeave')
   srcTx.addTag('Type', 'contractSrc')
-  srcTx.addTag('Version', '0.2.0')
+  srcTx.addTag('Version', '0.3.0')
   srcTx.addTag('Content-Type', 'application/javascript');
   
   await arweave.transactions.sign(srcTx, wallet)
@@ -26,7 +26,7 @@ export async function createContractFromTx(arweave: Arweave, wallet: JWKInterfac
   contractTX.addTag('App-Name', 'SmartWeave')
   contractTX.addTag('Type', 'contract')
   contractTX.addTag('Contract-Src', srcTXID)
-  contractTX.addTag('Version', '0.2.0')
+  contractTX.addTag('Version', '0.3.0')
   if (minFee) {
       contractTX.addTag('Min-Fee', minFee.toString())
   }
