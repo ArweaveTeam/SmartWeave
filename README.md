@@ -22,6 +22,14 @@ node smartweave-cli --key-file [YOUR KEYFILE] \
   --init-state [INITIAL STATE FILE]
 ```
 
+Or, using an existing contract source that is already deployed but with a new initial state and contract id:
+
+```
+node smartweave-cli --key-file [YOUR KEYFILE] \
+  --create --contract-src-tx [SRC TX] \
+  --init-state [INITIAL STATE FILE]
+```
+
 Check its state:
 
 ```
