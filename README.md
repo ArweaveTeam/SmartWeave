@@ -1,68 +1,50 @@
 # SmartWeave
-## Simple, scalable smart contracts on the Arweave protocol.
 
-Uses lazy-evaluation to move the burden of contract execution from network nodes 
-to smart contract users. Currently, SmartWeave supports JavaScript, using the 
+## Simple, scalable smart contracts on the Arweave protocol
+
+Uses lazy-evaluation to move the burden of contract execution from network nodes
+to smart contract users. Currently, SmartWeave supports JavaScript, using the
 client's unmodified execution engine.
 
-**Version: 0.1**
+**Version: 0.3**
 
-## Usage
+For information on how the contracts execute, how to write one, and the API. Read the [Contract Guide](CONTRACT-GUIDE.md) and have a look at some of the [examples](examples/)
+
+## CLI Usage
 
 Clone this repository and run `npm install`.
 
 You can deploy a contract as follows:
 
 ```
-node smartweave-cli.js --wallet-file [YOUR KEYFILE] \
-        --create --contract-src [SRC LOCATION] \
-        --init-state [INITIAL STATE FILE]
+node smartweave-cli --key-file [YOUR KEYFILE] \
+  --create --contract-src [SRC LOCATION] \
+  --init-state [INITIAL STATE FILE]
 ```
 
 Check its state:
 
 ```
-node smartweave-cli.js --wallet-file [YOUR KEYFILE] \
-        --contract [CONTRACT TXID] \
-        --get-state
+node smartweave-cli --key-file [YOUR KEYFILE] \
+  --contract [CONTRACT TXID] \
+  --get-state
 ```
 
 Interact with it:
 
 ```
-node smartweave-cli.js --wallet-file [YOUR KEYFILE] \
-        --contract [CONTRACT TXID] \
-        --interact \
-        --input "[CONTRACT INPUT STRING HERE]"
+node smartweave-cli --key-file [YOUR KEYFILE] \
+  --contract [CONTRACT TXID] \
+  --interact \
+  --input "[CONTRACT INPUT STRING HERE]"
 ```
 
-To test a contract interaction without writing it to the network, append 
-`--dry-run` to your `--interact` call.
+When interacting with the contract, the value passed to --input must be valid json. Typically an object is used:
 
-## Execution Environment
+`--input '{ "function": "transfer", "qty": 1984 }'`
 
-The SmartWeave 0.1 execution environment is extremely flexible, but 
-very basic. There are no safety rails. You can write programs that do far more 
-computation than Ethereum (etc.) smart contracts, make use of GPU rendering 
-facilities, write to the local machine's storage. But you can also trivally 
-write a contract that forks when people use it in a browser vs via Node.js, due 
-to environmental differences (for example).
-
-The rules are simple:
-
-- Your entire contract file will be executed by the local javascript execution 
-environment as a script when the contract is invoked.
-- The current state of the contract is found in the `state` variable upon 
-invocation. The value found in the `state` variable after the contract has 
-executed will be written to the Arweave so that it can be imported in the next 
-contract run. The value of the variable should be a string.
-- The input to the current contract execution is found in the `input` variable, 
-as a string.
-- The address of the wallet that is invoking the contract can be found in the 
-`caller` variable.
-
-Sample contracts and initial states can be found in the `examples` directory.
+To test a contract interaction without writing it to the network, append `--dry-run` to your `--interact` call.
 
 ## License
 
-Public domain.
+This project is licensed under the terms of the MIT license.
