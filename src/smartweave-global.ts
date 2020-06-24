@@ -37,6 +37,10 @@ export class SmartWeaveGlobal {
 
   _activeTx?: InteractionTx
 
+  get _isDryRunning() {
+    return !this._activeTx
+  }
+
   constructor(arweave: Arweave) {
     this.arweave = {
       ar: arweave.ar,
@@ -47,7 +51,7 @@ export class SmartWeaveGlobal {
     this.transaction = new Transaction(this);
     this.block = new Block(this);
     this.contracts = {
-      readContractState: (contractId: string, height?: number) => replayToState(arweave, contractId, height || this.block.height)
+      readContractState: (contractId: string, height?: number) => replayToState(arweave, contractId, height || (this._isDryRunning ? Number.POSITIVE_INFINITY : this.block.height))
     }
   }
 }
