@@ -93,7 +93,7 @@ The handler function should terminate by one of:
 - returning `{ result: someResult }` when the interaction was a read only operation that did not change the contract state.
 - throwing a `ContractError` exception, indicating the interaction could not be completed successfully.
 
-If the contract throws a different type of exception, this will be caught and contracts state will not be updated. The only time the contracts state will be updated is when it successfully returns `{ state: state }`.
+If the contract throws a different type of exception, this will be caught and contract's state will not be updated. The *only time the contract's state will be updated* is when it successfully returns `{ state: state }`.
 
 You can read some example contracts and their initial state files in the [examples](examples/) folder in this repo.
 
