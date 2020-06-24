@@ -7,7 +7,7 @@ export function handle(state, action) {
 
   if (input.function == 'transfer') {
     let target = input.target;
-    let qty = Math.trunc(input.quantity);
+    let qty = Math.trunc(parseFloat(input.quantity) * state.divisibility);
 
     if (!target) {
       throw new ContractError(`No target specified`);
@@ -39,11 +39,17 @@ export function handle(state, action) {
   }
 
   if (input.function == 'balance') {
+    if (typeof input.target !== 'string') {
+      throw new ContractError(`Must specific target to get balance for`);
+    }
+    if (typeof balances[target] !== 'number') {
+      throw new ContractError(`Cannnot get balance, target does not exist`);
+    }
     let target = input.target;
     let ticker = state.ticker;
     let divisibility = state.divisibility;
     let balance = balances[target] / divisibility;
-    return { result: { target, ticker, balance } };
+    return { result: { target, ticker, balance, divisibility } };
   }
 
   throw new ContractError(`No function supplied or function not recognised: "${input.function}"`);

@@ -29,12 +29,12 @@ const arweave = Arweave.init({
 })
 
 if(argv.create) {
-    if(!argv.contractSrc) {
+    
+    if(!argv.contractSrc && !argv.contractSrcTx) {
         console.log("ERROR: Please specify contract source bundle using argument " +
-            "'--contract-src <PATH>'.")
+            "'--contract-src <PATH>' or --contract-src-tx <TX>.")
         process.exit()
     }
-    const contractSrc = fs.readFileSync(argv.contractSrc)
 
     if(!argv.initState) {
         console.log("ERROR: Please specify a file defining an initial state with " +
@@ -42,15 +42,28 @@ if(argv.create) {
         process.exit()
     }
 
-    const minFee = argv.minFee ? argv.minFee : ''
+    if (argv.contractSrc) {
+        // Create from a new source file. 
+        const contractSrc = fs.readFileSync(argv.contractSrc)
+        const minFee = argv.minFee ? argv.minFee : ''
+        const initState = fs.readFileSync(argv.initState)
 
-    const initState = fs.readFileSync(argv.initState)
-
-    smartweave.createContract(arweave, wallet, contractSrc, initState, minFee).then(
-        (contractID) => {
-            console.log("Contract created in TX: " + contractID)
-        }
-    )
+        smartweave.createContract(arweave, wallet, contractSrc, initState, minFee).then(
+            (contractID) => {
+                console.log("Contract created in TX: " + contractID)
+            }
+        )
+    } else {
+        // Create from existing tx. 
+        const minFee = argv.minFee ? argv.minFee : ''
+        const initState = fs.readFileSync(argv.initState)
+        const contractSrcTx = argv.contractSrcTx;
+        smartweave.createContractFromTx(arweave, wallet, contractSrcTx, initState, minFee).then(
+            (contractID) => {
+                console.log("Contract created in TX: " + contractID)
+            }
+        )
+    }
     
 }
 

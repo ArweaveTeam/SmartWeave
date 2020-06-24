@@ -8,7 +8,9 @@ client's unmodified execution engine.
 
 **Version: 0.3**
 
-For information on how the contracts execute, how to write one, and the API. Read the [Contract Guide](CONTRACT-GUIDE.md) and have a look at some of the [examples](examples/)
+For information on how the contracts execute, how to write one, and the API, read the [Contract Guide](CONTRACT-GUIDE.md) and check some of the [examples](examples/)
+
+For information on how to create a new PST token, you can read the [PST Creation Guide](CREATE-PST.md).
 
 ## CLI Usage
 
@@ -19,6 +21,14 @@ You can deploy a contract as follows:
 ```
 node smartweave-cli --key-file [YOUR KEYFILE] \
   --create --contract-src [SRC LOCATION] \
+  --init-state [INITIAL STATE FILE]
+```
+
+Or, using an existing contract source that is already deployed but with a new initial state and contract id:
+
+```
+node smartweave-cli --key-file [YOUR KEYFILE] \
+  --create --contract-src-tx [SRC TX] \
   --init-state [INITIAL STATE FILE]
 ```
 
