@@ -5,9 +5,8 @@ import { JWKInterface } from 'arweave/node/lib/wallet'
 export async function createContract(arweave: Arweave, wallet: JWKInterface, contractSrc: string, initState: string, minFee: number) {
   let srcTx = await arweave.createTransaction({ data: contractSrc }, wallet)
   
-  srcTx.addTag('App-Name', 'SmartWeave')
-  srcTx.addTag('Type', 'contractSrc')
-  srcTx.addTag('Version', '0.3.0')
+  srcTx.addTag('App-Name', 'SmartWeaveContractSource')
+  srcTx.addTag('App-Version', '0.3.0')
   srcTx.addTag('Content-Type', 'application/javascript');
   
   await arweave.transactions.sign(srcTx, wallet)
@@ -23,10 +22,10 @@ export async function createContract(arweave: Arweave, wallet: JWKInterface, con
 export async function createContractFromTx(arweave: Arweave, wallet: JWKInterface, srcTXID: string, state: string, minFee: number) {
   // Create a contract from a stored source TXID, setting the default state.
   let contractTX = await arweave.createTransaction({ data: state }, wallet)
-  contractTX.addTag('App-Name', 'SmartWeave')
-  contractTX.addTag('Type', 'contract')
+  contractTX.addTag('App-Name', 'SmartWeaveContract')
+  contractTX.addTag('App-Version', '0.3.0')
   contractTX.addTag('Contract-Src', srcTXID)
-  contractTX.addTag('Version', '0.3.0')
+  contractTX.addTag('Content-Type', 'application/json')
   if (minFee) {
       contractTX.addTag('Min-Fee', minFee.toString())
   }

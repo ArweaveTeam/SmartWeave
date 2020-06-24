@@ -15,7 +15,7 @@ import { execute, ContractInteraction } from './contract-step';
  * @param contractId    the Transaction Id of the contract
  * @param input         the interaction input, will be serialized as Json.
  */
-export async function interactWrite(arweave: Arweave, wallet: JWKInterface, contractId: string, input: object) {
+export async function interactWrite(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any) {
   
   // Use a random value in the data body. We must put
   // _something_ in the body, because a tx must have data or target
@@ -30,11 +30,15 @@ export async function interactWrite(arweave: Arweave, wallet: JWKInterface, cont
     wallet
   );
 
-  interactionTx.addTag('App-Name', 'SmartWeave');
-  interactionTx.addTag('Type', 'interaction');
-  interactionTx.addTag('With-Contract', contractId);
-  interactionTx.addTag('Version', '0.3.0');
-  interactionTx.addTag('Input', JSON.stringify(input));
+  input = JSON.parse(input);
+  if (!input) {
+    throw new Error(`Input should be a truthy value: ${input}`);
+  }
+
+  interactionTx.addTag('App-Name', 'SmartWeaveAction');
+  interactionTx.addTag('App-Version', '0.3.0');
+  interactionTx.addTag('Contract', contractId);
+  interactionTx.addTag('Input', input);
 
   await arweave.transactions.sign(interactionTx, wallet);
 
@@ -55,7 +59,7 @@ export async function interactWrite(arweave: Arweave, wallet: JWKInterface, cont
  * @param contractId    the Transaction Id of the contract
  * @param input         the interaction input.
  */
-export async function interactWriteDryRun(arweave: Arweave, wallet: JWKInterface, contractId: string, input: object) {
+export async function interactWriteDryRun(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any) {
   const contractInfo = await getContract(arweave, contractId);
   const latestState = await replayToState(arweave, contractId);
   const from = await arweave.wallets.jwkToAddress(wallet);

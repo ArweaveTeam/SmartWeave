@@ -14,7 +14,6 @@ export async function getContract(arweave: Arweave, contractID: string) {
   // Generate an object containing the details about a contract in one place.
   const contractTX = await arweave.transactions.get(contractID);
   const contractSrcTXID = getTag(contractTX, 'Contract-Src');
-  const minDiff = getTag(contractTX, 'Min-Diff');
   const minFee = getTag(contractTX, 'Min-Fee');
   const contractSrcTX = await arweave.transactions.get(contractSrcTXID);
   const contractSrc = contractSrcTX.get('data', { decode: true, string: true });
@@ -28,7 +27,6 @@ export async function getContract(arweave: Arweave, contractID: string) {
     id: contractID,
     contractSrc: contractSrc,
     initState: state,
-    minDiff: minDiff,
     minFee: minFee,
     contractTX,
     handler,
@@ -61,7 +59,8 @@ export function getContractExecutionEnvironment(arweave: Arweave, contractSrc: s
   contractSrc = contractSrc.replace(/export\s+async\s+function\s+handle/gmu, 'async function handle');
   contractSrc = contractSrc.replace(/export\s+function\s+handle/gmu, 'function handle');
   const ContractErrorDef = `class ContractError extends Error { constructor(message) { super(message); this.name = 'ContractError' } };`;
-  const returningSrc = `const SmartWeave = swGlobal;\n\n${ContractErrorDef}\n\n${contractSrc}\n\n;return handle;`;
+  const ContractAssertDef = `function ContractAssert(cond, message) { if (!cond) throw new ContractError(message) };`
+  const returningSrc = `const SmartWeave = swGlobal;\n\n${ContractErrorDef}\n${ContractAssertDef}\n${contractSrc}\n\n;return handle;`;
   const swGlobal = new SmartWeaveGlobal(arweave);
   const getContractFunction = new Function('swGlobal', returningSrc);
   

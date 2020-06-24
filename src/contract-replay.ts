@@ -38,11 +38,11 @@ export async function replayToState(arweave: Arweave, contractId: string, height
       expr1: {
           op: 'equals',
           expr1: 'App-Name',
-          expr2: 'SmartWeave',
+          expr2: 'SmartWeaveAction',
       },
       expr2: {
           op: 'equals',
-          expr1: 'With-Contract',
+          expr1: 'Contract',
           expr2: contractId
       }
   }
