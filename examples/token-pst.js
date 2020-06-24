@@ -1,8 +1,4 @@
 
-// This contract is a token contract that supports divisibility. 
-// As long as the max supply of the token is <= Number.MAX_SAFE_INTEGER 
-// This will work fine, (all operations are done as integer values) 
-
 export function handle(state, action) {
   
   let balances = state.balances;
@@ -12,12 +8,11 @@ export function handle(state, action) {
   if (input.function == 'transfer') {
 
     let target = input.target;
-    
-    if (isNaN(input.qty)) {
-      throw new ContractError(`Invalid quantity`);
-    }
+    let qty = input.qty;
 
-    let qty = Math.trunc(parseFloat(input.qty) * state.divisibility);
+    if (!Number.isInteger(qty)) {
+      throw new ContractError(`Invalid value for "qty". Must be an integer`);
+    }
 
     if (!target) {
       throw new ContractError(`No target specified`);
@@ -48,17 +43,16 @@ export function handle(state, action) {
 
     let target = input.target;
     let ticker = state.ticker;
-    let divisibility = state.divisibility;
-    let balance = balances[target] / divisibility;
     
     if (typeof target !== 'string') {
       throw new ContractError(`Must specificy target to get balance for`);
     }
+
     if (typeof balances[target] !== 'number') {
       throw new ContractError(`Cannnot get balance, target does not exist`);
     }
 
-    return { result: { target, ticker, balance: balance.toFixed(divisibility), divisibility } };
+    return { result: { target, ticker, balance: balances[target] } };
   }
 
   throw new ContractError(`No function supplied or function not recognised: "${input.function}"`);
