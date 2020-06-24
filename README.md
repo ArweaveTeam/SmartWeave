@@ -10,6 +10,8 @@ client's unmodified execution engine.
 
 For information on how the contracts execute, how to write one, and the API, read the [Contract Guide](CONTRACT-GUIDE.md) and check some of the [examples](examples/)
 
+For information on how to create a new PST token, you can read the [PST Creation Guide](CREATE-PST.md).
+
 ## CLI Usage
 
 Clone this repository and run `npm install`.
