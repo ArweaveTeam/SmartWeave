@@ -30,15 +30,14 @@ export async function interactWrite(arweave: Arweave, wallet: JWKInterface, cont
     wallet
   );
 
-  input = JSON.parse(input);
   if (!input) {
-    throw new Error(`Input should be a truthy value: ${input}`);
-  }
+    throw new Error(`Input should be a truthy value: ${JSON.stringify(input)}`);
+  }  
 
   interactionTx.addTag('App-Name', 'SmartWeaveAction');
   interactionTx.addTag('App-Version', '0.3.0');
   interactionTx.addTag('Contract', contractId);
-  interactionTx.addTag('Input', input);
+  interactionTx.addTag('Input', JSON.stringify(input));
 
   await arweave.transactions.sign(interactionTx, wallet);
 

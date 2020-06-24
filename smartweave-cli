@@ -13,7 +13,7 @@ const arweave_port = argv.arweavePort ? argv.arweavePort : 443
 const arweave_host = argv.arweaveHost ? argv.arweaveHost : 'arweave.net'
 const arweave_protocol = argv.arweaveProtocol ? argv.arweaveProtocol : 'https'
 
-if(!argv.keyFile || !argv.walletFile) {
+if(!argv.keyFile && !argv.walletFile) {
     console.log("ERROR: Please specify a wallet file to load using argument " +
         "'--key-file <PATH>'.")
     process.exit()
@@ -42,11 +42,11 @@ if(argv.create) {
         process.exit()
     }
 
-    const minDiff = argv.minDiff ? argv.minDiff : 10
+    const minFee = argv.minFee ? argv.minFee : ''
 
     const initState = fs.readFileSync(argv.initState)
 
-    smartweave.createContract(arweave, wallet, contractSrc, initState, minDiff).then(
+    smartweave.createContract(arweave, wallet, contractSrc, initState, minFee).then(
         (contractID) => {
             console.log("Contract created in TX: " + contractID)
         }
