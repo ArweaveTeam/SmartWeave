@@ -4,9 +4,9 @@ To follow this, you will need an Arweave wallet, funded with some AR. You can ge
 
 ## Creating a new PST contract
 
-There is an existing contract source ([Wa3kRcY8u9CMtoVaG4L0OTkHqZXw35uMU-qFG_k4jzI](https://arweave.net/Wa3kRcY8u9CMtoVaG4L0OTkHqZXw35uMU-qFG_k4jzI)) already deployed that you should use, and you can create new instance of this contract for your PST using the SmartWeave CLI tool.
+There is an existing contract source ([nEpPS-eb99O2AhFdF4WR-cpddgmDWnFkkCD_Q-uaq44](https://arweave.net/nEpPS-eb99O2AhFdF4WR-cpddgmDWnFkkCD_Q-uaq44)) already deployed that you should use, and you can create new instance of this contract for your PST using the SmartWeave CLI tool.
 
-First, copy and edit the example init state Json from `examples/token.json`
+First, copy and edit the example init state Json from `examples/token-pst.json`
 
 `cp examples/token.json my-pst-token.json`
 
@@ -14,7 +14,7 @@ First, copy and edit the example init state Json from `examples/token.json`
 
 Then simply run the following command to deploy a new contract instance:
 
-`node smartweave-cli --key-file /path/to/keyfile.json --create --contract-src-tx Wa3kRcY8u9CMtoVaG4L0OTkHqZXw35uMU-qFG_k4jzI --init-state my-pst-token.json` 
+`node smartweave-cli --key-file /path/to/keyfile.json --create --contract-src-tx Wa3kRcY8u9CMtoVaG4L0OTkHqZXw35uMU-qFG_k4jzI --init-state my-pst-token.json`
 
 You will get back a transaction id, this is your Contract Id, and you don't need to keep around the .json file that initialized it. Once the transaction is mined, (it may take a few minutes), you can check the state of your PST token with the following command:
 
@@ -22,9 +22,9 @@ You will get back a transaction id, this is your Contract Id, and you don't need
 
 ## Transferring tokens and viewing balances
 
-To transfer tokens to another address you can use the following command (please double check the wallet address before doing this):
+To transfer tokens to another address you can use the following command:
 
-`node smartweave-cli --key-file /path/to/keyfile.json --contract CONTRACTID --interact --input '{ "function": "transfer", "qty": 5.5, "target": "TARGETWALLET" }'`
+`node smartweave-cli --key-file /path/to/keyfile.json --contract CONTRACTID --interact --input '{ "function": "transfer", "qty": 500, "target": "TARGETWALLET" }'`
 
 To view the balance of a particular address/wallet, you can use the following command:
 
