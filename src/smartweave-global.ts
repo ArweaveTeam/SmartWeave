@@ -32,7 +32,7 @@ export class SmartWeaveGlobal {
   arweave: Pick<Arweave, 'ar' | 'wallets' | 'utils' | 'crypto'>
 
   contracts: {
-    getContractState(contractId: string): Promise<any>
+    readContractState(contractId: string): Promise<any>
   }
 
   _activeTx?: InteractionTx
@@ -47,7 +47,7 @@ export class SmartWeaveGlobal {
     this.transaction = new Transaction(this);
     this.block = new Block(this);
     this.contracts = {
-      getContractState: (contractId: string, height?: number) => replayToState(arweave, contractId, height || this.block.height)
+      readContractState: (contractId: string, height?: number) => replayToState(arweave, contractId, height || this.block.height)
     }
   }
 }
