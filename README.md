@@ -8,7 +8,7 @@ client's unmodified execution engine.
 
 **Version: 0.3**
 
-For information on how the contracts execute, how to write one, and the API. Read the [Contract Guide](CONTRACT-GUIDE.md) and have a look at some of the [examples](examples/)
+For information on how the contracts execute, how to write one, and the API, read the [Contract Guide](CONTRACT-GUIDE.md) and check some of the [examples](examples/)
 
 ## CLI Usage
 

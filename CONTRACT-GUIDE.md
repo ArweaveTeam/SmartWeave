@@ -1,5 +1,12 @@
 # Contract Writing Guide
 
+- [Contract Writing Guide](#contract-writing-guide)
+  - [Introduction](#introduction)
+  - [Hello World Contract](#hello-world-contract)
+  - [Contract Format and Interface](#contract-format-and-interface)
+  - [Contract Writing Guidelines](#contract-writing-guidelines)
+  - [SmartWeave Global API](#smartweave-global-api)
+
 ## Introduction
 
 SmartWeave contracts operate on a simple model, the state of a contract is derived from:
@@ -97,7 +104,7 @@ If the contract throws a different type of exception, this will be caught and co
 
 You can read some example contracts and their initial state files in the [examples](examples/) folder in this repo.
 
-## Contract writing guidelines
+## Contract Writing Guidelines
 
 Contract must be deterministic! As of SmartWeave v0.3 they run in a full Js environment, so can do a lot of things, but it's trivially easy to write a contract that forks due to non-deterministic operations, or environment differences. Some things you should never do inside a contract:
 
@@ -112,7 +119,7 @@ In addition, you should be *very careful to sanitize the input object*, since it
 
 ## SmartWeave Global API
 
-Contracts have access to a global object `SmartWeave` that provides an additional API. This provides access to some utility functions, more information about interaction, and an API to read another contracts state.
+Contracts have access to a global object `SmartWeave` that provides an additional API. This provides access to some utility functions, more information about current interaction, and an API to read another contracts state.
 
 Note this API provide read access to values as they were at the *block height of the action being executed* 
 
