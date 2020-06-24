@@ -49,7 +49,7 @@ export function handle(state, action) {
     let ticker = state.ticker;
     let divisibility = state.divisibility;
     let balance = balances[target] / divisibility;
-    return { result: { target, ticker, balance } };
+    return { result: { target, ticker, balance, divisibility } };
   }
 
   throw new ContractError(`No function supplied or function not recognised: "${input.function}"`);
