@@ -10,20 +10,21 @@ import { replayToState } from "./contract-replay";
  * information or using utility and crypto functions from
  * inside the contracts execution.
  * 
- * It provides an api: 
+ * It provides an api:
  *
  * - SmartWeave.transaction.id 
  * - SmartWeave.transaction.reward 
  * - SmartWeave.block.height 
  * - etc 
  * 
- * and access to utils and crypto like: 
- * - SmartWeave.arUtils 
- * - SmartWeave.arCrypto
+ * and access to some of the arweave utils: 
+ * - SmartWeave.arweave.utils 
+ * - SmartWeave.arweave.crypto
+ * - SmartWeave.arweave.wallets
+ * - SmartWeave.arweave.ar
  * 
  */
 export class SmartWeaveGlobal {
-
 
   transaction: Transaction
   block: Block 
