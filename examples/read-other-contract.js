@@ -12,7 +12,7 @@
 // readContractState will get another contracts state as it was at the same
 // block height as the action. 
 
-const TOKEN_CONTRACT = '971xuq9z7Iisn4NZgt-9w2nqZYM33RltDTwx6d3jJi0';
+const TOKEN_CONTRACT = 'wZYLq8315Qnp2UEWxH3dG-9Q1ezvESB6xYh-auZZelI';
 const MIN_AMOUNT = 5000;
 
 export async function handle(state, action) {
