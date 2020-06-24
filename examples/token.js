@@ -7,7 +7,7 @@ export function handle(state, action) {
 
   if (input.function == 'transfer') {
     let target = input.target;
-    let qty = Math.trunc(input.quantity);
+    let qty = Math.trunc(parseFloat(input.quantity) * state.divisibility);
 
     if (!target) {
       throw new ContractError(`No target specified`);
