@@ -39,6 +39,12 @@ export function handle(state, action) {
   }
 
   if (input.function == 'balance') {
+    if (typeof input.target !== 'string') {
+      throw new ContractError(`Must specific target to get balance for`);
+    }
+    if (typeof balances[target] !== 'number') {
+      throw new ContractError(`Cannnot get balance, target does not exist`);
+    }
     let target = input.target;
     let ticker = state.ticker;
     let divisibility = state.divisibility;
