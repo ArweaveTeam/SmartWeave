@@ -1,7 +1,7 @@
 import Arweave from 'arweave/node';
 import { JWKInterface } from 'arweave/node/lib/wallet';
-import { getContract } from './contract-load';
-import { replayToState } from './contract-replay';
+import { loadContract } from './contract-load';
+import { readContract } from './contract-read';
 import { execute, ContractInteraction } from './contract-step';
 
 /**
@@ -50,8 +50,7 @@ export async function interactWrite(arweave: Arweave, wallet: JWKInterface, cont
 
 /**
  * This will load a contract to its latest state, and do a dry run of an interaction,
- * without writing anything to the chain. This also can be used to do interactions that
- * dont change any state.
+ * without writing anything to the chain.
  *
  * @param arweave       an Arweave client instance
  * @param wallet        a wallet private or public key
@@ -59,8 +58,8 @@ export async function interactWrite(arweave: Arweave, wallet: JWKInterface, cont
  * @param input         the interaction input.
  */
 export async function interactWriteDryRun(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any) {
-  const contractInfo = await getContract(arweave, contractId);
-  const latestState = await replayToState(arweave, contractId);
+  const contractInfo = await loadContract(arweave, contractId);
+  const latestState = await readContract(arweave, contractId);
   const from = await arweave.wallets.jwkToAddress(wallet);
 
   const interaction: ContractInteraction = {
@@ -70,3 +69,29 @@ export async function interactWriteDryRun(arweave: Arweave, wallet: JWKInterface
 
   return execute(contractInfo.handler, interaction, latestState);
 }
+
+
+/**
+ * This will load a contract to its latest state, and execute a read interaction that
+ * does not change any state.
+ *
+ * @param arweave       an Arweave client instance
+ * @param wallet        a wallet private or public key
+ * @param contractId    the Transaction Id of the contract
+ * @param input         the interaction input.
+ */
+export async function interactRead(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any) {
+  const contractInfo = await loadContract(arweave, contractId);
+  const latestState = await readContract(arweave, contractId);
+  const from = await arweave.wallets.jwkToAddress(wallet);
+
+  const interaction: ContractInteraction = {
+    input: input,
+    caller: from
+  };
+
+  const result = await execute(contractInfo.handler, interaction, latestState);
+  return result.result
+}
+
+
