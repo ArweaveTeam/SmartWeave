@@ -5,7 +5,7 @@
  * 
  * @param balances  A balances object, where the key is address and the value is the number of tokens they hold
  */
-export function randomTokenHolder(balances: Record<string, number>): string {
+export function selectWeightedPstHolder(balances: Record<string, number>): string {
   // Count the total tokens
   let totalTokens = 0;
   for (const address of Object.keys(balances)) {
@@ -18,8 +18,6 @@ export function randomTokenHolder(balances: Record<string, number>): string {
     weighted[address] = balances[address] / totalTokens;
   }
   
-  // While Math.random() is not suitable for cryptography, it does provide 
-  // a uniform distribution in the 0-1 range.
   let sum = 0;
   const r = Math.random();
   for (const address of Object.keys(weighted)) {

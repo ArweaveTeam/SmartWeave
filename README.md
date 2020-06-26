@@ -12,6 +12,8 @@ For information on how the contracts execute, how to write one, and the API, rea
 
 For information on how to create a new PST token, you can read the [PST Creation Guide](CREATE-PST.md).
 
+For a description of the SDK methods available, you can check [here](SDK.md)
+
 ## CLI Usage
 
 Clone this repository and run `npm install`.

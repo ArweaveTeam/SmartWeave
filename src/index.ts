@@ -2,7 +2,7 @@ import { createContract, createContractFromTx } from "./contract-create";
 import { loadContract } from "./contract-load";
 import { interactWrite, interactWriteDryRun, interactRead } from "./contract-interact";
 import { readContract } from "./contract-read";
-import { randomTokenHolder } from "./random-token-holder";
+import { selectWeightedPstHolder } from "./weighted-pst-holder";
 
 export {
   createContract, 
@@ -12,5 +12,5 @@ export {
   interactWriteDryRun,
   interactRead,
   readContract,
-  randomTokenHolder as randomTokenHolderByWeight
+  selectWeightedPstHolder
 }
