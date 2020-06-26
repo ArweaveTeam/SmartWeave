@@ -1,13 +1,16 @@
 import { createContract, createContractFromTx } from "./contract-create";
-import { getContract } from "./contract-load";
-import { interactWrite, interactWriteDryRun } from "./contract-interact";
-import { replayToState } from "./contract-replay";
+import { loadContract } from "./contract-load";
+import { interactWrite, interactWriteDryRun, interactRead } from "./contract-interact";
+import { readContract } from "./contract-read";
+import { selectWeightedPstHolder } from "./weighted-pst-holder";
 
 export {
   createContract, 
   createContractFromTx,
-  getContract,
+  loadContract,
   interactWrite,
   interactWriteDryRun,
-  replayToState
+  interactRead,
+  readContract,
+  selectWeightedPstHolder
 }

@@ -1,7 +1,7 @@
 import Arweave from "arweave/node";
 import { InteractionTx } from "./interaction-tx";
 import { unpackTags } from "./utils";
-import { replayToState } from "./contract-replay";
+import { readContract } from "./contract-read";
 
 /**
  * 
@@ -51,7 +51,7 @@ export class SmartWeaveGlobal {
     this.transaction = new Transaction(this);
     this.block = new Block(this);
     this.contracts = {
-      readContractState: (contractId: string, height?: number) => replayToState(arweave, contractId, height || (this._isDryRunning ? Number.POSITIVE_INFINITY : this.block.height))
+      readContractState: (contractId: string, height?: number) => readContract(arweave, contractId, height || (this._isDryRunning ? Number.POSITIVE_INFINITY : this.block.height))
     }
   }
 }

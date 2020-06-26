@@ -1,5 +1,5 @@
 import Arweave from 'arweave/node'
-import { getContract } from './contract-load';
+import { loadContract } from './contract-load';
 import { retryWithBackoff, batch, softFailWith } from 'promises-tho';
 import { getTag, arrayToHex, unpackTags } from './utils';
 import { execute, ContractInteraction } from './contract-step';
@@ -14,9 +14,9 @@ import { InteractionTx } from './interaction-tx';
  * @param contractId  the Transaction Id of the contract
  * @param height      if specified the contract will be replayed only to this block height
  */
-export async function replayToState(arweave: Arweave, contractId: string, height = Number.POSITIVE_INFINITY) {
+export async function readContract(arweave: Arweave, contractId: string, height = Number.POSITIVE_INFINITY): Promise<any> {
         
-  const contractInfo = await getContract(arweave, contractId);
+  const contractInfo = await loadContract(arweave, contractId);
 
   let state: any; 
   try {
@@ -49,7 +49,7 @@ export async function replayToState(arweave: Arweave, contractId: string, height
   
   let transactions = await arweave.arql(arql);
   const getTxInfoFn = retryWithBackoff(
-      { tries: 2, startMs: 1000 }, 
+      { tries: 3, startMs: 1000 }, 
       (id) => getFullTxInfo(arweave, id)
   );
   const batcher = batch(

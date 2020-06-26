@@ -9,29 +9,33 @@ import { SmartWeaveGlobal } from './smartweave-global';
  * @param arweave     an Arweave client instance
  * @param contractID  the Transaction Id of the contract
  */
-export async function getContract(arweave: Arweave, contractID: string) {
-  
-  // Generate an object containing the details about a contract in one place.
-  const contractTX = await arweave.transactions.get(contractID);
-  const contractSrcTXID = getTag(contractTX, 'Contract-Src');
-  const minFee = getTag(contractTX, 'Min-Fee');
-  const contractSrcTX = await arweave.transactions.get(contractSrcTXID);
-  const contractSrc = contractSrcTX.get('data', { decode: true, string: true });
-  const state = contractTX.get('data', { decode: true, string: true });
+export async function loadContract(arweave: Arweave, contractID: string) {
+  try {
+    // Generate an object containing the details about a contract in one place.
+    const contractTX = await arweave.transactions.get(contractID);
+    const contractSrcTXID = getTag(contractTX, 'Contract-Src');
+    const minFee = getTag(contractTX, 'Min-Fee');
+    const contractSrcTX = await arweave.transactions.get(contractSrcTXID);
+    const contractSrc = contractSrcTX.get('data', { decode: true, string: true });
+    const state = contractTX.get('data', { decode: true, string: true });
+    
+    //console.log(`${contractSrcTXID} (Src) \n`, contractSrc);
+    //console.log(`${contractID} (State) \n`, state);
 
-  //console.log(`${contractSrcTXID} (Src) \n`, contractSrc);
-  //console.log(`${contractID} (State) \n`, state);
-
-  const { handler, swGlobal } = getContractExecutionEnvironment(arweave, contractSrc);
-  return {
-    id: contractID,
-    contractSrc: contractSrc,
-    initState: state,
-    minFee: minFee,
-    contractTX,
-    handler,
-    swGlobal
-  };
+    const { handler, swGlobal } = createContractExecutionEnvironment(arweave, contractSrc);
+    return {
+      id: contractID,
+      contractSrc: contractSrc,
+      initState: state,
+      minFee: minFee,
+      contractTX,
+      handler,
+      swGlobal
+    };
+  } catch (e) {
+    console.error(e);
+    throw new Error(`Unable to load contract ${contractID}.`);
+  }
 }
 
 /**
@@ -47,7 +51,7 @@ export async function getContract(arweave: Arweave, contractID: string) {
  *
  * @param contractSrc the javascript source for the contract. Must declare a handle() function
  */
-export function getContractExecutionEnvironment(arweave: Arweave, contractSrc: string) {
+export function createContractExecutionEnvironment(arweave: Arweave, contractSrc: string) {
   
   // Convert from ES Module format to something we can run inside a Function.
   // just removes the `export` keyword and adds ;return handle to the end of the function.
