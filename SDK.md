@@ -17,7 +17,7 @@ The SmartWeave SDK can be installed from Arweave:
 You can import the full API or individual methods.
 
 ```typescript
-importas SmartWeaveSdk from 'smartweave'
+import * as SmartWeaveSdk from 'smartweave'
 ```
 
 ```typescript
@@ -82,7 +82,7 @@ This will load a contract to its latest state, and do a dry run of an interactio
 ### `interactRead`
 
 ```typescript
-async function interactRead(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any): Promise<any> {
+async function interactRead(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any): Promise<any>
 ```
 
 Load a contract to its latest state, and execute a read interaction that does not change any state.
@@ -107,7 +107,7 @@ Queries all interaction transactions and replays a contract to its latest state.
 ### `selectWeightedPstHolder`
 
 ```typescript
-export function selectWeightedPstHolder(balances: Record<string, number>): string
+function selectWeightedPstHolder(balances: Record<string, number>): string
 ```
 
 A utility function for PST tokens. Given an map of address->balance, select one random address weighted by the amount of tokens they hold.
