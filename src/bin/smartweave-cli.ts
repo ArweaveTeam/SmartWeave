@@ -119,7 +119,7 @@ if(argv.getState) {
     }
     const contractID = argv.contract
 
-    smartweave.replayContract(arweave, contractID).then(
+    smartweave.readContract(arweave, contractID).then(
         (state: any) => {
             if(!state) {
                 console.log("ERROR: Failed to get state for contract: " + contractID)
