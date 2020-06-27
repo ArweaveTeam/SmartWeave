@@ -20,7 +20,7 @@ To follow this, you will need an Arweave wallet, funded with some AR. You can ge
 
 You should also install the SmartWeave SDK. The package is hosted on Arweave, you can install it either globally (to have the cli available everywhere) or into your project folder:
 
-`npm install https://arweave.net/dV7c-Qf_PDk5In5BXzw1y9i4AWUrXr-wvvikZzDe7ZM`
+`npm install https://arweave.net/AM-u4X2po-3Tx7fma3lRonCfLwrjI42IALwDL_YFXBs`
 
 ## Creating a new PST contract
 

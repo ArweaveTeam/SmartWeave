@@ -1,6 +1,6 @@
 {
   "name": "smartweave",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Uses lazy-evaluation to move the burden of contract execution from network nodes to smart contract users.",
   "directories": {
     "example": "examples"
