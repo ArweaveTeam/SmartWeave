@@ -1,5 +1,15 @@
 # SmartWeave SDK
 
+- [SmartWeave SDK](#smartweave-sdk)
+  - [SDK Methods](#sdk-methods)
+    - [`createContract`](#createcontract)
+    - [`createContractFromTx`](#createcontractfromtx)
+    - [`interactWrite`](#interactwrite)
+    - [`interactWriteDryRun`](#interactwritedryrun)
+    - [`interactRead`](#interactread)
+    - [`readContract`](#readcontract)
+    - [`selectWeightedPstHolder`](#selectweightedpstholder)
+
 The SmartWeave SDK can be installed from Arweave:
 
 `npm install https://arweave.net/AM-u4X2po-3Tx7fma3lRonCfLwrjI42IALwDL_YFXBs`
@@ -7,43 +17,99 @@ The SmartWeave SDK can be installed from Arweave:
 You can import the full API or individual methods.
 
 ```typescript
-import * as SmartWeaveSdk from 'smartweave'
+importas SmartWeaveSdk from 'smartweave'
 ```
 
 ```typescript
 import { readContract, interactWrite, createContract } from 'smartweave'
 ```
 
-The full list of methods available in the SDK is as follows.
+## SDK Methods
 
-`createContract`
+### `createContract`
 
-Creates a new contract from source code and initial state. Returns a Contract ID.
+```typescript
+async function createContract(arweave: Arweave, wallet: JWKInterface, contractSrc: string, initState: string, minFee?: number): Promise<string>
+```
 
-`createContractFromTx`
+Create a new contract from a contract source file and an initial state.
+Returns the contract id.
+  
+- `arweave`       an Arweave client instance
+- `wallet`        a wallet private or public key
+- `contractSrc`   the contract source code as string.  
+- `initState`     the contract initial state, as a JSON string.
 
-Creates a new contract from an existing contract source transaction, but new initial state. This gives a new instance of the contract, while sharing the source code with other contracts of the same type. Returns a Contract ID.
+### `createContractFromTx`
 
-`interactWrite`
+ ```typescript
+async function createContractFromTx(arweave: Arweave, wallet: JWKInterface, srcTxId: string, state: string, minFee?: number): Promise<string>
+```
 
-Writes a new interaction to a contract. Returns the Interaction ID.
+Create a new contract from an existing contract source tx, with an initial state. Returns the contract id.
 
-`interactWriteDryRun`
+- `arweave`   an Arweave client instance
+- `wallet`    a wallet private or public key
+- `srcTxId`   the contract source Tx id.
+- `state`     the initial state, as a JSON string.  
 
-Simulates writing a new interaction to a contract, without actually writing anything. Returns the simulated contract state.
+### `interactWrite`
 
-`interactRead`
+```typescript
+async function interactWrite(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any): Promise<string>
+```
 
-Executes a read operation on a contract, that is an interaction that does not change the contracts state but only returns a value. Returns the result of the read operation.
+Writes an interaction on the blockchain. This creates an interaction tx and posts it, it does not need to know the current state of the contract.
 
-`readContract`
+- `arweave`       an Arweave client instance
+- `wallet`        a wallet private key
+- `contractId`    the Transaction Id of the contract
+- `input`         the interaction input, will be serialized as Json.
 
-Reads the contracts complete latest state. This reads the contracts latest confirmed state. Returns the contracts state, which will be a JavaScript object.
+### `interactWriteDryRun`
 
-`selectWeightedPstHolder`
+```typescript
+async function interactWriteDryRun(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any): Promise<ContractInteractionResult>
+```
 
-A utility function for PST tokens, to select a single holder weighted by their percentage holding in the token.
+This will load a contract to its latest state, and do a dry run of an interaction, without writing anything to the chain, simulating a write.
 
-`loadContract`
+- `arweave`       an Arweave client instance
+- `wallet`        a wallet private or public key
+- `contractId`    the Transaction Id of the contract
+- `input`         the interaction input.
 
-Loads the contract source, initial state, and some additional information. Generally you won't need to use this as it is used internally by other methods.
+### `interactRead`
+
+```typescript
+async function interactRead(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any): Promise<any> {
+```
+
+Load a contract to its latest state, and execute a read interaction that does not change any state.
+
+- `arweave`       an Arweave client instance
+- `wallet`        a wallet private or public key
+- `contractId`    the Transaction Id of the contract
+- `input`         the interaction input.
+
+### `readContract`
+
+```typescript
+async function readContract(arweave: Arweave, contractId: string, height?: number): Promise<any>
+```
+
+Queries all interaction transactions and replays a contract to its latest state. If height is provided, will replay only to that block height.
+
+- `arweave`     an Arweave client instance
+- `contractId`  the Transaction Id of the contract
+- `height`      if specified the contract will be replayed only to this block height
+
+### `selectWeightedPstHolder`
+
+```typescript
+export function selectWeightedPstHolder(balances: Record<string, number>): string
+```
+
+A utility function for PST tokens. Given an map of address->balance, select one random address weighted by the amount of tokens they hold.
+
+- `balances`  A balances object
