@@ -2,7 +2,7 @@
 
 The SmartWeave SDK can be installed from Arweave:
 
-`npm install https://arweave.net/dV7c-Qf_PDk5In5BXzw1y9i4AWUrXr-wvvikZzDe7ZM`
+`npm install https://arweave.net/AM-u4X2po-3Tx7fma3lRonCfLwrjI42IALwDL_YFXBs`
 
 You can import the full API or individual methods.
 
