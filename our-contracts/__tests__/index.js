@@ -4,7 +4,7 @@ import { createContractExecutionEnvironment } from '../../src/contract-load'
 import { execute } from '../../src/contract-step'
 import { initState, OWNER_NAME } from '../../our-contracts/community-state'
 import Arweave from 'arweave/node'
-import { functionTypes } from 'clear-rain'
+import { functionTypes } from 'clearrain'
 
 const arweave = Arweave.init({
     host: 'arweave.net',

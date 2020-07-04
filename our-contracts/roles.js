@@ -1,4 +1,4 @@
-import { functionTypes } from 'clear-rain'
+import { functionTypes } from 'clearrain'
 
 const {
   TRANSFER_OWNERSHIP,

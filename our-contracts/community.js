@@ -1,5 +1,5 @@
 import checkRoleOps, { hasAdminPrivileges } from './roles'
-import { functionTypes } from 'clear-rain'
+import { functionTypes } from 'clearrain'
 
 const {
   SET_ACCESS,

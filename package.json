@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "arweave": "^1.7.1",
-    "clear-rain": "^1.0.1",
+    "clearrain": "^1.0.3",
     "promises-tho": "^1.1.0",
     "yargs": "^15.3.1"
   },

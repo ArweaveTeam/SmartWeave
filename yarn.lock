@@ -1963,10 +1963,10 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-clear-rain@^1.0.1:
+clearrain@^1.0.3:
   version "1.0.3"
-  resolved "https://registry.yarnpkg.com/clear-rain/-/clear-rain-1.0.3.tgz#0c62f52888a59d18537e467035b421499b1732f5"
-  integrity sha512-Wmc+raT3HUdBOvy/rkmlbpLcmmDXzXGe9VcP1j0JX5SU5N+IJpw/Q5SRI4fnBsDa53WQZ7rXtGMzZTta60R0gg==
+  resolved "https://registry.yarnpkg.com/clearrain/-/clearrain-1.0.3.tgz#5ef72c7c6a13a0521de32b54c5a152931d36267e"
+  integrity sha512-uEPPBBXK6HjrKaB44Wt4mg9Zoexhna3v/IlkM8lmHLCvJylIkiQoeZ10WM3qYMKnk4k3Im4BsbUgJJ0Zj2ohKQ==
   dependencies:
     ajv "^6.12.2"
     did-jwt "^4.4.0"
