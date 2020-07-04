@@ -6,9 +6,10 @@
     "example": "examples"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:contracts": "jest",
+    "build:contracts": "rollup --config ./rollup.config.js && node our-contracts/bin/trimBundle.js",
     "version": "npx @pika/pack",
-    "build": "rm -rf pkg && npx @pika/pack && cp -r pkg/dist-src/bin pkg/dist-node && tar -zcvf smartweave-package.tgz pkg/"
+    "build:sdk": "rm -rf pkg && npx @pika/pack && cp -r pkg/dist-src/bin pkg/dist-node && tar -zcvf smartweave-package.tgz pkg/"
   },
   "bin": {
     "smartweave-cli": "dist-node/bin/smartweave-cli.js"
@@ -42,10 +43,14 @@
   },
   "dependencies": {
     "arweave": "^1.7.1",
+    "clear-rain": "^1.0.1",
     "promises-tho": "^1.1.0",
     "yargs": "^15.3.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-typescript": "^7.10.4",
     "@pika/pack": "^0.5.0",
     "@pika/plugin-build-deno": "^0.9.2",
     "@pika/plugin-build-node": "^0.9.2",
@@ -53,7 +58,13 @@
     "@pika/plugin-simple-bin": "^0.9.2",
     "@pika/plugin-ts-standard-pkg": "^0.9.2",
     "@pika/types": "^0.9.2",
+    "@rollup/plugin-commonjs": "^13.0.0",
+    "@rollup/plugin-node-resolve": "^8.1.0",
+    "babel-jest": "^26.1.0",
+    "esm": "^3.2.25",
+    "jest": "^26.1.0",
     "rimraf": "^3.0.2",
+    "rollup": "^2.18.2",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.5"
   }
