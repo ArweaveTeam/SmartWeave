@@ -44,6 +44,7 @@
   "dependencies": {
     "arweave": "^1.7.1",
     "clearrain": "1.1.4",
+    "did-jwt": "^4.4.0",
     "promises-tho": "^1.1.0",
     "yargs": "^15.3.1"
   },

@@ -28,7 +28,7 @@ export default function checkRoleOps(state, input) {
   }
 
   if (input.function == ADMIN_REMOVE) {
-    ContractAssert(input.callerDID === state.owner, 'Must be owner to remove an admin')
+    ContractAssert(isRemoveSelf(input.callerDID, input.mod) || input.callerDID === state.owner, 'Must be owner to remove an admin')
     ContractAssert(is3ID(input.admin), `'${input.admin}' not recognized as a valid 3ID`)
 
     state.admins[input.admin] = false
@@ -44,7 +44,7 @@ export default function checkRoleOps(state, input) {
   }
 
   if (input.function == MOD_REMOVE) {
-    ContractAssert(hasAdminPrivileges(input.callerDID, state), 'Must be owner or admin to remove a moderator')
+    ContractAssert(isRemoveSelf(input.callerDID, input.mod) || hasAdminPrivileges(input.callerDID, state), 'Must be owner or admin to remove a moderator')
     ContractAssert(is3ID(input.mod), `'${input.mod}' not recognized as a valid 3ID`)
 
     state.moderators[input.mod] = false
@@ -61,7 +61,7 @@ export default function checkRoleOps(state, input) {
   }
 
   if (input.function == MEMBER_REMOVE) {
-    ContractAssert(state.isOpen || hasModeratorPrivileges(input.callerDID, state),
+    ContractAssert(isRemoveSelf(input.callerDID, input.member) || hasModeratorPrivileges(input.callerDID, state),
       'Caller must have moderator privileges to remove a member')
     ContractAssert(is3ID(input.member), `'${input.member}' not recognized as a valid 3ID`)
 
@@ -78,6 +78,10 @@ export function hasAdminPrivileges (did, state) {
 
 function hasModeratorPrivileges (did, state) {
   return hasAdminPrivileges(did, state) || state.moderators[did]
+}
+
+function isRemoveSelf (caller, recipient) {
+  return caller === recipient
 }
 
 function is3ID (did) {
