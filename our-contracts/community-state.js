@@ -1,11 +1,17 @@
 export const OWNER_NAME = 'did:3:owner'
 
-export const initState = {
+const initState = {
   name: 'RAINtest',
   isOpen: true,
   owner: OWNER_NAME,
-  admins: { OWNER_NAME: true },
-  moderators: { OWNER_NAME: true },
-  members: { OWNER_NAME: true },
+  admins: {},
+  moderators: {},
+  members: {},
   children: []
 }
+
+initState.admins[OWNER_NAME] = true
+initState.moderators[OWNER_NAME] = true
+initState.members[OWNER_NAME] = true
+
+export { initState } 

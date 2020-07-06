@@ -1,11 +1,9 @@
 import checkRoleOps, { hasAdminPrivileges } from './roles'
-import { functionTypes } from 'clearrain'
-
-const {
+import {
   SET_ACCESS,
   CREATE_CHILD,
   REMOVE_CHILD
-} = functionTypes
+} from 'clearrain/functionTypes'
 
 export function handle(state, action)  {
   // check signature of caller DID

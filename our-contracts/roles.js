@@ -1,6 +1,4 @@
-import { functionTypes } from 'clearrain'
-
-const {
+import {
   TRANSFER_OWNERSHIP,
   ADMIN_ADD,
   ADMIN_REMOVE,
@@ -8,7 +6,7 @@ const {
   MOD_REMOVE,
   MEMBER_ADD,
   MEMBER_REMOVE
-} = functionTypes
+} from 'clearrain/functionTypes'
 
 const DID_3_PREFIX = 'did:3:'
 
