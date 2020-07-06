@@ -2,7 +2,7 @@ import Arweave from 'arweave/node';
 import { JWKInterface } from 'arweave/node/lib/wallet';
 import { loadContract } from './contract-load';
 import { readContract } from './contract-read';
-import { execute, ContractInteraction } from './contract-step';
+import { execute, ContractInteraction, ContractInteractionResult } from './contract-step';
 
 /**
  * Writes an interaction on the blockchain.
@@ -15,7 +15,7 @@ import { execute, ContractInteraction } from './contract-step';
  * @param contractId    the Transaction Id of the contract
  * @param input         the interaction input, will be serialized as Json.
  */
-export async function interactWrite(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any) {
+export async function interactWrite(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any): Promise<string> {
   
   // Use a random value in the data body. We must put
   // _something_ in the body, because a tx must have data or target
@@ -43,7 +43,9 @@ export async function interactWrite(arweave: Arweave, wallet: JWKInterface, cont
 
   const response = await arweave.transactions.post(interactionTx);
 
-  if (response.status != 200) return false;
+  if (response.status != 200) {
+    throw new Error(`Unable to write interaction Tx: ${response.status}`);
+  }
 
   return interactionTx.id;
 }
@@ -57,7 +59,7 @@ export async function interactWrite(arweave: Arweave, wallet: JWKInterface, cont
  * @param contractId    the Transaction Id of the contract
  * @param input         the interaction input.
  */
-export async function interactWriteDryRun(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any) {
+export async function interactWriteDryRun(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any): Promise<ContractInteractionResult> {
   const contractInfo = await loadContract(arweave, contractId);
   const latestState = await readContract(arweave, contractId);
   const from = await arweave.wallets.jwkToAddress(wallet);
@@ -80,10 +82,10 @@ export async function interactWriteDryRun(arweave: Arweave, wallet: JWKInterface
  * @param contractId    the Transaction Id of the contract
  * @param input         the interaction input.
  */
-export async function interactRead(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any) {
+export async function interactRead(arweave: Arweave, wallet: JWKInterface | undefined, contractId: string, input: any): Promise<any> {
   const contractInfo = await loadContract(arweave, contractId);
   const latestState = await readContract(arweave, contractId);
-  const from = await arweave.wallets.jwkToAddress(wallet);
+  const from = wallet ? await arweave.wallets.jwkToAddress(wallet) : ''
 
   const interaction: ContractInteraction = {
     input: input,

@@ -4,7 +4,7 @@ import { retryWithBackoff, batch, softFailWith } from 'promises-tho';
 import { getTag, arrayToHex, unpackTags } from './utils';
 import { execute, ContractInteraction } from './contract-step';
 import { InteractionTx } from './interaction-tx';
-
+import logger from 'loglevel';
 /**
  * Queries all interaction transactions and replays a contract to its latest state. 
  * 
@@ -15,7 +15,7 @@ import { InteractionTx } from './interaction-tx';
  * @param height      if specified the contract will be replayed only to this block height
  */
 export async function readContract(arweave: Arweave, contractId: string, height = Number.POSITIVE_INFINITY): Promise<any> {
-        
+  const log = logger.getLogger('contract-replay')
   const contractInfo = await loadContract(arweave, contractId);
 
   let state: any; 
@@ -56,11 +56,9 @@ export async function readContract(arweave: Arweave, contractId: string, height 
     { batchDelayMs: 50, batchSize: 3 },
     softFailWith(undefined, getTxInfoFn)
   )
-  console.log(`Query returned ${transactions.length} interactions`);
+  log.info(`Query returned ${transactions.length} interactions`);
   
   let unconfirmed = await batcher(transactions);
-
-  console.log(`Recieved info for ${unconfirmed.length} transactions`);
   
   // Filter out txs that are not confirmed yet, not found, 
   // or are below the height we are replaying to.
@@ -72,7 +70,7 @@ export async function readContract(arweave: Arweave, contractId: string, height 
       x.info.confirmed.block_height <= height
     ) as InteractionTx[]
   
-  console.log(`Replaying ${txInfos.length} confirmed interactions`);
+  log.info(`Replaying ${txInfos.length} confirmed interactions`);
 
   txInfos.sort((a, b) => a.sortKey.localeCompare(b.sortKey));
 
@@ -86,7 +84,7 @@ export async function readContract(arweave: Arweave, contractId: string, height 
       } catch (e) {}
 
       if (!input) {
-          console.warn(`Skipping tx with missing or invalid Input tag - ${txInfos[i].id}`);
+          log.warn(`Skipping tx with missing or invalid Input tag - ${txInfos[i].id}`);
           continue;
       }
       
@@ -100,12 +98,12 @@ export async function readContract(arweave: Arweave, contractId: string, height 
       const result = await execute(handler, interaction, state);
       
       if (result.type === 'exception') {
-        console.warn(`${result.result}`);
-        console.warn(`Executing of interaction: ${txInfos[i].id} threw exception.`);
+        log.debug(`${result.result}`);
+        log.debug(`Executing of interaction: ${txInfos[i].id} threw exception.`);
       }
       if (result.type === 'error') {
-        console.warn(`${result.result}`);
-        console.warn(`Executing of interaction: ${txInfos[i].id} returned error.`);
+        log.debug(`${result.result}`);
+        log.debug(`Executing of interaction: ${txInfos[i].id} returned error.`);
       }
       
       state = result.state;

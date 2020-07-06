@@ -2,6 +2,8 @@ import Arweave from 'arweave/node';
 import { getTag } from './utils';
 import { ContractHandler } from './contract-step';
 import { SmartWeaveGlobal } from './smartweave-global';
+import logger from 'loglevel';
+
 
 /**
  * Loads the contract source, initial state and other parameters
@@ -33,8 +35,7 @@ export async function loadContract(arweave: Arweave, contractID: string) {
       swGlobal
     };
   } catch (e) {
-    console.error(e);
-    throw new Error(`Unable to load contract ${contractID}.`);
+    throw (e)
   }
 }
 

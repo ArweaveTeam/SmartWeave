@@ -41,7 +41,11 @@
     ]
   },
   "dependencies": {
+    "@types/yargs": "^15.0.5",
     "arweave": "^1.7.1",
+    "logdown": "^3.3.1",
+    "loglevel": "^1.6.8",
+    "loglevel-plugin-prefix": "^0.8.4",
     "promises-tho": "^1.1.0",
     "yargs": "^15.3.1"
   },
