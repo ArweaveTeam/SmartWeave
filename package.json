@@ -59,6 +59,7 @@
     "yargs": "^15.3.1"
   },
   "devDependencies": {
+    "3id-test-helper": "^1.0.2",
     "@babel/core": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
     "@babel/preset-typescript": "^7.10.4",

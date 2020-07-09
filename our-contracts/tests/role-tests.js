@@ -7,7 +7,7 @@ import { execute } from '../../src/contract-step'
 import { initState, OWNER, testKeys } from './test-helpers'
 import Arweave from 'arweave/node'
 import * as functionTypes from 'clearrain/functionTypes'
-import DidTestHelper from '../../../did-gen/src'
+import DidTestHelper from '3id-test-helper'
 import { assert } from 'chai'
 import IPFS from 'ipfs'
 
