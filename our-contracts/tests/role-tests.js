@@ -1,38 +1,11 @@
 /* global describe, before, it, after, beforeEach */
 
-import fs from 'fs'
-import path from 'path'
-import { createContractExecutionEnvironment } from '../../src/contract-load'
-import { execute } from '../../src/contract-step'
-import { initState, OWNER, testKeys } from './test-helpers'
-import Arweave from 'arweave/node'
+import { initState, OWNER, testKeys } from './test-helpers/constants'
+import TestHelper from './test-helpers'
 import * as functionTypes from 'clearrain/functionTypes'
-import DidTestHelper from '3id-test-helper'
 import { assert } from 'chai'
-import IPFS from 'ipfs'
 
-const arweave = Arweave.init({
-  host: 'arweave.net',
-  port: 443,
-  protocol: 'https'
-})
-
-const CONTRACT_PATH = path.resolve(__dirname, '../../build/community.js')
-
-const contractBuffer = fs.readFileSync(CONTRACT_PATH)
-const contractSrc = contractBuffer.toString()
-
-let ipfs
-let didHelper
-let handler
-
-async function packageNExecute (handler, interaction, state, caller) {
-  const jwt = await didHelper.createJWTFromDID(caller, interaction)
-  const res = await execute(handler, { jwt, ipfs }, state)
-  return res
-}
-
-describe('Test Community', function () {
+describe('Community Roles', function () {
   let state
   let ADMIN
   let MOD
@@ -40,24 +13,25 @@ describe('Test Community', function () {
   let MEMBER2
   let NEW_OWNER
 
-  before(async function () {
-    handler = createContractExecutionEnvironment(arweave, contractSrc).handler
-    ipfs = await IPFS.create()
-    didHelper = new DidTestHelper(ipfs)
+  let helper
+  let packageNExecute
 
-    const accounts = await didHelper.generateAccounts(testKeys)
-    await didHelper.getOwner() // sets the signer for the owner did
+  before(async function () {
+    helper = new TestHelper()
+    const accounts = await helper.setupEnv(testKeys)
     ADMIN = accounts[0]
     MOD = accounts[1]
     MEMBER = accounts[2]
     MEMBER2 = accounts[3]
     NEW_OWNER = accounts[4]
 
+    packageNExecute = helper.packageNExecute.bind(helper)
+
     state = Object.assign({}, initState)
   })
 
   after(async function () {
-    ipfs.stop()
+    helper.stopIPFS()
   })
 
   describe('Transfer Ownership', function () {
@@ -73,24 +47,24 @@ describe('Test Community', function () {
     })
 
     it('successfully transfers ownership', async function () {
-      const res = await packageNExecute(handler, interaction, state, OWNER)
+      const res = await packageNExecute(interaction, state, OWNER)
       assert.equal(res.type, 'ok')
       assert.equal(res.state.owner, NEW_OWNER)
 
       interaction.input.newOwner = OWNER
-      const res2 = await packageNExecute(handler, interaction, res.state, NEW_OWNER)
+      const res2 = await packageNExecute(interaction, res.state, NEW_OWNER)
       assert.equal(res2.type, 'ok')
     })
 
     it('fails transfer if callerDID is not owner', async function () {
-      const res = await packageNExecute(handler, interaction, state, ADMIN)
+      const res = await packageNExecute(interaction, state, ADMIN)
       assert.equal(res.result, 'Must be owner to transfer ownership')
     })
 
     it('fails when new owner is not a valid 3ID', async function () {
       interaction.input.newOwner = 'not a did'
 
-      const res = await packageNExecute(handler, interaction, state, OWNER)
+      const res = await packageNExecute(interaction, state, OWNER)
       assert.equal(res.result, '\'not a did\' not recognized as a valid 3ID')
     })
   })
@@ -118,14 +92,14 @@ describe('Test Community', function () {
     it('add and remove an admin', async function () {
       let res
       async function testAdd () {
-        res = await packageNExecute(handler, addInteraction, state, OWNER)
+        res = await packageNExecute(addInteraction, state, OWNER)
         state = res.state
         assert.equal(state.admins[ADMIN], true)
       }
 
       await testAdd()
 
-      res = await packageNExecute(handler, removeInteraction, state, OWNER)
+      res = await packageNExecute(removeInteraction, state, OWNER)
       state = res.state
       assert.equal(state.admins[ADMIN], false)
 
@@ -133,7 +107,7 @@ describe('Test Community', function () {
     })
 
     it('fails when not called by owner', async function () {
-      const res = await packageNExecute(handler, addInteraction, state, ADMIN)
+      const res = await packageNExecute(addInteraction, state, ADMIN)
       assert.equal(res.result, 'Must be owner to add an admin')
     })
   })
@@ -159,7 +133,7 @@ describe('Test Community', function () {
     })
 
     async function testAdd (caller = OWNER) {
-      const res = await packageNExecute(handler, addInteraction, state, caller)
+      const res = await packageNExecute(addInteraction, state, caller)
       state = res.state
       assert.equal(state.moderators[MOD], true)
     }
@@ -169,7 +143,7 @@ describe('Test Community', function () {
     })
 
     it('remove mod by owner', async function () {
-      const res = await packageNExecute(handler, removeInteraction, state, OWNER)
+      const res = await packageNExecute(removeInteraction, state, OWNER)
       state = res.state
       assert.equal(state.moderators[MOD], false)
     })
@@ -179,15 +153,17 @@ describe('Test Community', function () {
     })
 
     it('moderator can remove themself', async function () {
-      const res = await packageNExecute(handler, removeInteraction, state, MOD)
+      const res = await packageNExecute(removeInteraction, state, MOD)
       state = res.state
       assert.equal(state.moderators[MOD], false)
+    })
 
+    it('test add again for later testing', async function () {
       await testAdd(ADMIN) // for later testing
     })
 
     it('add without admin privileges fails', async function () {
-      const res = await packageNExecute(handler, addInteraction, state, MOD)
+      const res = await packageNExecute(addInteraction, state, MOD)
       assert.equal(res.result, 'Must be owner or admin to add a moderator')
     })
   })
@@ -213,34 +189,50 @@ describe('Test Community', function () {
     })
 
     it('adds anyone to open community', async function () {
-      const res = await packageNExecute(handler, addInteraction, state, MEMBER)
+      const res = await packageNExecute(addInteraction, state, MEMBER)
       state = res.state
       assert.equal(state.members[MEMBER], true)
     })
 
     it('moderators and above can remove', async function () {
-      const res = await packageNExecute(handler, removeInteraction, state, MOD)
+      const res = await packageNExecute(removeInteraction, state, MOD)
       state = res.state
       assert.equal(state.members[MEMBER], false)
     })
 
     it('members cannot remove', async function () {
-      state = (await packageNExecute(handler, addInteraction, state, MEMBER)).state
+      state = (await packageNExecute(addInteraction, state, MEMBER)).state
       addInteraction.input.member = MEMBER2
-      let res = await packageNExecute(handler, addInteraction, state, MEMBER2)
+      let res = await packageNExecute(addInteraction, state, MEMBER2)
       state = res.state
 
       removeInteraction.input.member = MEMBER2
-      res = await packageNExecute(handler, removeInteraction, state, MEMBER)
+      res = await packageNExecute(removeInteraction, state, MEMBER)
       state = res.state
       assert.equal(res.result, 'Caller must have moderator privileges to remove a member')
     })
 
     it('members can remove themselves', async function () {
-      const res = await packageNExecute(handler, removeInteraction, state, MEMBER2)
+      const res = await packageNExecute(removeInteraction, state, MEMBER2)
       state = res.state
 
       assert.equal(state.members[MEMBER2], false)
+    })
+
+    it('close community and add fails', async function () {
+      const closeCom = {
+        input: {
+          function: functionTypes.SET_ACCESS,
+          isOpen: false
+        }
+      }
+
+      let res = await packageNExecute(closeCom, state, OWNER)
+      state = res.state
+      assert.equal(state.isOpen, false)
+
+      res = await packageNExecute(addInteraction, state, MEMBER2)
+      assert.equal(res.result, 'Caller must have moderator privileges to add a member')
     })
   })
 })

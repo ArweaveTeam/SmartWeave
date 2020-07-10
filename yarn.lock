@@ -3360,10 +3360,10 @@ clean-stack@^2.0.0:
   resolved "https://registry.yarnpkg.com/clean-stack/-/clean-stack-2.2.0.tgz#ee8472dbb129e727b31e8a10a427dee9dfe4008b"
   integrity sha512-4diC9HaTE+KRAMWhDhrGOECgWZxoevMc5TlkObMqNSsVU62PYzXZ/SMTjzyGAFF1YusgxGcSWTEXBhp0CPwQ1A==
 
-clearrain@1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/clearrain/-/clearrain-1.1.4.tgz#fa8ace23ad545f7804bc00cd60f908d05f2f00b5"
-  integrity sha512-lIa8ajrcrJ8SuxOf+jcKBAi9vd6jG7hNmyNqwaq54u0dg6OKAXc6W+DRdxDlpJbPNYMKq/LxrmqxFLZmqVdBww==
+clearrain@^1.2.0:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/clearrain/-/clearrain-1.2.2.tgz#1a835172f971ff177d0cbc1bd0816ad0957ced8c"
+  integrity sha512-nyUg6gmFlEE9HyTYHHslfP9Vt8M9cXcME0ibYOzwB3zx9dcjsyY/GzNBc8ZzOtf5GT1Dixe248bW9zuQFpJcrw==
   dependencies:
     ajv "^6.12.2"
     did-jwt "^4.4.0"

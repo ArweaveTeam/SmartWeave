@@ -1,30 +1,110 @@
-export const OWNER = 'did:3:bafyreiewjn5bc7ntxy4ug4a6fhwynjir4vqhb4fdoqfztfbvju5ooguofu'
+import fs from 'fs'
+import path from 'path'
+import Arweave from 'arweave/node'
+import { execute } from '../../../src/contract-step'
+import DidTestHelper from '3id-test-helper'
+import IPFS from 'ipfs'
+import wallet from './test-wallet'
+import { createContractExecutionEnvironment } from '../../../src/contract-load'
 
-const initState = {
-  name: 'RAINtest',
-  isOpen: true,
-  owner: OWNER,
-  admins: {},
-  moderators: {},
-  members: {},
-  children: []
+const CONTRACT_ID = 'random id for testing'
+
+const arweave = Arweave.init({
+  host: 'arweave.net',
+  port: 443,
+  protocol: 'https'
+})
+
+const CONTRACT_PATH = path.resolve(__dirname, '../../../build/community.js')
+
+const contractBuffer = fs.readFileSync(CONTRACT_PATH)
+const contractSrc = contractBuffer.toString()
+
+let ipfs
+let didHelper
+let handler
+let swGlobal
+
+export default class TestHelper {
+  constructor () {
+    this.nonces = {}
+  }
+
+  async setupEnv (testKeys) {
+    const contractInfo = createContractExecutionEnvironment(arweave, contractSrc)
+    swGlobal = contractInfo.swGlobal
+    handler = contractInfo.handler
+
+    ipfs = await IPFS.create()
+    didHelper = new DidTestHelper(ipfs)
+
+    const accounts = await didHelper.generateAccounts(testKeys)
+    await didHelper.getOwner() // sets the signer for the owner DID
+
+    return accounts
+  }
+
+  async packageNExecute (interaction, state, caller) {
+    const nonce = this.nonces[caller] ? this.nonces[caller] + 1 : 1
+
+    this.nonces[caller] = nonce
+    interaction.nonce = nonce
+    interaction.contractId = CONTRACT_ID
+
+    const jwt = await didHelper.createJWTFromDID(caller, interaction)
+
+    swGlobal._activeTx = await this.getInteractionTx(jwt)
+
+    const res = await execute(handler, { jwt, ipfs }, state)
+
+    return res
+  }
+
+  // code taken mainly from interactWrite in contract-interact
+  async getInteractionTx (input) {
+    const interactionTx = await arweave.createTransaction(
+      {
+        data: Math.random()
+          .toString()
+          .slice(-4)
+      },
+      wallet
+    )
+
+    if (!input) {
+      throw new Error(`Input should be a truthy value: ${JSON.stringify(input)}`)
+    }
+
+    interactionTx.addTag('App-Name', 'SmartWeaveAction')
+    interactionTx.addTag('App-Version', '0.3.0')
+    interactionTx.addTag('Contract', CONTRACT_ID)
+    interactionTx.addTag('Input', JSON.stringify(input))
+
+    // await arweave.transactions.sign(interactionTx, wallet)
+
+    // interaction Tx needs to satisfy InteractionTx interface
+    const fullTx = this.fillUnusedTxValues(interactionTx)
+    return fullTx
+  }
+
+  fillUnusedTxValues (tx) {
+    return {
+      tx,
+      info: {
+        status: 200,
+        confirmed: {
+          block_indep_hash: 'some hash',
+          block_height: 1,
+          number_of_confirmations: 10
+        }
+      },
+      id: '',
+      sortKey: '',
+      from: ''
+    }
+  }
+
+  stopIPFS () {
+    ipfs.stop()
+  }
 }
-
-initState.admins[OWNER] = true
-initState.moderators[OWNER] = true
-initState.members[OWNER] = true
-
-export { initState }
-
-export const testKeys = [
-  '0x2f03bbd84a197aac98e0e15c6b41ce0135725a02a30e07e2355e27ecf95bf91d',
-  '0x900c8bf6d4848f99dc8fb2c65954c786478fbbe9a3a0ab0e4d3843e787761463',
-  '0x945acd117f27c8c75184ba74a49186c39c44b4cf296c969ff8384ce32967c00b',
-  '0xb4dc42f2b339a688ab2a335ef6d4d7c67de019a4023a87295f7baff7e329c060',
-  '0x53e45087bb8ba4a52aea2df4be0986e0065f70bdb99fc138e086de4a66a144ff',
-  '0x6e88827f409751df108d2047076a41c99654f682c5dc75ceacbed157d0ca83e8',
-  '0xec6caf23a637fe5db8addb2cb10573fc883e91e8fdf334bb7d5f8cfb415a0ef3',
-  '0xbb878e72f775890580dd02a8f3fe81d2908152acf4f8f57996708d57059ce089',
-  '0x5cf6d7f3910f18d720c1d900c7913b9e7d6676299ee1379feb0451b55d65e43b',
-  '0xad60a821491cff10c77cc096c5bc3874d24944b7880a7b8e10fca1f9f4180ecd'
-]

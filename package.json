@@ -6,7 +6,7 @@
     "example": "examples"
   },
   "scripts": {
-    "test:contracts": "mocha --require ts-node/register --require @babel/register our-contracts/tests/role-tests.js",
+    "test:contracts": "mocha --require ts-node/register --require @babel/register --timeout 5000 our-contracts/tests/",
     "build:contracts": "rollup --config ./rollup.config.js && node our-contracts/bin/trimBundle.js",
     "version": "npx @pika/pack",
     "build:sdk": "rm -rf pkg && npx @pika/pack && cp -r pkg/dist-src/bin pkg/dist-node && tar -zcvf smartweave-package.tgz pkg/"
@@ -44,7 +44,7 @@
   "dependencies": {
     "3id-resolver": "^1.0.1",
     "arweave": "^1.7.1",
-    "clearrain": "1.1.4",
+    "clearrain": "^1.2.0",
     "did-jwt": "^4.4.0",
     "did-resolver": "^2.0.1",
     "eslint": "6.8.0",
