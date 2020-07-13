@@ -1,0 +1,10 @@
+{
+  "name": "ANS103_TOKEN",
+  "symbol": "AT",
+  "decimals": 1e8,
+  "balances": {
+    "e4G1p1SRuZq3pLZi0lqZgSBRotKIGvlVDk4-bn_NkMQ": 21000000e8
+  },
+  "allownance": {},
+  "totalSupply": 21000000e8
+}
