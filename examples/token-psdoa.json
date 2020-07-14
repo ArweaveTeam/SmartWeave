@@ -1,0 +1,9 @@
+{
+  "ticker": "EXAMPLE_PSDAO",
+  "balances": {
+      "uhE-QeYS8i4pmUtnxQyHD7dzXFNaJ9oMK-IM-QPNY6M": 10000000
+  },
+  "votes": [],
+  "quorum": 0.5,
+  "voteLength": 2000
+}
