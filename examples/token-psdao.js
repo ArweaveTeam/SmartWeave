@@ -59,10 +59,10 @@ export function handle(state, action) {
     return { result: { target, ticker, balance: balances[target] } };
   }
 
-  if(input.function == 'propose') {
+  if (input.function == 'propose') {
     let voteType = input.type;
 
-    if(voteType == 'mint') {
+    if (voteType == 'mint') {
       let recipient = input.recipient;
       let qty = input.qty;
       let note = intput.note;
@@ -95,6 +95,30 @@ export function handle(state, action) {
       votes.push(vote);
 
       return { state };
+    }
+
+    if (voteType == 'set') {
+
+      if (typeof input.key !== "string") {
+        throw new ContractError(`Data type of key not supported`)
+      }
+
+      let vote =
+        {
+          'status': "active",
+          'type': 'set',
+          'key': input.key,
+          'value': input.value,
+          'yays': 0,
+          'nays': 0,
+          'voted': [],
+          'start': currentHeight
+        };
+      
+      votes.push(vote);
+
+      return { state };
+
     }
   }
 
@@ -158,12 +182,19 @@ export function handle(state, action) {
     if (vote.yays > vote.nays) {
       vote.status = "passed";
 
-      if (vote.recipient in balances) {
-        // Wallet already exists in state, add new tokens
-        balances[vote.recipient] += qty;
-      } else {
-        // Wallet is new, set starting balance
-        balances[vote.recipient] = qty;
+      if (vote.type == 'mint') {
+
+        if (vote.recipient in balances) {
+          // Wallet already exists in state, add new tokens
+          balances[vote.recipient] += qty;
+        } else {
+          // Wallet is new, set starting balance
+          balances[vote.recipient] = qty;
+        }
+
+      }
+      else if (vote.type == 'set') {
+        state[vote.key] = vote.value
       }
 
     } else {
