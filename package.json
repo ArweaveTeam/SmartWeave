@@ -8,7 +8,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "version": "npx @pika/pack",
-    "build": "rm -rf pkg && npx @pika/pack && cp -r pkg/dist-src/bin pkg/dist-node && tar -zcvf smartweave-package.tgz pkg/"
+    "build": "rimraf pkg && npx @pika/pack && cp-cli pkg/dist-src/bin pkg/dist-node && npx rollup --config=rollup.config.js && tar -zcvf smartweave-package.tgz pkg/"
   },
   "bin": {
     "smartweave-cli": "dist-node/bin/smartweave-cli.js"
@@ -36,7 +36,7 @@
         "@pika/plugin-build-web"
       ],
       [
-        "@pika/plugin-build-deno"
+        "@pika/plugin-bundle-web"
       ]
     ]
   },
@@ -50,10 +50,13 @@
     "@pika/plugin-build-deno": "^0.9.2",
     "@pika/plugin-build-node": "^0.9.2",
     "@pika/plugin-build-web": "^0.9.2",
+    "@pika/plugin-bundle-web": "^0.9.2",
     "@pika/plugin-simple-bin": "^0.9.2",
     "@pika/plugin-ts-standard-pkg": "^0.9.2",
     "@pika/types": "^0.9.2",
+    "cp-cli": "^2.0.0",
     "rimraf": "^3.0.2",
+    "rollup-plugin-node-polyfills": "^0.2.1",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.5"
   }

@@ -10,7 +10,8 @@ export async function handle(state, input) {
   const txTags = SmartWeave.transaction.tags 
   const blockHeight = SmartWeave.block.height
   const blockIndepHash = SmartWeave.block.indep_hash 
-  
+  const contractId = SmartWeave.contract.id 
+
   const ownerBytes = SmartWeave.arweave.utils.b64UrlToBuffer(txOwner);
   const from = 
     SmartWeave.arweave.utils.bufferToB64Url(
