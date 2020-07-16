@@ -136,6 +136,10 @@ export function handle(state, action) {
     // TODO: Get balances at vote creation height
     let voterBalance = balances[caller];
 
+    if (!Number.isInteger(voterBalance)) {
+      throw new ContractError(`Voter does not have a balance`);
+    }
+
     if (vote.voted.includes(caller)) {
       throw new ContractError(`Caller has already voted`);
     }
