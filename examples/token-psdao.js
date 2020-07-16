@@ -120,6 +120,29 @@ export function handle(state, action) {
       return { state };
 
     }
+
+    if (voteType == 'indicative') {
+
+      let note = intput.note;
+
+      if (!((typeof note == "string") && (note.length == 43))) {
+        throw new ContractError(`Note format not recognised`)
+      }
+
+      let vote =
+        {
+          'status': "active",
+          'type': 'indicative',
+          'note': note,
+          'yays': 0,
+          'nays': 0,
+          'voted': [],
+          'start': currentHeight
+        };
+      
+      votes.push(vote);
+
+    }
   }
 
   if (input.function == 'vote') {
