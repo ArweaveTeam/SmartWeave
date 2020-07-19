@@ -44,7 +44,7 @@ export function handle(state, action) {
       throw new ContractError(`Name not owned by caller`);
     }
 
-    state.name[action.input.name].data = action.input.data;
+    state.names[action.input.name].data = action.input.data;
     
     return { state }
   }
@@ -64,7 +64,7 @@ export function handle(state, action) {
       throw new ContractError(`Name not owned by caller`);
     }
 
-    state.name[action.input.name].ownedBy = action.input.target;
+    state.names[action.input.name].ownedBy = action.input.target;
     
     return { state }
   }
@@ -82,7 +82,7 @@ export function handle(state, action) {
       throw new ContractError(`Name not owned by caller`);
     }
 
-    delete state.name[action.input.name];
+    delete state.names[action.input.name];
     
     return { state }
   }
