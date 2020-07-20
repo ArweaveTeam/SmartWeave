@@ -89,8 +89,8 @@ const jwk = ... // the users wallet loaded previously.
 async function sendFee() {
   const holder = selectWeightedPstHolder(contractState.balances)
   // send a fee. You should inform the user about this fee and amount.
-  const tx = await arweave.transactions.create({ target: holder, quantity: 0.1 }, jwk)
-  await arweave.transaction.sign(tx, jwk)
+  const tx = await arweave.transactions.createTransaction({ target: holder, quantity: 0.1 }, jwk)
+  await arweave.transactions.sign(tx, jwk)
   await arweave.transactions.post(tx)
 }
 ```
