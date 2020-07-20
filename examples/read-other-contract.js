@@ -1,6 +1,6 @@
 
 // Just a simple demo contract to test reading another contracts state.  
-// This lets a user to register as elligble for something, based off 
+// This lets a user to register as eligible for something, based off 
 // whether they are holding a certain amount of some token. 
 
 // WARNING: Using readContractState with a user supplied contract means 
@@ -21,11 +21,11 @@ export async function handle(state, action) {
     const tokenContractState = await SmartWeave.contracts.readContractState(TOKEN_CONTRACT);
     const balance = tokenContractState.balances[action.caller];
     if (balance >= MIN_AMOUNT) {
-      state.elligble[action.caller] = true;
+      state.eligible[action.caller] = true;
       return { state }
     }
 
-    throw new ContractError(`${action.caller} not elligble, balance is "${balance}"`);
+    throw new ContractError(`${action.caller} not eligible, balance is "${balance}"`);
   }
 
   throw new ContractError(`Unrecognized function: "${action.input.function}"`)
