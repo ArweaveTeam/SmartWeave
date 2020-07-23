@@ -42,8 +42,6 @@ You will get back a transaction id, this is your Contract ID, and you don't need
 
 ## Transferring tokens and viewing balances of your PST token
 
-To transfer tokens to another address you can use the following command
-
 `npx smartweave-cli --key-file /path/to/keyfile.json --contract CONTRACTID --interact --input '{ "function": "transfer", "qty": 500, "target": "TARGETWALLET" }'`
 
 To view the balance of a particular address/wallet, you can use the following command:
@@ -91,8 +89,8 @@ const jwk = ... // the users wallet loaded previously.
 async function sendFee() {
   const holder = selectWeightedPstHolder(contractState.balances)
   // send a fee. You should inform the user about this fee and amount.
-  const tx = await arweave.transactions.create({ target: holder, quantity: 0.1 }, jwk)
-  await arweave.transaction.sign(tx, jwk)
+  const tx = await arweave.transactions.createTransaction({ target: holder, quantity: 0.1 }, jwk)
+  await arweave.transactions.sign(tx, jwk)
   await arweave.transactions.post(tx)
 }
 ```

@@ -28,8 +28,10 @@ export class SmartWeaveGlobal {
 
   transaction: Transaction
   block: Block 
-  
   arweave: Pick<Arweave, 'ar' | 'wallets' | 'utils' | 'crypto'>
+  contract: {
+    id: string
+  }
 
   contracts: {
     readContractState(contractId: string): Promise<any>
@@ -41,13 +43,14 @@ export class SmartWeaveGlobal {
     return !this._activeTx
   }
 
-  constructor(arweave: Arweave) {
+  constructor(arweave: Arweave, contract: { id: string }) {
     this.arweave = {
       ar: arweave.ar,
       utils: arweave.utils,
       wallets: arweave.wallets,
       crypto: arweave.crypto,
     }
+    this.contract = contract;
     this.transaction = new Transaction(this);
     this.block = new Block(this);
     this.contracts = {
