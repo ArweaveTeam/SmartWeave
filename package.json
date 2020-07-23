@@ -11,7 +11,8 @@
     "build": "rimraf pkg && npx @pika/pack && cp-cli pkg/dist-src/bin pkg/dist-node && npx rollup --config=rollup.config.js && tar -zcvf smartweave-package.tgz pkg/"
   },
   "bin": {
-    "smartweave-cli": "dist-node/bin/smartweave-cli.js"
+    "smartweave-cli": "dist-node/bin/smartweave-cli.js",
+    "smartweave": "smartweave"
   },
   "repository": {
     "type": "git",

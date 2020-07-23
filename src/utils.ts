@@ -19,6 +19,7 @@ export function getTag(tx: Transaction, name: string) {
 
 /**
  * Unpacks string tags from a Tx and puts in a KV map 
+ * 
  * Tags that appear multiple times will be converted to an
  * array of string values, ordered as they appear in the tx. 
  * 
