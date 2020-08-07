@@ -2,6 +2,7 @@ import Arweave from 'arweave/node';
 import { getTag } from './utils';
 import { ContractHandler } from './contract-step';
 import { SmartWeaveGlobal } from './smartweave-global';
+import BigNumber from "bignumber.js"
 
 /**
  * Loads the contract source, initial state and other parameters
@@ -64,14 +65,14 @@ export function createContractExecutionEnvironment(arweave: Arweave, contractSrc
   contractSrc = contractSrc.replace(/export\s+function\s+handle/gmu, 'function handle');
   const ContractErrorDef = `class ContractError extends Error { constructor(message) { super(message); this.name = 'ContractError' } };`;
   const ContractAssertDef = `function ContractAssert(cond, message) { if (!cond) throw new ContractError(message) };`
-  const returningSrc = `const SmartWeave = swGlobal;\n\n${ContractErrorDef}\n${ContractAssertDef}\n${contractSrc}\n\n;return handle;`;
+  const returningSrc = `const BigNumber = bigNumberCtor; const SmartWeave = swGlobal;\n\n${ContractErrorDef}\n${ContractAssertDef}\n${contractSrc}\n\n;return handle;`;
   const swGlobal = new SmartWeaveGlobal(arweave, { id: contractId } );
-  const getContractFunction = new Function('swGlobal', returningSrc);
+  const getContractFunction = new Function('swGlobal', 'bigNumberCtor', returningSrc);
   
   //console.log(returningSrc);
   
   return {
-    handler: getContractFunction(swGlobal) as ContractHandler,
+    handler: getContractFunction(swGlobal, BigNumber) as ContractHandler,
     swGlobal
   };
 }

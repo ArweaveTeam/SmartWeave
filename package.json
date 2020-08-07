@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "arweave": "^1.7.1",
+    "bignumber.js": "^9.0.0",
     "promises-tho": "^1.1.0",
     "yargs": "^15.3.1"
   },
