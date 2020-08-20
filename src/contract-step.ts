@@ -50,7 +50,9 @@ export interface ContractInteractionResult {
 export async function execute(handler: ContractHandler, interaction: ContractInteraction, state: any): Promise<ContractInteractionResult> {
   try {
     
-    const result = await handler(state, interaction);
+    const stateCopy = JSON.parse(JSON.stringify(state));
+    
+    const result = await handler(stateCopy, interaction);
     
     if (result && (result.state || result.result)) {
       return {
