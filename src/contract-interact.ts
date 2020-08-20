@@ -3,6 +3,12 @@ import { JWKInterface } from 'arweave/node/lib/wallet';
 import { loadContract } from './contract-load';
 import { readContract } from './contract-read';
 import { execute, ContractInteraction } from './contract-step';
+import { InteractionTx } from './interaction-tx';
+
+/**
+ * zeros as b64url
+ */
+const NO_BLOCK_HASH = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
 
 /**
  * Writes an interaction on the blockchain.
@@ -17,30 +23,8 @@ import { execute, ContractInteraction } from './contract-step';
  */
 export async function interactWrite(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any) {
   
-  // Use a random value in the data body. We must put
-  // _something_ in the body, because a tx must have data or target
-  // to be valid. The value doesn't matter, but something sorta random
-  // helps because it will generate a different txid.
-  let interactionTx = await arweave.createTransaction(
-    {
-      data: Math.random()
-        .toString()
-        .slice(-4)
-    },
-    wallet
-  );
-
-  if (!input) {
-    throw new Error(`Input should be a truthy value: ${JSON.stringify(input)}`);
-  }  
-
-  interactionTx.addTag('App-Name', 'SmartWeaveAction');
-  interactionTx.addTag('App-Version', '0.3.0');
-  interactionTx.addTag('Contract', contractId);
-  interactionTx.addTag('Input', JSON.stringify(input));
-
-  await arweave.transactions.sign(interactionTx, wallet);
-
+  const interactionTx = await createTx(arweave, wallet, contractId, input);
+  
   const response = await arweave.transactions.post(interactionTx);
 
   if (response.status != 200) return false;
@@ -61,11 +45,32 @@ export async function interactWriteDryRun(arweave: Arweave, wallet: JWKInterface
   const contractInfo = await loadContract(arweave, contractId);
   const latestState = await readContract(arweave, contractId);
   const from = await arweave.wallets.jwkToAddress(wallet);
-
+  
   const interaction: ContractInteraction = {
     input: input,
     caller: from
   };
+
+  const { height } = await arweave.network.getInfo();
+
+  const tx = await createTx(arweave, wallet, contractId, input);
+ 
+  const dummyActiveTx: InteractionTx = {
+    info: {
+      status: 200,
+      confirmed: {
+        block_height: height + 1,
+        block_indep_hash: NO_BLOCK_HASH,
+        number_of_confirmations: 0,
+      }
+    },
+    id: tx.id,
+    tx: tx,
+    sortKey: '',
+    from: from,
+  }
+
+  contractInfo.swGlobal._activeTx = dummyActiveTx;
 
   return execute(contractInfo.handler, interaction, latestState);
 }
@@ -90,8 +95,51 @@ export async function interactRead(arweave: Arweave, wallet: JWKInterface, contr
     caller: from
   };
 
+  const { height, current } = await arweave.network.getInfo();
+
+  const tx = await createTx(arweave, wallet, contractId, input);
+ 
+  const dummyActiveTx: InteractionTx = {
+    info: {
+      status: 200,
+      confirmed: {
+        block_height: height,
+        block_indep_hash: current,
+        number_of_confirmations: 0,
+      }
+    },
+    id: tx.id,
+    tx: tx,
+    sortKey: '',
+    from: from,
+  }
+
+  contractInfo.swGlobal._activeTx = dummyActiveTx;
+
   const result = await execute(contractInfo.handler, interaction, latestState);
   return result.result
 }
 
 
+async function createTx(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any) {
+  let interactionTx = await arweave.createTransaction(
+    {
+      data: Math.random()
+        .toString()
+        .slice(-4)
+    },
+    wallet
+  );
+
+  if (!input) {
+    throw new Error(`Input should be a truthy value: ${JSON.stringify(input)}`);
+  }  
+
+  interactionTx.addTag('App-Name', 'SmartWeaveAction');
+  interactionTx.addTag('App-Version', '0.3.0');
+  interactionTx.addTag('Contract', contractId);
+  interactionTx.addTag('Input', JSON.stringify(input));
+
+  await arweave.transactions.sign(interactionTx, wallet);
+  return interactionTx;
+}
