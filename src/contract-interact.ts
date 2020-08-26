@@ -4,6 +4,7 @@ import { loadContract } from './contract-load';
 import { readContract } from './contract-read';
 import { execute, ContractInteraction } from './contract-step';
 import { InteractionTx } from './interaction-tx';
+import { unpackTags } from "./utils";
 
 /**
  * zeros as b64url
@@ -22,9 +23,9 @@ const NO_BLOCK_HASH = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
  * @param input         the interaction input, will be serialized as Json.
  */
 export async function interactWrite(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any) {
-  
+
   const interactionTx = await createTx(arweave, wallet, contractId, input);
-  
+
   const response = await arweave.transactions.post(interactionTx);
 
   if (response.status != 200) return false;
@@ -45,29 +46,35 @@ export async function interactWriteDryRun(arweave: Arweave, wallet: JWKInterface
   const contractInfo = await loadContract(arweave, contractId);
   const latestState = await readContract(arweave, contractId);
   const from = await arweave.wallets.jwkToAddress(wallet);
-  
+
   const interaction: ContractInteraction = {
     input: input,
     caller: from
   };
 
-  const { height } = await arweave.network.getInfo();
+  const { height, current } = await arweave.network.getInfo();
 
   const tx = await createTx(arweave, wallet, contractId, input);
- 
+
+  const tags = unpackTags(tx)
+
   const dummyActiveTx: InteractionTx = {
-    info: {
-      status: 200,
-      confirmed: {
-        block_height: height + 1,
-        block_indep_hash: NO_BLOCK_HASH,
-        number_of_confirmations: 0,
-      }
-    },
     id: tx.id,
-    tx: tx,
-    sortKey: '',
-    from: from,
+    owner: {
+      address: from
+    },
+    recipient: tx.target,
+    tags,
+    fee: {
+      winston: tx.reward
+    },
+    quantity: {
+      winston: tx.quantity
+    },
+    block: {
+      height,
+      id: current
+    }
   }
 
   contractInfo.swGlobal._activeTx = dummyActiveTx;
@@ -98,20 +105,26 @@ export async function interactRead(arweave: Arweave, wallet: JWKInterface, contr
   const { height, current } = await arweave.network.getInfo();
 
   const tx = await createTx(arweave, wallet, contractId, input);
- 
+
+  const tags = unpackTags(tx)
+
   const dummyActiveTx: InteractionTx = {
-    info: {
-      status: 200,
-      confirmed: {
-        block_height: height,
-        block_indep_hash: current,
-        number_of_confirmations: 0,
-      }
-    },
     id: tx.id,
-    tx: tx,
-    sortKey: '',
-    from: from,
+    owner: {
+      address: from
+    },
+    recipient: tx.target,
+    tags,
+    fee: {
+      winston: tx.reward
+    },
+    quantity: {
+      winston: tx.quantity
+    },
+    block: {
+      height,
+      id: current
+    }
   }
 
   contractInfo.swGlobal._activeTx = dummyActiveTx;
@@ -133,7 +146,7 @@ async function createTx(arweave: Arweave, wallet: JWKInterface, contractId: stri
 
   if (!input) {
     throw new Error(`Input should be a truthy value: ${JSON.stringify(input)}`);
-  }  
+  }
 
   interactionTx.addTag('App-Name', 'SmartWeaveAction');
   interactionTx.addTag('App-Version', '0.3.0');
