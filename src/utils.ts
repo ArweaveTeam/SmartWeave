@@ -1,5 +1,6 @@
 
 import Transaction from 'arweave/node/lib/transaction'
+import Arweave from 'arweave'
 
 export function getTag(tx: Transaction, name: string) {
   let tags = tx.get('tags') as any
@@ -53,4 +54,8 @@ export function arrayToHex(arr: Uint8Array) {
   return str;
 }
 
-
+export function log(arweave?: Arweave, ...str: string[]) {
+  (arweave && typeof arweave.getConfig().api.logger == "function") ?
+    arweave.getConfig().api.logger!(...str) :
+    console.log(...str);
+}
