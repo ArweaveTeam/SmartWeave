@@ -7,6 +7,22 @@ interface UnformattedTag {
   value: string
 }
 
+export function getTag(tx: Transaction, name: string) {
+  let tags = tx.get('tags') as any
+
+  for(let i = 0; i < tags.length; i++) {
+    // decoding tags can throw on invalid utf8 data.
+    try {
+      if(tags[i].get('name', { decode: true, string: true }) == name)
+        return tags[i].get('value', { decode: true, string: true })
+    } catch (e) {
+
+    }
+  }
+
+  return false
+}
+
 /**
  * Unpacks string tags from a Tx and puts in a KV map
  * Tags that appear multiple times will be converted to an
