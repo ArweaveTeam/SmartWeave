@@ -2,6 +2,11 @@
 import Transaction from 'arweave/node/lib/transaction'
 import Arweave from 'arweave'
 
+interface UnformattedTag {
+  name: string
+  value: string
+}
+
 export function getTag(tx: Transaction, name: string) {
   let tags = tx.get('tags') as any
 
@@ -14,28 +19,28 @@ export function getTag(tx: Transaction, name: string) {
 
     }
   }
-      
+
   return false
 }
 
 /**
- * Unpacks string tags from a Tx and puts in a KV map 
+ * Unpacks string tags from a Tx and puts in a KV map
  * Tags that appear multiple times will be converted to an
- * array of string values, ordered as they appear in the tx. 
- * 
- * @param tx 
+ * array of string values, ordered as they appear in the tx.
+ *
+ * @param tx
  */
 export function unpackTags(tx: Transaction): Record<string, string | string[]> {
-  
+
   let tags = tx.get('tags') as any
   let result: Record<string, string | string[]> = {}
-  
+
   for(let i = 0; i < tags.length; i++) {
     try {
-      const name = tags[i].get('name', { decode: true, string: true }) as string 
-      const value = tags[i].get('value', { decode: true, string: true }) as string 
+      const name = tags[i].get('name', { decode: true, string: true }) as string
+      const value = tags[i].get('value', { decode: true, string: true }) as string
       if (!result.hasOwnProperty(name)) {
-        result[name] = value; 
+        result[name] = value;
         continue;
       }
       result[name] = [ ...result[name], value ]
@@ -43,7 +48,22 @@ export function unpackTags(tx: Transaction): Record<string, string | string[]> {
       // ignore tags with invalid utf-8 strings in key or value.
     }
   }
-  return result; 
+  return result;
+}
+
+export function formatTags(tags: Array<UnformattedTag>): Record<string, string | string[]> {
+  let result: Record<string, string | string[]> = {}
+
+  for (let i = 0; i < tags.length; i++) {
+    const { name, value } = tags[i]
+    if (!result.hasOwnProperty(name)) {
+      result[name] = value;
+      continue;
+    }
+    result[name] = [ ...result[name], value ]
+  }
+
+  return result
 }
 
 export function arrayToHex(arr: Uint8Array) {

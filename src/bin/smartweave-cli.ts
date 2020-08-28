@@ -8,7 +8,7 @@ const smartweave = require('../')
 
 // Set Arweave parameters from commandline or defaults.
 const arweave_port = argv.arweavePort ? argv.arweavePort : 443
-const arweave_host = argv.arweaveHost ? argv.arweaveHost : 'arweave.net'
+const arweave_host = argv.arweaveHost ? argv.arweaveHost : 'arweave.dev'
 const arweave_protocol = argv.arweaveProtocol ? argv.arweaveProtocol : 'https'
 
 if(!argv.keyFile && !argv.walletFile) {
@@ -27,7 +27,7 @@ const arweave = Arweave.init({
 })
 
 if(argv.create) {
-    
+
     if(!argv.contractSrc && !argv.contractSrcTx) {
         console.log("ERROR: Please specify contract source bundle using argument " +
             "'--contract-src <PATH>' or --contract-src-tx <TX>.")
@@ -41,7 +41,7 @@ if(argv.create) {
     }
 
     if (argv.contractSrc) {
-        // Create from a new source file. 
+        // Create from a new source file.
         const contractSrc = fs.readFileSync(argv.contractSrc)
         const minFee = argv.minFee ? argv.minFee : ''
         const initState = fs.readFileSync(argv.initState)
@@ -52,7 +52,7 @@ if(argv.create) {
             }
         )
     } else {
-        // Create from existing tx. 
+        // Create from existing tx.
         const minFee = argv.minFee ? argv.minFee : ''
         const initState = fs.readFileSync(argv.initState)
         const contractSrcTx = argv.contractSrcTx;
@@ -62,7 +62,7 @@ if(argv.create) {
             }
         )
     }
-    
+
 }
 
 if(argv.interact) {
@@ -108,7 +108,7 @@ if(argv.interact) {
         .then((result: any) => {
             console.log(result)
         })
-    } 
+    }
 }
 
 if(argv.getState) {
@@ -124,9 +124,8 @@ if(argv.getState) {
             if(!state) {
                 console.log("ERROR: Failed to get state for contract: " + contractID)
             }
-        
+
             console.log(state)
         }
     )
 }
-
