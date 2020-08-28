@@ -1,7 +1,7 @@
 import Arweave from 'arweave/node'
 import { loadContract } from './contract-load';
 import { retryWithBackoff, batch, softFailWith } from 'promises-tho';
-import { getTag, arrayToHex, unpackTags, formatTags } from './utils';
+import { getTag, arrayToHex, unpackTags, formatTags, log } from './utils';
 import { execute, ContractInteraction } from './contract-step';
 import { InteractionTx } from './interaction-tx';
 
@@ -79,14 +79,22 @@ export async function readContract(arweave: Arweave, contractId: string, height?
       variables
     }
   )
+  log(arweave, `Query returned ${transactions.length} interactions`);
+  
+  let unconfirmed = await batcher(transactions);
 
+  log(arweave, `Recieved info for ${unconfirmed.length} transactions`);
+  
+  // Filter out txs that are not confirmed yet, not found, 
+  // or are below the height we are replaying to.
+  
   if (response.status !== 200) {
     throw new Error(`Unable to retrieve transactions. Arweave gateway responded with status ${response.status}.`)
   }
 
   const txInfos = response.data.data.transactions.edges
-
-  console.log(`Replaying ${txInfos.length} confirmed interactions`);
+  
+  log(arweave, `Replaying ${txInfos.length} confirmed interactions`);
 
   await sortTransactions(arweave, txInfos)
 
@@ -111,8 +119,8 @@ export async function readContract(arweave: Arweave, contractId: string, height?
       input = JSON.parse(input as string)
 
       if (!input) {
-        console.warn(`Skipping tx with missing or invalid Input tag - ${currentTx.id}`);
-        continue;
+          log(arweave, `Skipping tx with missing or invalid Input tag - ${currentTx.id}`);
+          continue;
       }
 
       const interaction: ContractInteraction = {
@@ -125,12 +133,12 @@ export async function readContract(arweave: Arweave, contractId: string, height?
       const result = await execute(handler, interaction, state);
 
       if (result.type === 'exception') {
-        console.warn(`${result.result}`);
-        console.warn(`Executing of interaction: ${currentTx.id} threw exception.`);
+        log(arweave, `${result.result}`);
+        log(arweave, `Executing of interaction: ${currentTx.id} threw exception.`);
       }
       if (result.type === 'error') {
-        console.warn(`${result.result}`);
-        console.warn(`Executing of interaction: ${currentTx.id} returned error.`);
+        log(arweave, `${result.result}`);
+        log(arweave, `Executing of interaction: ${currentTx.id} returned error.`);
       }
 
       state = result.state;
