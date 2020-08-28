@@ -1,6 +1,6 @@
 import Arweave from 'arweave/node'
 import { loadContract } from './contract-load';
-import { getTag, arrayToHex, unpackTags, formatTags, log } from './utils';
+import { arrayToHex, formatTags, log } from './utils';
 import { execute, ContractInteraction } from './contract-step';
 import { InteractionTx } from './interaction-tx';
 
