@@ -79,11 +79,6 @@ export async function readContract(arweave: Arweave, contractId: string, height?
       variables
     }
   )
-  log(arweave, `Query returned ${transactions.length} interactions`);
-  
-  let unconfirmed = await batcher(transactions);
-
-  log(arweave, `Recieved info for ${unconfirmed.length} transactions`);
   
   // Filter out txs that are not confirmed yet, not found, 
   // or are below the height we are replaying to.
