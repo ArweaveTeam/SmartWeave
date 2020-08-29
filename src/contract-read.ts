@@ -1,6 +1,6 @@
 import Arweave from 'arweave/node'
 import { loadContract } from './contract-load'
-import { arrayToHex, formatTags } from './utils'
+import { arrayToHex, formatTags, log } from './utils'
 import { execute, ContractInteraction } from './contract-step'
 import { InteractionTx } from './interaction-tx'
 
@@ -82,7 +82,7 @@ export async function readContract (arweave: Arweave, contractId: string, height
 
   const txInfos = response.data.data.transactions.edges
 
-  console.log(`Replaying ${txInfos.length} confirmed interactions`)
+  log(arweave, `Replaying ${txInfos.length} confirmed interactions`)
 
   await sortTransactions(arweave, txInfos)
 
@@ -107,7 +107,7 @@ export async function readContract (arweave: Arweave, contractId: string, height
     input = JSON.parse(input)
 
     if (!input) {
-      console.warn(`Skipping tx with missing or invalid Input tag - ${currentTx.id}`)
+      log(arweave, `Skipping tx with missing or invalid Input tag - ${currentTx.id}`)
       continue
     }
 
@@ -121,12 +121,12 @@ export async function readContract (arweave: Arweave, contractId: string, height
     const result = await execute(handler, interaction, state)
 
     if (result.type === 'exception') {
-      console.warn(`${result.result}`)
-      console.warn(`Executing of interaction: ${currentTx.id} threw exception.`)
+      log(arweave, `${result.result}`)
+      log(arweave, `Executing of interaction: ${currentTx.id} threw exception.`)
     }
     if (result.type === 'error') {
-      console.warn(`${result.result}`)
-      console.warn(`Executing of interaction: ${currentTx.id} returned error.`)
+      log(arweave, `${result.result}`)
+      log(arweave, `Executing of interaction: ${currentTx.id} returned error.`)
     }
 
     state = result.state

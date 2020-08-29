@@ -22,6 +22,7 @@ module.exports = {
     'no-prototype-builtins': 0,
     '@typescript-eslint/no-var-requires': 0,
     '@typescript-eslint/restrict-plus-operands': 0,
-    '@typescript-eslint/prefer-nullish-coalescing': 0
+    '@typescript-eslint/prefer-nullish-coalescing': 0,
+    '@typescript-eslint/no-non-null-assertion': 0
   }
 }

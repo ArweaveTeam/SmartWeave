@@ -1,5 +1,5 @@
-
 import Transaction from 'arweave/node/lib/transaction'
+import Arweave from 'arweave'
 
 interface UnformattedTag {
   name: string
@@ -69,4 +69,10 @@ export function arrayToHex (arr: Uint8Array) {
     str += ('0' + arr[i].toString(16)).slice(-2)
   }
   return str
+}
+
+export function log (arweave?: Arweave, ...str: string[]) {
+  (arweave && typeof arweave.getConfig().api.logger === 'function')
+    ? arweave.getConfig().api.logger!(...str)
+    : console.log(...str)
 }
