@@ -1,9 +1,8 @@
 import Arweave from 'arweave/node'
-import { loadContract } from './contract-load';
-import { retryWithBackoff, batch, softFailWith } from 'promises-tho';
-import { getTag, arrayToHex, unpackTags, formatTags } from './utils';
-import { execute, ContractInteraction } from './contract-step';
-import { InteractionTx } from './interaction-tx';
+import { loadContract } from './contract-load'
+import { arrayToHex, formatTags } from './utils'
+import { execute, ContractInteraction } from './contract-step'
+import { InteractionTx } from './interaction-tx'
 
 // integers on the server are 32 bit so we can't user Number.MAX_SAFE_INTEGER
 const MAX_INT_ON_SERVER = 2147483647
@@ -17,15 +16,14 @@ const MAX_INT_ON_SERVER = 2147483647
  * @param contractId  the Transaction Id of the contract
  * @param height      if specified the contract will be replayed only to this block height
  */
-export async function readContract(arweave: Arweave, contractId: string, height?: number): Promise<any> {
+export async function readContract (arweave: Arweave, contractId: string, height?: number): Promise<any> {
+  const contractInfo = await loadContract(arweave, contractId)
 
-  const contractInfo = await loadContract(arweave, contractId);
-
-  let state: any;
+  let state: any
   try {
-      state = JSON.parse(contractInfo.initState);
+    state = JSON.parse(contractInfo.initState)
   } catch (e) {
-      throw new Error(`Unable to parse initial state for contract: ${contractId}`);
+    throw new Error(`Unable to parse initial state for contract: ${contractId}`)
   }
 
   if (!height) {
@@ -73,12 +71,10 @@ export async function readContract(arweave: Arweave, contractId: string, height?
     first: MAX_INT_ON_SERVER
   }
 
-  let response = await arweave.api.post('graphql',
-    {
-      query,
-      variables
-    }
-  )
+  const response = await arweave.api.post('graphql', {
+    query,
+    variables
+  })
 
   if (response.status !== 200) {
     throw new Error(`Unable to retrieve transactions. Arweave gateway responded with status ${response.status}.`)
@@ -86,65 +82,64 @@ export async function readContract(arweave: Arweave, contractId: string, height?
 
   const txInfos = response.data.data.transactions.edges
 
-  console.log(`Replaying ${txInfos.length} confirmed interactions`);
+  console.log(`Replaying ${txInfos.length} confirmed interactions`)
 
   await sortTransactions(arweave, txInfos)
 
   const { handler, swGlobal } = contractInfo
 
   for (let i = 0; i < txInfos.length; i++) {
-      const tags = formatTags(txInfos[i].node.tags)
+    const tags = formatTags(txInfos[i].node.tags)
 
-      const currentTx: InteractionTx = {
-        ...txInfos[i].node,
-        tags
-      }
+    const currentTx: InteractionTx = {
+      ...txInfos[i].node,
+      tags
+    }
 
-      let input = currentTx.tags['Input']
+    let input = currentTx.tags.Input
 
-      // check that input is not an array
-      if (Array.isArray(input)) {
-        console.warn(`Skipping tx with multiple Input tags - ${currentTx.id}`);
-        continue;
-      }
+    // check that input is not an array
+    if (Array.isArray(input)) {
+      console.warn(`Skipping tx with multiple Input tags - ${currentTx.id}`)
+      continue
+    }
 
-      input = JSON.parse(input as string)
+    input = JSON.parse(input)
 
-      if (!input) {
-        console.warn(`Skipping tx with missing or invalid Input tag - ${currentTx.id}`);
-        continue;
-      }
+    if (!input) {
+      console.warn(`Skipping tx with missing or invalid Input tag - ${currentTx.id}`)
+      continue
+    }
 
-      const interaction: ContractInteraction = {
-        input: input,
-        caller: currentTx.owner.address,
-      }
+    const interaction: ContractInteraction = {
+      input: input,
+      caller: currentTx.owner.address
+    }
 
-      swGlobal._activeTx = currentTx;
+    swGlobal._activeTx = currentTx
 
-      const result = await execute(handler, interaction, state);
+    const result = await execute(handler, interaction, state)
 
-      if (result.type === 'exception') {
-        console.warn(`${result.result}`);
-        console.warn(`Executing of interaction: ${currentTx.id} threw exception.`);
-      }
-      if (result.type === 'error') {
-        console.warn(`${result.result}`);
-        console.warn(`Executing of interaction: ${currentTx.id} returned error.`);
-      }
+    if (result.type === 'exception') {
+      console.warn(`${result.result}`)
+      console.warn(`Executing of interaction: ${currentTx.id} threw exception.`)
+    }
+    if (result.type === 'error') {
+      console.warn(`${result.result}`)
+      console.warn(`Executing of interaction: ${currentTx.id} returned error.`)
+    }
 
-      state = result.state;
+    state = result.state
   }
 
-  return state;
+  return state
 }
 
-
-async function sortTransactions(arweave: Arweave, txInfos: any[]) {
+async function sortTransactions (arweave: Arweave, txInfos: any[]) {
   const addKeysFuncs = txInfos.map(tx => addSortKey(arweave, tx))
   await Promise.all(addKeysFuncs)
 
-  txInfos.sort((a, b) => a.sortKey.localeCompare(b.sortKey));
+  txInfos.sort((a, b) => a.sortKey.localeCompare(b.sortKey))
 }
 
 // Construct a string that will lexographically sort.
@@ -158,7 +153,7 @@ async function addSortKey (arweave: Arweave, txInfo: any) {
   const txIdBytes = arweave.utils.b64UrlToBuffer(node.id)
   const concatted = arweave.utils.concatBuffers([blockHashBytes, txIdBytes])
   const hashed = arrayToHex(await arweave.crypto.hash(concatted))
-  const blockHeight = `000000${node.block.height}`.slice(-12);
+  const blockHeight = `000000${node.block.height}`.slice(-12)
 
   txInfo.sortKey = `${blockHeight},${hashed}`
 }
