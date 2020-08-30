@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "version": "npx @pika/pack",
     "build": "rimraf pkg && npx @pika/pack && cp-cli pkg/dist-src/bin pkg/dist-node && npx rollup --config=rollup.config.js && tar -zcvf smartweave-package.tgz pkg/",
-    "lint": "eslint --ext .ts src/",
+    "lint": "eslint --ext .ts,.js src/ examples/ rollup.config.js",
     "lint:fix": "npm run lint -- --fix"
   },
   "bin": {

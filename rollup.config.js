@@ -1,6 +1,6 @@
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
-import nodePolyfills from 'rollup-plugin-node-polyfills';
+import nodePolyfills from 'rollup-plugin-node-polyfills'
 
 export default {
   input: 'pkg/dist-web/index.js',
@@ -13,6 +13,6 @@ export default {
   plugins: [
     resolve(),
     commonjs(),
-    nodePolyfills(),
+    nodePolyfills()
   ]
 }
