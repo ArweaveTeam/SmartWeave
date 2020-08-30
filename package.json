@@ -2,6 +2,7 @@
   "name": "smartweave",
   "version": "0.3.2",
   "description": "Uses lazy-evaluation to move the burden of contract execution from network nodes to smart contract users.",
+  "main": "pkg/dist-node/index.js",
   "directories": {
     "example": "examples"
   },
@@ -45,6 +46,7 @@
   "dependencies": {
     "arweave": "^1.9.1",
     "bignumber.js": "^9.0.0",
+    "typescript": "^4.0.2",
     "yargs": "^15.3.1"
   },
   "devDependencies": {
@@ -62,13 +64,13 @@
     "@typescript-eslint/parser": "^3.10.1",
     "cp-cli": "^2.0.0",
     "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.1",
     "eslint-config-standard-with-typescript": "^18.0.2",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "rimraf": "^3.0.2",
-    "rollup-plugin-node-polyfills": "^0.2.1",
-    "typescript": "^3.9.5"
+    "rollup-plugin-node-polyfills": "^0.2.1"
   }
 }
