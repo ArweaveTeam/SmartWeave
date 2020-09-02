@@ -18,9 +18,16 @@ This guide will give an overview of how to create your PST token, and how to use
 
 To follow this, you will need an Arweave wallet, funded with some AR. You can get one at [arweave.org/tokens](https://arweave.org/tokens), or generate one offline with the [arweave-deploy](https://github.com/ArweaveTeam/arweave-deploy#arweave-deploy) CLI tools.
 
-You should also install the SmartWeave SDK. The package is hosted on Arweave, you can install it either globally (to have the cli available everywhere) or into your project folder:
+You should also install the SmartWeave SDK. You can install it either globally (to have the cli available everywhere) or into your project folder:
 
-`npm install https://arweave.net/AM-u4X2po-3Tx7fma3lRonCfLwrjI42IALwDL_YFXBs`
+```
+npm install smartweave
+```
+
+Hosted on Arweave:
+```
+npm install https://arweave.net/I5tkm4L0e39IPmvZbShWf5eHmTvKbxo048t-iNKqLqE
+```
 
 ## Creating a new PST contract
 
