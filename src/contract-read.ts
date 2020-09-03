@@ -4,9 +4,6 @@ import { arrayToHex, formatTags, log } from './utils'
 import { execute, ContractInteraction } from './contract-step'
 import { InteractionTx } from './interaction-tx'
 
-// the maximum number of transactions we can get from graphql at once
-const MAX_REQUEST = 100
-
 /**
  * Queries all interaction transactions and replays a contract to its latest state.
  *
@@ -17,7 +14,18 @@ const MAX_REQUEST = 100
  * @param height      if specified the contract will be replayed only to this block height
  */
 export async function readContract (arweave: Arweave, contractId: string, height?: number): Promise<any> {
-  const contractInfo = await loadContract(arweave, contractId)
+  if (!height) {
+    const networkInfo = await arweave.network.getInfo()
+    height = networkInfo.height
+  }
+
+  const loadPromise = loadContract(arweave, contractId).catch(err => err)
+  const fetchTxPromsie = fetchTransactions(arweave, contractId, height).catch(err => err)
+
+  const [contractInfo, txInfos] = await Promise.all([loadPromise, fetchTxPromsie])
+
+  if (contractInfo instanceof Error) throw contractInfo
+  if (txInfos instanceof Error) throw txInfos
 
   let state: any
   try {
@@ -25,13 +33,6 @@ export async function readContract (arweave: Arweave, contractId: string, height
   } catch (e) {
     throw new Error(`Unable to parse initial state for contract: ${contractId}`)
   }
-
-  if (!height) {
-    const networkInfo = await arweave.network.getInfo()
-    height = networkInfo.height
-  }
-
-  const txInfos = await fetchTransactions(arweave, contractId, height)
 
   log(arweave, `Replaying ${txInfos.length} confirmed interactions`)
 
@@ -49,7 +50,7 @@ export async function readContract (arweave: Arweave, contractId: string, height
 
     let input = currentTx.tags.Input
 
-    // check that input is not an array
+    // Check that input is not an array. If a tx has multiple input tags, it will be an array
     if (Array.isArray(input)) {
       console.warn(`Skipping tx with multiple Input tags - ${currentTx.id}`)
       continue
@@ -63,7 +64,7 @@ export async function readContract (arweave: Arweave, contractId: string, height
     }
 
     const interaction: ContractInteraction = {
-      input: input,
+      input,
       caller: currentTx.owner.address
     }
 
@@ -86,7 +87,87 @@ export async function readContract (arweave: Arweave, contractId: string, height
   return state
 }
 
+// Sort the transactions based on the sort key generated in addSortKey()
+async function sortTransactions (arweave: Arweave, txInfos: any[]) {
+  const addKeysFuncs = txInfos.map(tx => addSortKey(arweave, tx))
+  await Promise.all(addKeysFuncs)
+
+  txInfos.sort((a, b) => a.sortKey.localeCompare(b.sortKey))
+}
+
+// Construct a string that will lexographically sort.
+// { block_height, sha256(block_indep_hash + txid) }
+// pad block height to 12 digits and convert hash value
+// to a hex string.
+async function addSortKey (arweave: Arweave, txInfo: any) {
+  const { node } = txInfo
+
+  const blockHashBytes = arweave.utils.b64UrlToBuffer(node.block.id)
+  const txIdBytes = arweave.utils.b64UrlToBuffer(node.id)
+  const concatted = arweave.utils.concatBuffers([blockHashBytes, txIdBytes])
+  const hashed = arrayToHex(await arweave.crypto.hash(concatted))
+  const blockHeight = `000000${node.block.height}`.slice(-12)
+
+  txInfo.sortKey = `${blockHeight},${hashed}`
+}
+
+// the maximum number of transactions we can get from graphql at once
+const MAX_REQUEST = 100
+
+interface TagFilter {
+  name: string
+  values: string[]
+}
+
+interface BlockFilter {
+  max: Number
+}
+
+interface ReqVariables {
+  tags: TagFilter[]
+  blockFilter: BlockFilter
+  first: Number
+  after?: string
+}
+
+// fetch all contract interactions up to the specified block height
 async function fetchTransactions (arweave: Arweave, contractId: string, height: number) {
+  let variables: ReqVariables = {
+    tags: [{
+      name: 'App-Name',
+      values: ['SmartWeaveAction']
+    },
+    {
+      name: 'Contract',
+      values: [contractId]
+    }],
+    blockFilter: {
+      max: height
+    },
+    first: MAX_REQUEST
+  }
+
+  let transactions = await getNextPage(arweave, variables)
+
+  const txInfos = transactions.edges
+
+  while (transactions.pageInfo.hasNextPage) {
+    const cursor = transactions.edges[MAX_REQUEST - 1].cursor
+
+    variables = {
+      ...variables,
+      after: cursor
+    }
+
+    transactions = await getNextPage(arweave, variables)
+
+    txInfos.push(...transactions.edges)
+  }
+
+  return txInfos
+}
+
+async function getNextPage (arweave: Arweave, variables: ReqVariables) {
   const query = `query Transactions($tags: [TagFilter!]!, $blockFilter: BlockFilter!, $first: Int!, $after: String) {
     transactions(tags: $tags, block: $blockFilter, first: $first, sort: HEIGHT_ASC, after: $after) {
       pageInfo {
@@ -113,23 +194,7 @@ async function fetchTransactions (arweave: Arweave, contractId: string, height: 
     }
   }`
 
-  let variables = {
-    tags: [{
-      name: 'App-Name',
-      values: ['SmartWeaveAction']
-    },
-    {
-      name: 'Contract',
-      values: [contractId]
-    }],
-    blockFilter: {
-      max: height
-    },
-    first: MAX_REQUEST,
-    after: ''
-  }
-
-  let response = await arweave.api.post('graphql', {
+  const response = await arweave.api.post('graphql', {
     query,
     variables
   })
@@ -138,55 +203,5 @@ async function fetchTransactions (arweave: Arweave, contractId: string, height: 
     throw new Error(`Unable to retrieve transactions. Arweave gateway responded with status ${response.status}.`)
   }
 
-  const txInfos = response.data.data.transactions.edges
-
-  while (response.data.data.transactions.pageInfo.hasNextPage) {
-    const cursor = response.data.data.transactions.edges[99].cursor
-
-    variables = {
-      ...variables,
-      after: cursor
-    }
-
-    response = await arweave.api.post('graphql', {
-      query,
-      variables
-    })
-
-    if (response.status !== 200) {
-      throw new Error(`Unable to retrieve transactions. Arweave gateway responded with status ${response.status}.`)
-    }
-
-    txInfos.push(...response.data.data.transactions.edges)
-  }
-
-  return txInfos
-}
-
-async function sortTransactions (arweave: Arweave, txInfos: any[]) {
-  const addKeysFuncs = txInfos.map(tx => addSortKey(arweave, tx))
-  await Promise.all(addKeysFuncs)
-
-  txInfos.sort((a, b) => a.sortKey.localeCompare(b.sortKey))
-}
-
-// Construct a string that will lexographically sort.
-// { block_height, sha256(block_indep_hash + txid) }
-// pad block height to 12 digits and convert hash value
-// to a hex string.
-async function addSortKey (arweave: Arweave, txInfo: any) {
-  const { node } = txInfo
-
-  if (!node) {
-    console.log(txInfo, 'THE TXINFO WITH NO NODE')
-    return
-  }
-
-  const blockHashBytes = arweave.utils.b64UrlToBuffer(node.block.id)
-  const txIdBytes = arweave.utils.b64UrlToBuffer(node.id)
-  const concatted = arweave.utils.concatBuffers([blockHashBytes, txIdBytes])
-  const hashed = arrayToHex(await arweave.crypto.hash(concatted))
-  const blockHeight = `000000${node.block.height}`.slice(-12)
-
-  txInfo.sortKey = `${blockHeight},${hashed}`
+  return response.data.data.transactions
 }

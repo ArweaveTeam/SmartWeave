@@ -14,16 +14,17 @@ export async function loadContract (arweave: Arweave, contractID: string) {
   try {
     // Generate an object containing the details about a contract in one place.
     const contractTX = await arweave.transactions.get(contractID)
+
     const contractSrcTXID = getTag(contractTX, 'Contract-Src')
     const minFee = getTag(contractTX, 'Min-Fee')
+
     const contractSrcTX = await arweave.transactions.get(contractSrcTXID)
+
     const contractSrc = contractSrcTX.get('data', { decode: true, string: true })
     const state = contractTX.get('data', { decode: true, string: true })
 
-    // console.log(`${contractSrcTXID} (Src) \n`, contractSrc);
-    // console.log(`${contractID} (State) \n`, state);
-
     const { handler, swGlobal } = createContractExecutionEnvironment(arweave, contractSrc, contractID)
+
     return {
       id: contractID,
       contractSrc: contractSrc,
