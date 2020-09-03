@@ -1,4 +1,3 @@
 node_modules
-dist/
-pkg/
-smartweave-package.tgz
+smartweave-*.tgz
+lib/
