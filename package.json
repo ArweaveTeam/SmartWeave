@@ -17,7 +17,7 @@
     "lib/**/*"
   ],
   "bin": {
-    "smartweave-cli": "lib/smartweave-cli.js"
+    "smartweave-cli": "lib/bin/smartweave-cli.js"
   },
   "repository": {
     "type": "git",
