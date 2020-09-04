@@ -26,7 +26,7 @@ npm install smartweave
 
 Hosted on Arweave:
 ```
-npm install https://arweave.net/I5tkm4L0e39IPmvZbShWf5eHmTvKbxo048t-iNKqLqE
+npm install https://arweave.net/OMrcdWdO3Q9VEV3N3z1NC2v0aSsQ5n4PFSBQPB-uJ7I
 ```
 
 ## Creating a new PST contract
