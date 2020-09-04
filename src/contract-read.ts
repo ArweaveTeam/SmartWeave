@@ -110,7 +110,11 @@ export async function readContract(arweave: Arweave, contractId: string, height?
         continue;
       }
 
-      input = JSON.parse(input as string)
+      try {
+        input = JSON.parse(input as string);
+      } catch (e) {
+        log(arweave, `Skipping tx with invalid JSON fromat - ${currentTx.id}`);
+      }
 
       if (!input) {
           log(arweave, `Skipping tx with missing or invalid Input tag - ${currentTx.id}`);
