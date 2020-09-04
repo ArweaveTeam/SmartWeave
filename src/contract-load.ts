@@ -11,32 +11,24 @@ import BigNumber from 'bignumber.js'
  * @param contractID  the Transaction Id of the contract
  */
 export async function loadContract (arweave: Arweave, contractID: string) {
-  try {
-    // Generate an object containing the details about a contract in one place.
-    const contractTX = await arweave.transactions.get(contractID)
+  // Generate an object containing the details about a contract in one place.
+  const contractTX = await arweave.transactions.get(contractID)
+  const contractSrcTXID = getTag(contractTX, 'Contract-Src')
+  const minFee = getTag(contractTX, 'Min-Fee')
+  const contractSrcTX = await arweave.transactions.get(contractSrcTXID)
+  const contractSrc = contractSrcTX.get('data', { decode: true, string: true })
+  const state = contractTX.get('data', { decode: true, string: true })
 
-    const contractSrcTXID = getTag(contractTX, 'Contract-Src')
-    const minFee = getTag(contractTX, 'Min-Fee')
+  const { handler, swGlobal } = createContractExecutionEnvironment(arweave, contractSrc, contractID)
 
-    const contractSrcTX = await arweave.transactions.get(contractSrcTXID)
-
-    const contractSrc = contractSrcTX.get('data', { decode: true, string: true })
-    const state = contractTX.get('data', { decode: true, string: true })
-
-    const { handler, swGlobal } = createContractExecutionEnvironment(arweave, contractSrc, contractID)
-
-    return {
-      id: contractID,
-      contractSrc: contractSrc,
-      initState: state,
-      minFee: minFee,
-      contractTX,
-      handler,
-      swGlobal
-    }
-  } catch (e) {
-    console.error(e)
-    throw new Error(`Unable to load contract ${contractID}.`)
+  return {
+    id: contractID,
+    contractSrc: contractSrc,
+    initState: state,
+    minFee: minFee,
+    contractTX,
+    handler,
+    swGlobal
   }
 }
 
