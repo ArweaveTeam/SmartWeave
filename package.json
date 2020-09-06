@@ -12,6 +12,7 @@
     "prepare": "npm run build",
     "version": "git add -A src",
     "postversion": "git push && git push --tags",
+    "clean": "rimraf ./lib",
     "lint": "eslint --ext .ts,.js src/ examples/",
     "lint:fix": "npm run lint -- --fix"
   },
@@ -19,7 +20,7 @@
     "lib/**/*"
   ],
   "bin": {
-    "smartweave-cli": "lib/smartweave-cli.js",
+    "smartweave-cli": "lib/bin/smartweave-cli.js",
     "smartweave": "smartweave"
   },
   "repository": {
@@ -52,7 +53,6 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "rimraf": "^3.0.2",
-    "rollup-plugin-node-polyfills": "^0.2.1",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.2"
   }
