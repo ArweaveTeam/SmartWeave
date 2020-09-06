@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import yargs from 'yargs'
 import { readCommandHandler, writeCommandHandler, createCommandHandler } from './handlers'
 
@@ -6,7 +8,7 @@ import { readCommandHandler, writeCommandHandler, createCommandHandler } from '.
 // smartweave create <sourceTx | sourceFile> <initStateFile>
 // smartweave info -- contractId
 
-var readCommand: yargs.CommandModule = {
+const readCommand: yargs.CommandModule = {
   command: 'read <contractId>',
   describe: 'Read a contracts state or executes a read interaction.',
   builder: yargs =>
@@ -18,7 +20,7 @@ var readCommand: yargs.CommandModule = {
   handler: readCommandHandler
 }
 
-var writeCommand: yargs.CommandModule = {
+const writeCommand: yargs.CommandModule = {
   command: 'write <contractId>',
   describe: 'Writes an interaction with contract, or simulates a write interaction.',
   builder: yargs =>
@@ -41,7 +43,7 @@ var writeCommand: yargs.CommandModule = {
   handler: writeCommandHandler
 }
 
-var createCommand: yargs.CommandModule = {
+const createCommand: yargs.CommandModule = {
   command: 'create <contractSource> <initStateFile>',
   describe: 'Creates a new contract from a source file or existing contract source already on-chain.',
   builder: yargs =>
@@ -57,7 +59,7 @@ var createCommand: yargs.CommandModule = {
   handler: createCommandHandler
 }
 
-yargs
+yargs // eslint-disable-line
   .command(readCommand)
   .command(writeCommand)
   .command(createCommand)

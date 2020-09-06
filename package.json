@@ -1,6 +1,6 @@
 {
   "name": "smartweave",
-  "version": "0.3.3",
+  "version": "0.3.5",
   "description": "Uses lazy-evaluation to move the burden of contract execution from network nodes to smart contract users.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -21,7 +21,7 @@
   ],
   "bin": {
     "smartweave-cli": "lib/bin/smartweave-cli.js",
-    "smartweave": "smartweave"
+    "smartweave": "lib/bin/smartweave.js"
   },
   "repository": {
     "type": "git",

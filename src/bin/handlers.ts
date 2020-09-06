@@ -3,9 +3,9 @@ import * as Sdk from '..'
 import logger from 'loglevel'
 import Arweave from 'arweave/node'
 
-const arweave = Arweave.init({ host: 'arweave.net', port: 443, protocol: 'https' })
+const arweave = Arweave.init({ host: 'arweave.dev', port: 443, protocol: 'https' })
 
-export function readCommandHandler (argv: any) {
+export async function readCommandHandler (argv: any) {
   const contractId = argv.contractId
   let input = argv.input
 
@@ -15,6 +15,7 @@ export function readCommandHandler (argv: any) {
     jsonInput = typeof input === 'string' && JSON.parse(argv.input)
     jsonInput = typeof jsonInput === 'object' && jsonInput ? jsonInput : undefined
   } catch (e) {}
+
   input = jsonInput || input
 
   if (input) {
