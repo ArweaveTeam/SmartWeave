@@ -44,10 +44,13 @@ export async function writeCommandHandler (argv: any) {
   try {
     let result
 
-    if (dryRun) result = await Sdk.interactWriteDryRun(arweave, wallet, contractId, input)
-    else result = await Sdk.interactWrite(arweave, wallet, contractId, input)
-
-    console.log(`Interaction posted at: ${result}`)
+    if (dryRun) {
+      result = await Sdk.interactWriteDryRun(arweave, wallet, contractId, input)
+      console.log(result)
+    } else {
+      result = await Sdk.interactWrite(arweave, wallet, contractId, input)
+      console.log(`Interaction posted at: ${result}`)
+    }
   } catch (e) {
     logger.error(e)
     logger.error('Unable to excute write.')
