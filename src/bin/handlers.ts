@@ -1,106 +1,100 @@
 import { readFileSync, existsSync } from 'fs'
 import * as Sdk from '..'
-import logger from 'loglevel'
 import Arweave from 'arweave/node'
+import logger from 'loglevel'
+import { getTag } from '../utils'
+import { assert, isExpectedType, getJsonInput } from './utils'
 
-const arweave = Arweave.init({ host: 'arweave.dev', port: 443, protocol: 'https' })
+const arweave = Arweave.init({
+  host: 'arweave.dev',
+  port: 443,
+  protocol: 'https'
+})
 
 export async function readCommandHandler (argv: any) {
   const contractId = argv.contractId
   let input = argv.input
 
-  // Support string JSON input & yargs `foo.bar=3` syntax.
-  let jsonInput: any
-  try {
-    jsonInput = typeof input === 'string' && JSON.parse(argv.input)
-    jsonInput = typeof jsonInput === 'object' && jsonInput ? jsonInput : undefined
-  } catch (e) {}
+  const jsonInput = getJsonInput(input)
 
   input = jsonInput || input
 
-  if (input) {
-    Sdk.interactRead(arweave, undefined, contractId, input)
-      .then(x => console.log(x))
-      .catch(e => {
-        logger.error(e)
-        logger.error(`Unable to read contract: ${contractId}`)
-      })
-  } else {
-    Sdk.readContract(arweave, contractId)
-      .then(x => console.log(x))
-      .catch(e => {
-        logger.error(e)
-        logger.error(`Unable to read contract: ${contractId}`)
-      })
+  try {
+    let result
+
+    if (input) result = await Sdk.interactRead(arweave, undefined, contractId, input)
+    else result = await Sdk.readContract(arweave, contractId)
+
+    console.log(result)
+  } catch (e) {
+    logger.error(e)
+    logger.error(`Unable to read contract: ${contractId}`)
   }
 }
 
-export function writeCommandHandler (argv: any) {
+export async function writeCommandHandler (argv: any) {
   const contractId = argv.contractId
   let input = argv.input
-  let jsonInput: any
   const dryRun = argv.dryRun
   const wallet = JSON.parse(readFileSync(argv.keyFile).toString())
-  try {
-    jsonInput = typeof input === 'string' && JSON.parse(argv.input)
-    jsonInput = typeof jsonInput === 'object' && jsonInput ? jsonInput : undefined
-  } catch (e) {}
+
+  const jsonInput = getJsonInput(input)
   input = jsonInput || input
 
-  if (dryRun) {
-    Sdk.interactWriteDryRun(arweave, wallet, contractId, input)
-      .then(x => console.log(x))
-      .catch(e => {
-        logger.error(e)
-        logger.error('Unable to execute write (dry-run).')
-      })
-  } else {
-    Sdk.interactWrite(arweave, wallet, contractId, input)
-      .then(x => console.log(x))
-      .catch(e => {
-        logger.error(e)
-        logger.error('Unable to excute write.')
-      })
+  try {
+    let result
+
+    if (dryRun) result = await Sdk.interactWriteDryRun(arweave, wallet, contractId, input)
+    else result = await Sdk.interactWrite(arweave, wallet, contractId, input)
+
+    console.log(`Interaction posted at: ${result}`)
+  } catch (e) {
+    logger.error(e)
+    logger.error('Unable to excute write.')
   }
 }
 
-export function createCommandHandler (argv: any) {
-  // TODO: refactor this to do early checks on everything for better error-reporting,
-  // and make it async for readability.
-  // - contractSource exists and seems to be a valid .js file or valid tx.
-  // - initState exists and seems to be a valid .jsonn file.
-  // - contractTx exists and seems to have valid tags.
-
+export async function createCommandHandler (argv: any) {
   const contractSource = argv.contractSource
   const initStateFile = argv.initStateFile
   const wallet = JSON.parse(readFileSync(argv.keyFile).toString())
 
-  if (existsSync(contractSource)) {
-    Sdk.createContract(arweave, wallet, readFileSync(contractSource).toString(), readFileSync(initStateFile).toString())
-      .then(x => {
-        console.log(`Contract ID: ${x}`)
-      })
-      .catch(e => {
-        logger.error(e)
-        logger.error('Unable create contract')
-      })
+  assert(isExpectedType(initStateFile, 'json'), 'The state file must be a json file.')
+
+  // we'll assume all sources that include `.` are a local path since `.` is not a valid char in a trasaction id
+  if (contractSource.includes('.')) {
+    assert(existsSync(contractSource), `The file name provided was not found in your file system: ${contractSource}`)
+
+    assert(isExpectedType(contractSource, 'js'), 'The contract source must be a javascript file.')
+
+    try {
+      const contractId = await Sdk.createContract(arweave, wallet, readFileSync(contractSource).toString(), readFileSync(initStateFile).toString())
+      console.log(`Contract ID: ${contractId}`)
+    } catch (e) {
+      logger.error(e)
+      logger.error('Unable create contract')
+    }
   } else {
-    // Check TX exists.
-    // TODO: Check valid tags.
-    arweave.transactions.get(contractSource)
-      .then(tx => {
-        Sdk.createContractFromTx(arweave, wallet, tx.id, readFileSync(initStateFile).toString())
-          .then(x => {
-            console.log(`Contract ID: ${x}`)
-          })
-          .catch(e => {
-            logger.error(e)
-            logger.error('Unable create contract')
-          })
-      })
-      .catch((e: any) => {
-        logger.error(e)
-        logger.error(`Unable to get contract source tx: ${contractSource}`)
-      })
+    let sourceTx
+
+    try {
+      sourceTx = await arweave.transactions.get(contractSource)
+
+      const appTag = getTag(sourceTx, 'App-Name')
+
+      assert(appTag && appTag === 'SmartWeaveContractSource', 'The source transaction must be a valid smartweave contract source.')
+    } catch (e) {
+      logger.error(e)
+      logger.error(`Unable to find the transaction with your given contract source: ${contractSource}`)
+      return
+    }
+
+    try {
+      const contractId = await Sdk.createContractFromTx(arweave, wallet, sourceTx.id, readFileSync(initStateFile).toString())
+      console.log(`Contract ID: ${contractId}`)
+    } catch (e) {
+      logger.error(e)
+      logger.error('Unable create the contract.')
+    }
   }
 }
