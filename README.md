@@ -27,7 +27,7 @@ smartweave create [SRC LOCATION] [INITIAL STATE FILE] --key-file [YOUR KEYFILE]
 Or, using an existing contract source that is already deployed but with a new initial state and contract id:
 
 ```
-smartweave [SRC TX] [INITIAL STATE FILE] --key-file [YOUR KEYFILE]
+smartweave create [SRC TX] [INITIAL STATE FILE] --key-file [YOUR KEYFILE]
 ```
 
 Check its state:
@@ -47,7 +47,7 @@ When interacting with the contract, the value passed to --input must be valid js
 
 `--input '{ "function": "transfer", "qty": 1984 }'`
 
-To test a contract interaction without writing it to the network, append `--dry-run` to your `--interact` call.
+To test a contract interaction without writing it to the network, append `--dry-run` to your `write` call.
 
 ## License
 
