@@ -1,59 +1,56 @@
 
-export function handle(state, action) {
-  
-  let balances = state.balances;
-  let input = action.input;
-  let caller = action.caller;
+export function handle (state, action) {
+  const balances = state.balances
+  const input = action.input
+  const caller = action.caller
 
-  if (input.function == 'transfer') {
-
-    let target = input.target;
-    let qty = input.qty;
+  if (input.function === 'transfer') {
+    const target = input.target
+    const qty = input.qty
 
     if (!Number.isInteger(qty)) {
-      throw new ContractError(`Invalid value for "qty". Must be an integer`);
+      throw new ContractError('Invalid value for "qty". Must be an integer')
     }
 
     if (!target) {
-      throw new ContractError(`No target specified`);
+      throw new ContractError('No target specified')
     }
 
-    if (qty <= 0 || caller == target) {
-      throw new ContractError('Invalid token transfer');
+    if (qty <= 0 || caller === target) {
+      throw new ContractError('Invalid token transfer')
     }
 
     if (balances[caller] < qty) {
-      throw new ContractError(`Caller balance not high enough to send ${qty} token(s)!`);
+      throw new ContractError(`Caller balance not high enough to send ${qty} token(s)!`)
     }
 
     // Lower the token balance of the caller
-    balances[caller] -= qty;
+    balances[caller] -= qty
     if (target in balances) {
       // Wallet already exists in state, add new tokens
-      balances[target] += qty;
+      balances[target] += qty
     } else {
       // Wallet is new, set starting balance
-      balances[target] = qty;
+      balances[target] = qty
     }
 
-    return { state };
+    return { state }
   }
 
-  if (input.function == 'balance') {
+  if (input.function === 'balance') {
+    const target = input.target
+    const ticker = state.ticker
 
-    let target = input.target;
-    let ticker = state.ticker;
-    
     if (typeof target !== 'string') {
-      throw new ContractError(`Must specificy target to get balance for`);
+      throw new ContractError('Must specificy target to get balance for')
     }
 
     if (typeof balances[target] !== 'number') {
-      throw new ContractError(`Cannnot get balance, target does not exist`);
+      throw new ContractError('Cannnot get balance, target does not exist')
     }
 
-    return { result: { target, ticker, balance: balances[target] } };
+    return { result: { target, ticker, balance: balances[target] } }
   }
 
-  throw new ContractError(`No function supplied or function not recognised: "${input.function}"`);
+  throw new ContractError(`No function supplied or function not recognised: "${input.function}"`)
 }

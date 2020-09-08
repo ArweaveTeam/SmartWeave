@@ -12,7 +12,7 @@
 
 The SmartWeave SDK can be installed from Arweave:
 
-`npm install https://arweave.net/AM-u4X2po-3Tx7fma3lRonCfLwrjI42IALwDL_YFXBs`
+`npm install smartweave`
 
 You can import the full API or individual methods.
 
@@ -34,7 +34,7 @@ async function createContract(arweave: Arweave, wallet: JWKInterface, contractSr
 
 Create a new contract from a contract source file and an initial state.
 Returns the contract id.
-  
+
 - `arweave`       an Arweave client instance
 - `wallet`        a wallet private or public key
 - `contractSrc`   the contract source code as string.  

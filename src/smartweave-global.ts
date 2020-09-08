@@ -1,7 +1,6 @@
-import Arweave from "arweave/node";
-import { InteractionTx } from "./interaction-tx";
-import { unpackTags } from "./utils";
-import { readContract } from "./contract-read";
+import Arweave from 'arweave/node'
+import { InteractionTx } from './interaction-tx'
+import { readContract } from './contract-read'
 
 /**
  *
@@ -25,7 +24,6 @@ import { readContract } from "./contract-read";
  *
  */
 export class SmartWeaveGlobal {
-
   transaction: Transaction
   block: Block
   arweave: Pick<Arweave, 'ar' | 'wallets' | 'utils' | 'crypto'>
@@ -34,25 +32,25 @@ export class SmartWeaveGlobal {
   }
 
   contracts: {
-    readContractState(contractId: string): Promise<any>
+    readContractState: (contractId: string) => Promise<any>
   }
 
   _activeTx?: InteractionTx
 
-  get _isDryRunning() {
+  get _isDryRunning () {
     return !this._activeTx
   }
 
-  constructor(arweave: Arweave, contract: { id: string }) {
+  constructor (arweave: Arweave, contract: { id: string }) {
     this.arweave = {
       ar: arweave.ar,
       utils: arweave.utils,
       wallets: arweave.wallets,
-      crypto: arweave.crypto,
+      crypto: arweave.crypto
     }
-    this.contract = contract;
-    this.transaction = new Transaction(this);
-    this.block = new Block(this);
+    this.contract = contract
+    this.transaction = new Transaction(this)
+    this.block = new Block(this)
     this.contracts = {
       readContractState: (contractId: string, height?: number) => readContract(arweave, contractId, height || (this._isDryRunning ? Number.POSITIVE_INFINITY : this.block.height))
     }
@@ -60,68 +58,66 @@ export class SmartWeaveGlobal {
 }
 
 class Transaction {
-
-  constructor(private global: SmartWeaveGlobal) {
+  constructor (private readonly global: SmartWeaveGlobal) {
   }
 
-  get id() {
+  get id () {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx');
+      throw new Error('No current Tx')
     }
     return this.global._activeTx.id
   }
 
-  get owner() {
+  get owner () {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx');
+      throw new Error('No current Tx')
     }
     return this.global._activeTx.owner.address
   }
 
-  get target() {
+  get target () {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx');
+      throw new Error('No current Tx')
     }
     return this.global._activeTx.recipient
   }
 
-  get tags() {
+  get tags () {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx');
+      throw new Error('No current Tx')
     }
     return this.global._activeTx.tags
   }
 
-  get quantity() {
+  get quantity () {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx');
+      throw new Error('No current Tx')
     }
     return this.global._activeTx.quantity.winston
   }
 
-  get reward() {
+  get reward () {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx');
+      throw new Error('No current Tx')
     }
     return this.global._activeTx.fee.winston
   }
-
 }
 
 class Block {
-
-  constructor(private global: SmartWeaveGlobal) {
+  constructor (private readonly global: SmartWeaveGlobal) {
   }
 
-  get height() {
+  get height () {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx');
+      throw new Error('No current Tx')
     }
     return this.global._activeTx.block.height
   }
-  get indep_hash() {
+
+  get indep_hash () {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx');
+      throw new Error('No current Tx')
     }
     return this.global._activeTx.block.id
   }
