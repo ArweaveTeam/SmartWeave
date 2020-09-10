@@ -29,6 +29,13 @@ interface SyncOptions {
   contractDependencies: object
 }
 
+interface SyncedContractInfo {
+  state: any
+  endHeight: number
+  contractSrc: string
+  minFee: number
+}
+
 /**
  * Replays a contract to its state.
  *
@@ -41,7 +48,7 @@ interface SyncOptions {
  * @param options.minFee         The minimum fee required for contract interactions
  * @param options.contractDependencies    Any inputs running the contract depends on
  */
-export async function syncContract (arweave: Arweave, contractId: string, options: Partial<SyncOptions> = {}) {
+export async function syncContract (arweave: Arweave, contractId: string, options: Partial<SyncOptions> = {}): Promise<SyncedContractInfo> {
   let endHeight = options.endHeight
   if (!endHeight) {
     const networkInfo = await arweave.network.getInfo()
