@@ -104,6 +104,23 @@ Queries all interaction transactions and replays a contract to its latest state.
 - `contractId`  the Transaction Id of the contract
 - `height`      if specified the contract will be replayed only to this block height
 
+### `syncContract`
+
+```typescript
+async function syncContract(arweave: Arweave, contractId: string, options: Partial<SyncOptions> = {}): Promise<SyncedContractInfo>
+```
+
+Replay the contract to its latests state. Without any options, syncContract() is the same as readContract() but syncContract can also take the contracts state at a previous block height and replay the contract from there.
+
+- `arweave`                an Arweave client instance
+- `contractId`             the Transaction Id of the contract
+- `options.contractSrc`    The source code of the contract as a string
+- `options.startHeight`    The block height to start syncing transactions at
+- `options.endHeight`      The height to stop syncing transactions at
+- `options.state`          The state of the contract at block (options.startHeight - 1)
+- `options.minFee`         The minimum fee required for contract interactions
+- `options.dependencies`    Any additional inputs running the contract depends on
+
 ### `selectWeightedPstHolder`
 
 ```typescript
