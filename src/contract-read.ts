@@ -1,5 +1,5 @@
 import Arweave from 'arweave/node'
-import { loadContract } from './contract-load'
+import { loadContract, createContractExecutionEnvironment } from './contract-load'
 import { arrayToHex, formatTags, log } from './utils'
 import { execute, ContractInteraction } from './contract-step'
 import { InteractionTx } from './interaction-tx'
@@ -14,15 +14,44 @@ import { InteractionTx } from './interaction-tx'
  * @param height      if specified the contract will be replayed only to this block height
  */
 export async function readContract (arweave: Arweave, contractId: string, height?: number): Promise<any> {
-  if (!height) {
+  const { state } = await syncContract(arweave, contractId, { endHeight: height })
+
+  return state
+}
+
+interface SyncOptions {
+  contractSrc: string
+  startHeight: number
+  endHeight: number
+  state: any
+  minFee: number
+  // allows contracts to efficiently use dependencies that would expensive to constantly instantiate (like ipfs for interacting with DIDs)
+  contractDependencies: object
+}
+
+/**
+ * Replays a contract to its state.
+ *
+ * @param arweave                an Arweave client instance
+ * @param contractId             the Transaction Id of the contract
+ * @param options.contractSrc    The source code of the contract as a string
+ * @param options.startHeight    The block height to start syncing transactions at
+ * @param options.endHeight      The height to stop syncing transactions at
+ * @param options.state          The state of the contract at block (options.startHeight - 1)
+ * @param options.minFee         The minimum fee required for contract interactions
+ * @param options.contractDependencies    Any inputs running the contract depends on
+ */
+export async function syncContract (arweave: Arweave, contractId: string, options: Partial<SyncOptions> = {}) {
+  let endHeight = options.endHeight
+  if (!endHeight) {
     const networkInfo = await arweave.network.getInfo()
-    height = networkInfo.height
+    endHeight = networkInfo.height
   }
 
-  const loadPromise = loadContract(arweave, contractId).catch(err => err)
-  const fetchTxPromsie = fetchTransactions(arweave, contractId, height).catch(err => err)
+  const contractInfoPromise = getContractInfo(arweave, contractId, JSON.stringify(options.state), options.contractSrc, options.minFee).catch(err => err)
+  const fetchTxPromise = fetchTransactions(arweave, contractId, endHeight, options.startHeight).catch(err => err)
 
-  const [contractInfo, txInfos] = await Promise.all([loadPromise, fetchTxPromsie])
+  const [contractInfo, txInfos] = await Promise.all([contractInfoPromise, fetchTxPromise])
 
   if (contractInfo instanceof Error) throw contractInfo
   if (txInfos instanceof Error) throw txInfos
@@ -65,7 +94,8 @@ export async function readContract (arweave: Arweave, contractId: string, height
 
     const interaction: ContractInteraction = {
       input,
-      caller: currentTx.owner.address
+      caller: currentTx.owner.address,
+      ...options.contractDependencies
     }
 
     swGlobal._activeTx = currentTx
@@ -84,7 +114,29 @@ export async function readContract (arweave: Arweave, contractId: string, height
     state = result.state
   }
 
-  return state
+  const { minFee, contractSrc } = contractInfo
+
+  return {
+    state,
+    endHeight,
+    minFee,
+    contractSrc
+  }
+}
+
+async function getContractInfo (arweave: Arweave, contractId: string, state?: string, contractSrc?: string, minFee?: number) {
+  if (state && contractSrc) {
+    const { handler, swGlobal } = createContractExecutionEnvironment(arweave, contractSrc, contractId)
+
+    return {
+      initState: state,
+      handler,
+      swGlobal,
+      minFee
+    }
+  }
+
+  return await loadContract(arweave, contractId)
 }
 
 // Sort the transactions based on the sort key generated in addSortKey()
@@ -120,18 +172,19 @@ interface TagFilter {
 }
 
 interface BlockFilter {
-  max: Number
+  max: number
+  min: number
 }
 
 interface ReqVariables {
   tags: TagFilter[]
   blockFilter: BlockFilter
-  first: Number
+  first: number
   after?: string
 }
 
 // fetch all contract interactions up to the specified block height
-async function fetchTransactions (arweave: Arweave, contractId: string, height: number) {
+async function fetchTransactions (arweave: Arweave, contractId: string, endHeight: number, startHeight = 0) {
   let variables: ReqVariables = {
     tags: [{
       name: 'App-Name',
@@ -142,7 +195,8 @@ async function fetchTransactions (arweave: Arweave, contractId: string, height: 
       values: [contractId]
     }],
     blockFilter: {
-      max: height
+      max: endHeight,
+      min: startHeight
     },
     first: MAX_REQUEST
   }
