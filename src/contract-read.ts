@@ -26,7 +26,7 @@ interface SyncOptions {
   state: any
   minFee: number
   // allows contracts to efficiently use dependencies that would expensive to constantly instantiate (like ipfs for interacting with DIDs)
-  contractDependencies: object
+  dependencies: object
 }
 
 interface SyncedContractInfo {
@@ -46,7 +46,7 @@ interface SyncedContractInfo {
  * @param options.endHeight      The height to stop syncing transactions at
  * @param options.state          The state of the contract at block (options.startHeight - 1)
  * @param options.minFee         The minimum fee required for contract interactions
- * @param options.contractDependencies    Any inputs running the contract depends on
+ * @param options.dependencies    Any inputs running the contract depends on
  */
 export async function syncContract (arweave: Arweave, contractId: string, options: Partial<SyncOptions> = {}): Promise<SyncedContractInfo> {
   let endHeight = options.endHeight
@@ -102,7 +102,7 @@ export async function syncContract (arweave: Arweave, contractId: string, option
     const interaction: ContractInteraction = {
       input,
       caller: currentTx.owner.address,
-      ...options.contractDependencies
+      ...options.dependencies
     }
 
     swGlobal._activeTx = currentTx
