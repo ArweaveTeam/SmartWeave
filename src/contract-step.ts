@@ -7,6 +7,7 @@
 export interface ContractInteraction {
   input: any
   caller: string
+  [key: string]: any
 }
 
 /**
