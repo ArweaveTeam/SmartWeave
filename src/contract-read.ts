@@ -141,6 +141,13 @@ async function getContractInfo (arweave: Arweave, contractId: string, state?: st
       swGlobal,
       minFee
     }
+  } else if (state) {
+    const contractInfo = await loadContract(arweave, contractId)
+
+    return {
+      ...contractInfo,
+      initState: state
+    }
   }
 
   return await loadContract(arweave, contractId)
