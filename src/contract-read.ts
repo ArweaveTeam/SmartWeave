@@ -55,7 +55,7 @@ export async function syncContract (arweave: Arweave, contractId: string, option
     endHeight = networkInfo.height
   }
 
-  const contractInfoPromise = getContractInfo(arweave, contractId, JSON.stringify(options.state), options.contractSrc, options.minFee).catch(err => err)
+  const contractInfoPromise = getContractInfo(arweave, contractId, options.state, options.contractSrc, options.minFee).catch(err => err)
   const fetchTxPromise = fetchTransactions(arweave, contractId, endHeight, options.startHeight).catch(err => err)
 
   const [contractInfo, txInfos] = await Promise.all([contractInfoPromise, fetchTxPromise])
@@ -88,7 +88,7 @@ export async function syncContract (arweave: Arweave, contractId: string, option
 
     // Check that input is not an array. If a tx has multiple input tags, it will be an array
     if (Array.isArray(input)) {
-      console.warn(`Skipping tx with multiple Input tags - ${currentTx.id}`)
+      log(`Skipping tx with multiple Input tags - ${currentTx.id}`)
       continue
     }
 
@@ -136,7 +136,7 @@ async function getContractInfo (arweave: Arweave, contractId: string, state?: st
     const { handler, swGlobal } = createContractExecutionEnvironment(arweave, contractSrc, contractId)
 
     return {
-      initState: state,
+      initState: JSON.stringify(state),
       handler,
       swGlobal,
       minFee
@@ -146,7 +146,7 @@ async function getContractInfo (arweave: Arweave, contractId: string, state?: st
 
     return {
       ...contractInfo,
-      initState: state
+      initState: JSON.stringify(state)
     }
   }
 
