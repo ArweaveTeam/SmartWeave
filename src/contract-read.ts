@@ -19,7 +19,7 @@ export async function readContract (arweave: Arweave, contractId: string, height
   return state
 }
 
-interface SyncOptions {
+export interface SyncOptions {
   contractSrc: string
   startHeight: number
   endHeight: number
@@ -29,7 +29,7 @@ interface SyncOptions {
   dependencies: object
 }
 
-interface SyncedContractInfo {
+export interface SyncedContractInfo {
   state: any
   endHeight: number
   contractSrc: string
@@ -88,7 +88,7 @@ export async function syncContract (arweave: Arweave, contractId: string, option
 
     // Check that input is not an array. If a tx has multiple input tags, it will be an array
     if (Array.isArray(input)) {
-      log(`Skipping tx with multiple Input tags - ${currentTx.id}`)
+      log(arweave, `Skipping tx with multiple Input tags - ${currentTx.id}`)
       continue
     }
 
