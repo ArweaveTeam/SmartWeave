@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/ArweaveTeam/SmartWeave#readme",
   "dependencies": {
-    "@weavery/clarity": "^0.1.0",
+    "@weavery/clarity": "^0.1.1",
     "arweave": "^1.9.1",
     "bignumber.js": "^9.0.0",
     "loglevel": "^1.7.0",
