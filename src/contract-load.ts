@@ -1,4 +1,5 @@
 import Arweave from 'arweave/node'
+import * as clarity from '@weavery/clarity'
 import { getTag } from './utils'
 import { ContractHandler } from './contract-step'
 import { SmartWeaveGlobal } from './smartweave-global'
@@ -55,16 +56,20 @@ export function createContractExecutionEnvironment (arweave: Arweave, contractSr
 
   contractSrc = contractSrc.replace(/export\s+async\s+function\s+handle/gmu, 'async function handle')
   contractSrc = contractSrc.replace(/export\s+function\s+handle/gmu, 'function handle')
-  const ContractErrorDef = 'class ContractError extends Error { constructor(message) { super(message); this.name = \'ContractError\' } };'
-  const ContractAssertDef = 'function ContractAssert(cond, message) { if (!cond) throw new ContractError(message) };'
-  const returningSrc = `const BigNumber = bigNumberCtor; const SmartWeave = swGlobal;\n\n${ContractErrorDef}\n${ContractAssertDef}\n${contractSrc}\n\n;return handle;`
+  const returningSrc = `
+    const [SmartWeave, BigNumber, clarity] = arguments;
+    class ContractError extends Error { constructor(message) { super(message); this.name = \'ContractError\' } };
+    function ContractAssert(cond, message) { if (!cond) throw new ContractError(message) };
+    ${contractSrc};
+    return handle;
+  `
   const swGlobal = new SmartWeaveGlobal(arweave, { id: contractId })
-  const getContractFunction = new Function('swGlobal', 'bigNumberCtor', returningSrc) // eslint-disable-line
+  const getContractFunction = new Function(returningSrc) // eslint-disable-line
 
   // console.log(returningSrc);
 
   return {
-    handler: getContractFunction(swGlobal, BigNumber) as ContractHandler,
+    handler: getContractFunction(swGlobal, BigNumber, clarity) as ContractHandler,
     swGlobal
   }
 }

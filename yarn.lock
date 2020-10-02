@@ -199,10 +199,10 @@
     "@typescript-eslint/types" "4.0.1"
     eslint-visitor-keys "^2.0.0"
 
-"@weavery/clarity@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@weavery/clarity/-/clarity-0.1.0.tgz#70353b708cc530d32c599a60c81dde4e079b5252"
-  integrity sha512-8IDDTTx6WDXGcf8yKTzPr6gsA0qQW0aIPQn7eycb4gdMHmsESHTOh/AizmBLph7WsLEQuaB5tfSeIj8kaEECrg==
+"@weavery/clarity@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@weavery/clarity/-/clarity-0.1.1.tgz#86a2b8777b1b00bd19d14137ddc3b6b7ed4e5e32"
+  integrity sha512-h0YEPlNqiSyBs+72BVkB1hzBp1gRL3k9L7k1T9RVGheoDvRC5NOGkuoqnvEjq4Vfuz8hpsKyT0TUpQXF1y5uhg==
   dependencies:
     "@types/keccak" "^3.0.1"
     keccak "^3.0.1"
