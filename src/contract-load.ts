@@ -58,6 +58,7 @@ export function createContractExecutionEnvironment (arweave: Arweave, contractSr
   contractSrc = contractSrc.replace(/export\s+function\s+handle/gmu, 'function handle')
   const returningSrc = `
     const [SmartWeave, BigNumber, clarity] = arguments;
+    clarity.SmartWeave = SmartWeave;
     class ContractError extends Error { constructor(message) { super(message); this.name = \'ContractError\' } };
     function ContractAssert(cond, message) { if (!cond) throw new ContractError(message) };
     ${contractSrc};
