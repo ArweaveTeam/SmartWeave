@@ -60,9 +60,4 @@ const createCommand: yargs.CommandModule = {
 };
 
 // tslint:disable-next-line: no-unused-expression
-yargs
-  .command(readCommand)
-  .command(writeCommand)
-  .command(createCommand)
-  .demandCommand()
-  .help().argv;
+yargs.command(readCommand).command(writeCommand).command(createCommand).demandCommand().help().argv;

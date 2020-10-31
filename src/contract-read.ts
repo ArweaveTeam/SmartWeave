@@ -45,15 +45,15 @@ export async function readContract(arweave: Arweave, contractId: string, height?
   const { handler, swGlobal } = contractInfo;
 
   const r = storage.getItem('sw_latest');
-  if(r) {
-    const latest: {id: string, state: any } = JSON.parse(r);
-    
-    if(txInfos[txInfos.length - 1].node.id !== latest.id) {
+  if (r) {
+    const latest: { id: string; state: any } = JSON.parse(r);
+
+    if (txInfos[txInfos.length - 1].node.id !== latest.id) {
       return latest.state;
     }
   }
 
-  for(const txInfo of txInfos) {
+  for (const txInfo of txInfos) {
     const tags = formatTags(txInfo.node.tags);
 
     const currentTx: InteractionTx = {
@@ -96,7 +96,7 @@ export async function readContract(arweave: Arweave, contractId: string, height?
 
     state = result.state;
   }
-  storage.setItem('sw_latest', JSON.stringify({id: txInfos[txInfos.length - 1].node.id, state}));
+  storage.setItem('sw_latest', JSON.stringify({ id: txInfos[txInfos.length - 1].node.id, state }));
 
   return state;
 }

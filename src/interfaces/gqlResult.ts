@@ -42,12 +42,12 @@ export interface GQLNodeInterface {
   block: GQLBlockInterface;
   parent: {
     id: string;
-  }
+  };
 }
 
 export interface GQLEdgeInterface {
   cursor: string;
-  node: GQLNodeInterface; 
+  node: GQLNodeInterface;
 }
 
 export interface GQLTransactionsResultInterface {
@@ -58,5 +58,5 @@ export interface GQLTransactionsResultInterface {
 export default interface GQLResultInterface {
   data: {
     transactions: GQLTransactionsResultInterface;
-  }
+  };
 }

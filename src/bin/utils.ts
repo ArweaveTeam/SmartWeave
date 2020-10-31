@@ -17,7 +17,7 @@ export function getJsonInput(input: string): object | undefined {
   try {
     jsonInput = typeof input === 'string' && JSON.parse(input);
     jsonInput = typeof jsonInput === 'object' && jsonInput ? jsonInput : undefined;
-  // tslint:disable-next-line: no-empty
+    // tslint:disable-next-line: no-empty
   } catch (e) {}
 
   return jsonInput;

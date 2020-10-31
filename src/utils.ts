@@ -15,7 +15,7 @@ export function getTag(tx: Transaction, name: string) {
       if (tag.get('name', { decode: true, string: true }) === name) {
         return tag.get('value', { decode: true, string: true });
       }
-    // tslint:disable-next-line: no-empty
+      // tslint:disable-next-line: no-empty
     } catch (e) {}
   }
 

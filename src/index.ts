@@ -24,5 +24,5 @@ export {
   interactRead,
   readContract,
   selectWeightedPstHolder,
-  smartweave
+  smartweave,
 };
