@@ -4,6 +4,17 @@ import { interactWrite, interactWriteDryRun, interactRead } from './contract-int
 import { readContract } from './contract-read';
 import { selectWeightedPstHolder } from './weighted-pst-holder';
 
+const smartweave = {
+  createContract,
+  createContractFromTx,
+  loadContract,
+  interactWrite,
+  interactWriteDryRun,
+  interactRead,
+  readContract,
+  selectWeightedPstHolder,
+};
+
 export {
   createContract,
   createContractFromTx,
@@ -13,4 +24,5 @@ export {
   interactRead,
   readContract,
   selectWeightedPstHolder,
+  smartweave
 };

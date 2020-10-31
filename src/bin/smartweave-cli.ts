@@ -1,22 +1,24 @@
 #!/usr/bin/env node
 
 // Include dependencies.
-const fs = require('fs');
-const Arweave = require('arweave');
-const argv = require('yargs').argv;
-const smartweave = require('../');
+import * as fs from 'fs';
+import Arweave from 'arweave';
+import * as yargs from 'yargs';
+import { smartweave } from '../';
+
+const argv = yargs.argv;
 
 // Set Arweave parameters from commandline or defaults.
-const arweavePort = argv.arweavePort ? argv.arweavePort : 443;
-const arweaveHost = argv.arweaveHost ? argv.arweaveHost : 'arweave.dev';
-const arweaveProtocol = argv.arweaveProtocol ? argv.arweaveProtocol : 'https';
+const arweavePort: number = argv.arweavePort ? +argv.arweavePort : 443;
+const arweaveHost: string = argv.arweaveHost ? argv.arweaveHost.toString() : 'arweave.dev';
+const arweaveProtocol: string = argv.arweaveProtocol ? argv.arweaveProtocol.toString() : 'https';
 
 if (!argv.keyFile && !argv.walletFile) {
   console.log('ERROR: Please specify a wallet file to load using argument ' + "'--key-file <PATH>'.");
   process.exit();
 }
 
-const rawWallet = fs.readFileSync(argv.keyFile || argv.walletFile);
+const rawWallet = fs.readFileSync(argv.keyFile?.toString() || argv.walletFile?.toString(), 'utf-8');
 const wallet = JSON.parse(rawWallet);
 
 const arweave = Arweave.init({
@@ -38,18 +40,18 @@ if (argv.create) {
 
   if (argv.contractSrc) {
     // Create from a new source file.
-    const contractSrc = fs.readFileSync(argv.contractSrc);
-    const minFee = argv.minFee ? argv.minFee : '';
-    const initState = fs.readFileSync(argv.initState);
+    const contractSrc = fs.readFileSync(argv.contractSrc.toString(), 'utf8');
+    const minFee = argv.minFee ? +argv.minFee : 0;
+    const initState = fs.readFileSync(argv.initState.toString(), 'utf8');
 
     smartweave.createContract(arweave, wallet, contractSrc, initState, minFee).then((contractID: string) => {
       console.log('Contract created in TX: ' + contractID);
     });
   } else {
     // Create from existing tx.
-    const minFee = argv.minFee ? argv.minFee : '';
-    const initState = fs.readFileSync(argv.initState);
-    const contractSrcTx = argv.contractSrcTx;
+    const minFee = argv.minFee ? +argv.minFee : 0;
+    const initState = fs.readFileSync(argv.initState.toString(), 'utf8');
+    const contractSrcTx = argv.contractSrcTx.toString();
     smartweave.createContractFromTx(arweave, wallet, contractSrcTx, initState, minFee).then((contractID: string) => {
       console.log('Contract created in TX: ' + contractID);
     });
@@ -61,14 +63,14 @@ if (argv.interact) {
     console.log('ERROR: Please specify a contract to interact with using ' + "'--contract <TXID>'.");
     process.exit();
   }
-  const contractID = argv.contract;
+  const contractID = argv.contract.toString();
   let input: string = '';
   const dryRun = !!argv.dryRun;
 
   if (argv.inputFile) {
-    input = fs.readFileSync(argv.inputFile).toString();
+    input = fs.readFileSync(argv.inputFile.toString(), 'utf8');
   } else if (argv.input) {
-    input = argv.input;
+    input = argv.input.toString();
   } else {
     console.log('ERROR: Please specify input to the contract using ' + "'--input \"INPUT VAR\"' or '--input-file <FILE>'.");
     process.exit();
@@ -97,7 +99,7 @@ if (argv.getState) {
     console.log('ERROR: Please specify a contract to interact with using ' + "'--contract <TXID>'.");
     process.exit();
   }
-  const contractID = argv.contract;
+  const contractID = argv.contract.toString();
 
   smartweave.readContract(arweave, contractID).then((state: any) => {
     if (!state) {

@@ -37,28 +37,29 @@
   },
   "homepage": "https://github.com/ArweaveTeam/SmartWeave#readme",
   "dependencies": {
-    "@weavery/clarity": "^0.1.3",
+    "@weavery/clarity": "^0.1.5",
     "arweave": "^1.9.1",
-    "bignumber.js": "^9.0.0",
+    "bignumber.js": "^9.0.1",
     "localporridge": "^1.0.0",
     "loglevel": "^1.7.0",
-    "yargs": "^15.3.1"
+    "yargs": "^16.1.0"
   },
   "devDependencies": {
-    "@types/node": "^14.6.3",
-    "@typescript-eslint/eslint-plugin": "^4.0.1",
-    "@typescript-eslint/parser": "^4.0.1",
+    "@types/node": "^14.14.6",
+    "@types/yargs": "^15.0.9",
+    "@typescript-eslint/eslint-plugin": "^4.6.0",
+    "@typescript-eslint/parser": "^4.6.0",
     "cp-cli": "^2.0.0",
-    "eslint": "^6.8.0",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-config-standard-with-typescript": "^18.0.2",
-    "eslint-plugin-import": "^2.22.0",
+    "eslint": "^7.12.1",
+    "eslint-config-standard": "^16.0.1",
+    "eslint-config-standard-with-typescript": "^19.0.1",
+    "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.2",
     "prettier": "^2.1.2",
     "rimraf": "^3.0.2",
     "ts-node": "^9.0.0",
-    "typescript": "^4.0.2"
+    "typescript": "^4.0.5"
   }
 }
