@@ -6,7 +6,7 @@ import { InteractionTx } from './interaction-tx';
 import { GQLEdgeInterface } from './interfaces/gqlResult';
 
 let storage = window?.localStorage;
-if(typeof localStorage === 'undefined') {
+if (typeof localStorage === 'undefined') {
   // tslint:disable-next-line: no-var-requires
   const localPorridge = require('localporridge');
   storage = new localPorridge('./.swcache.json');
