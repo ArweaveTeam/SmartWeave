@@ -20,9 +20,9 @@ export async function readContract (arweave: Arweave, contractId: string, height
   }
 
   const loadPromise = loadContract(arweave, contractId).catch(err => err)
-  const fetchTxPromsie = fetchTransactions(arweave, contractId, height).catch(err => err)
+  const fetchTxPromise = fetchTransactions(arweave, contractId, height).catch(err => err)
 
-  const [contractInfo, txInfos] = await Promise.all([loadPromise, fetchTxPromsie])
+  const [contractInfo, txInfos] = await Promise.all([loadPromise, fetchTxPromise])
 
   if (contractInfo instanceof Error) throw contractInfo
   if (txInfos instanceof Error) throw txInfos

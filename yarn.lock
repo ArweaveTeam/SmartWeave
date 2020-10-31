@@ -1267,6 +1267,11 @@ load-json-file@^2.0.0:
     pify "^2.0.0"
     strip-bom "^3.0.0"
 
+localporridge@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/localporridge/-/localporridge-1.0.0.tgz#718eb86547b075ec78b369a26b7d1b6fddd171d5"
+  integrity sha512-mCaTeK+CMBUElyxQiLOIB0GdEOTZwvYl/VyqynJ+ApQbelItugJnp4+45jBcFbSAvFV9lStnkCK1ZbCNL75iUg==
+
 locate-path@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/locate-path/-/locate-path-2.0.0.tgz#2b568b265eec944c6d9c0de9c3dbbbca0354cd8e"

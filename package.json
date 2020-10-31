@@ -38,6 +38,7 @@
     "@weavery/clarity": "^0.1.3",
     "arweave": "^1.9.1",
     "bignumber.js": "^9.0.0",
+    "localporridge": "^1.0.0",
     "loglevel": "^1.7.0",
     "yargs": "^15.3.1"
   },
