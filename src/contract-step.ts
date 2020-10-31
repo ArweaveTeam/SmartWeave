@@ -65,14 +65,14 @@ export async function execute(handler: ContractHandler, interaction: ContractInt
       return {
         type: 'error',
         result: err.message,
-        state: state,
+        state,
       };
     }
 
     return {
       type: 'exception',
       result: `${(err && err.stack) || (err && err.message)}`,
-      state: state,
+      state,
     };
   }
 }

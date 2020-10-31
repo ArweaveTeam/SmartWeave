@@ -58,6 +58,7 @@ export class SmartWeaveGlobal {
   }
 }
 
+// tslint:disable-next-line: max-classes-per-file
 class Transaction {
   constructor(private readonly global: SmartWeaveGlobal) {}
 
@@ -104,6 +105,7 @@ class Transaction {
   }
 }
 
+// tslint:disable-next-line: max-classes-per-file
 class Block {
   constructor(private readonly global: SmartWeaveGlobal) {}
 

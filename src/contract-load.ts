@@ -24,9 +24,9 @@ export async function loadContract(arweave: Arweave, contractID: string) {
 
   return {
     id: contractID,
-    contractSrc: contractSrc,
+    contractSrc,
     initState: state,
-    minFee: minFee,
+    minFee,
     contractTX,
     handler,
     swGlobal,

@@ -11,7 +11,7 @@ import { readCommandHandler, writeCommandHandler, createCommandHandler } from '.
 const readCommand: yargs.CommandModule = {
   command: 'read <contractId>',
   describe: 'Read a contracts state or executes a read interaction.',
-  builder: (yargs) =>
+  builder: () =>
     yargs
       .options('input', {
         describe: 'Optional input to the contract, if not provided, contracts full state will be read',
@@ -23,7 +23,7 @@ const readCommand: yargs.CommandModule = {
 const writeCommand: yargs.CommandModule = {
   command: 'write <contractId>',
   describe: 'Writes an interaction with contract, or simulates a write interaction.',
-  builder: (yargs) =>
+  builder: () =>
     yargs
       .options({
         'key-file': {
@@ -46,7 +46,7 @@ const writeCommand: yargs.CommandModule = {
 const createCommand: yargs.CommandModule = {
   command: 'create <contractSource> <initStateFile>',
   describe: 'Creates a new contract from a source file or existing contract source already on-chain.',
-  builder: (yargs) =>
+  builder: () =>
     yargs
       .options({
         'key-file': {
@@ -59,7 +59,8 @@ const createCommand: yargs.CommandModule = {
   handler: createCommandHandler,
 };
 
-yargs // eslint-disable-line
+// tslint:disable-next-line: no-unused-expression
+yargs
   .command(readCommand)
   .command(writeCommand)
   .command(createCommand)

@@ -47,7 +47,7 @@ export async function interactWriteDryRun(
   const from = await arweave.wallets.jwkToAddress(wallet);
 
   const interaction: ContractInteraction = {
-    input: input,
+    input,
     caller: from,
   };
 
@@ -96,7 +96,7 @@ export async function interactRead(arweave: Arweave, wallet: JWKInterface | unde
   const from = wallet ? await arweave.wallets.jwkToAddress(wallet) : '';
 
   const interaction: ContractInteraction = {
-    input: input,
+    input,
     caller: from,
   };
 

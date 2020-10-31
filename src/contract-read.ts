@@ -53,11 +53,11 @@ export async function readContract(arweave: Arweave, contractId: string, height?
     }
   }
 
-  for (let i = 0; i < txInfos.length; i++) {
-    const tags = formatTags(txInfos[i].node.tags);
+  for(const txInfo of txInfos) {
+    const tags = formatTags(txInfo.node.tags);
 
     const currentTx: InteractionTx = {
-      ...txInfos[i].node,
+      ...txInfo.node,
       tags,
     };
 
@@ -134,13 +134,13 @@ interface TagFilter {
 }
 
 interface BlockFilter {
-  max: Number;
+  max: number;
 }
 
 interface ReqVariables {
   tags: TagFilter[];
   blockFilter: BlockFilter;
-  first: Number;
+  first: number;
   after?: string;
 }
 
