@@ -1,6 +1,6 @@
-import Arweave from 'arweave/node'
-import { InteractionTx } from './interaction-tx'
-import { readContract } from './contract-read'
+import Arweave from 'arweave';
+import { InteractionTx } from './interaction-tx';
+import { readContract } from './contract-read';
 
 /**
  *
@@ -24,101 +24,100 @@ import { readContract } from './contract-read'
  *
  */
 export class SmartWeaveGlobal {
-  transaction: Transaction
-  block: Block
-  arweave: Pick<Arweave, 'ar' | 'wallets' | 'utils' | 'crypto'>
+  transaction: Transaction;
+  block: Block;
+  arweave: Pick<Arweave, 'ar' | 'wallets' | 'utils' | 'crypto'>;
   contract: {
-    id: string
-  }
+    id: string;
+  };
 
   contracts: {
-    readContractState: (contractId: string) => Promise<any>
+    readContractState: (contractId: string) => Promise<any>;
+  };
+
+  _activeTx?: InteractionTx;
+
+  get _isDryRunning() {
+    return !this._activeTx;
   }
 
-  _activeTx?: InteractionTx
-
-  get _isDryRunning () {
-    return !this._activeTx
-  }
-
-  constructor (arweave: Arweave, contract: { id: string }) {
+  constructor(arweave: Arweave, contract: { id: string }) {
     this.arweave = {
       ar: arweave.ar,
       utils: arweave.utils,
       wallets: arweave.wallets,
-      crypto: arweave.crypto
-    }
-    this.contract = contract
-    this.transaction = new Transaction(this)
-    this.block = new Block(this)
+      crypto: arweave.crypto,
+    };
+    this.contract = contract;
+    this.transaction = new Transaction(this);
+    this.block = new Block(this);
     this.contracts = {
-      readContractState: (contractId: string, height?: number) => readContract(arweave, contractId, height || (this._isDryRunning ? Number.POSITIVE_INFINITY : this.block.height))
-    }
+      readContractState: (contractId: string, height?: number) =>
+        readContract(arweave, contractId, height || (this._isDryRunning ? Number.POSITIVE_INFINITY : this.block.height)),
+    };
   }
 }
 
 class Transaction {
-  constructor (private readonly global: SmartWeaveGlobal) {
+  constructor(private readonly global: SmartWeaveGlobal) {}
+
+  get id() {
+    if (!this.global._activeTx) {
+      throw new Error('No current Tx');
+    }
+    return this.global._activeTx.id;
   }
 
-  get id () {
+  get owner() {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx')
+      throw new Error('No current Tx');
     }
-    return this.global._activeTx.id
+    return this.global._activeTx.owner.address;
   }
 
-  get owner () {
+  get target() {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx')
+      throw new Error('No current Tx');
     }
-    return this.global._activeTx.owner.address
+    return this.global._activeTx.recipient;
   }
 
-  get target () {
+  get tags() {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx')
+      throw new Error('No current Tx');
     }
-    return this.global._activeTx.recipient
+    return this.global._activeTx.tags;
   }
 
-  get tags () {
+  get quantity() {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx')
+      throw new Error('No current Tx');
     }
-    return this.global._activeTx.tags
+    return this.global._activeTx.quantity.winston;
   }
 
-  get quantity () {
+  get reward() {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx')
+      throw new Error('No current Tx');
     }
-    return this.global._activeTx.quantity.winston
-  }
-
-  get reward () {
-    if (!this.global._activeTx) {
-      throw new Error('No current Tx')
-    }
-    return this.global._activeTx.fee.winston
+    return this.global._activeTx.fee.winston;
   }
 }
 
 class Block {
-  constructor (private readonly global: SmartWeaveGlobal) {
+  constructor(private readonly global: SmartWeaveGlobal) {}
+
+  get height() {
+    if (!this.global._activeTx) {
+      throw new Error('No current Tx');
+    }
+    return this.global._activeTx.block.height;
   }
 
-  get height () {
+  get indep_hash() {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx')
+      throw new Error('No current Tx');
     }
-    return this.global._activeTx.block.height
-  }
-
-  get indep_hash () {
-    if (!this.global._activeTx) {
-      throw new Error('No current Tx')
-    }
-    return this.global._activeTx.block.id
+    return this.global._activeTx.block.id;
   }
 }

@@ -1,24 +1,24 @@
-import Transaction from 'arweave/node/lib/transaction'
-import Arweave from 'arweave'
+import Transaction from 'arweave/node/lib/transaction';
+import Arweave from 'arweave';
 
 interface UnformattedTag {
-  name: string
-  value: string
+  name: string;
+  value: string;
 }
 
-export function getTag (tx: Transaction, name: string) {
-  const tags = tx.get('tags') as any
+export function getTag(tx: Transaction, name: string) {
+  const tags = tx.get('tags') as any;
 
   for (let i = 0; i < tags.length; i++) {
     // decoding tags can throw on invalid utf8 data.
     try {
-      if (tags[i].get('name', { decode: true, string: true }) === name) { return tags[i].get('value', { decode: true, string: true }) }
-    } catch (e) {
-
-    }
+      if (tags[i].get('name', { decode: true, string: true }) === name) {
+        return tags[i].get('value', { decode: true, string: true });
+      }
+    } catch (e) {}
   }
 
-  return false
+  return false;
 }
 
 /**
@@ -28,51 +28,51 @@ export function getTag (tx: Transaction, name: string) {
  *
  * @param tx
  */
-export function unpackTags (tx: Transaction): Record<string, string | string[]> {
-  const tags = tx.get('tags') as any
-  const result: Record<string, string | string[]> = {}
+export function unpackTags(tx: Transaction): Record<string, string | string[]> {
+  const tags = tx.get('tags') as any;
+  const result: Record<string, string | string[]> = {};
 
   for (let i = 0; i < tags.length; i++) {
     try {
-      const name = tags[i].get('name', { decode: true, string: true }) as string
-      const value = tags[i].get('value', { decode: true, string: true }) as string
+      const name = tags[i].get('name', { decode: true, string: true }) as string;
+      const value = tags[i].get('value', { decode: true, string: true }) as string;
       if (!result.hasOwnProperty(name)) {
-        result[name] = value
-        continue
+        result[name] = value;
+        continue;
       }
-      result[name] = [...result[name], value]
+      result[name] = [...result[name], value];
     } catch (e) {
       // ignore tags with invalid utf-8 strings in key or value.
     }
   }
-  return result
+  return result;
 }
 
-export function formatTags (tags: UnformattedTag[]): Record<string, string | string[]> {
-  const result: Record<string, string | string[]> = {}
+export function formatTags(tags: UnformattedTag[]): Record<string, string | string[]> {
+  const result: Record<string, string | string[]> = {};
 
   for (let i = 0; i < tags.length; i++) {
-    const { name, value } = tags[i]
+    const { name, value } = tags[i];
     if (!result.hasOwnProperty(name)) {
-      result[name] = value
-      continue
+      result[name] = value;
+      continue;
     }
-    result[name] = [...result[name], value]
+    result[name] = [...result[name], value];
   }
 
-  return result
+  return result;
 }
 
-export function arrayToHex (arr: Uint8Array) {
-  let str = ''
+export function arrayToHex(arr: Uint8Array) {
+  let str = '';
   for (let i = 0; i < arr.length; i++) {
-    str += ('0' + arr[i].toString(16)).slice(-2)
+    str += ('0' + arr[i].toString(16)).slice(-2);
   }
-  return str
+  return str;
 }
 
-export function log (arweave?: Arweave, ...str: string[]) {
-  if(!arweave || !arweave.getConfig().api.logging) return;
+export function log(arweave?: Arweave, ...str: string[]) {
+  if (!arweave || !arweave.getConfig().api.logging) return;
 
-  typeof arweave.getConfig().api.logger === 'function' ? arweave.getConfig().api.logger(...str) : console.log(...str)
+  typeof arweave.getConfig().api.logger === 'function' ? arweave.getConfig().api.logger(...str) : console.log(...str);
 }

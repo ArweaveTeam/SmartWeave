@@ -1,6 +1,5 @@
-
-import Arweave from 'arweave/node'
-import { JWKInterface } from 'arweave/node/lib/wallet'
+import Arweave from 'arweave';
+import { JWKInterface } from 'arweave/node/lib/wallet';
 
 /**
  * Create a new contract from a contract source file and an initial state.
@@ -11,21 +10,27 @@ import { JWKInterface } from 'arweave/node/lib/wallet'
  * @param contractSrc   the contract source as string.
  * @param initState     the contract initial state, as a JSON string.
  */
-export async function createContract (arweave: Arweave, wallet: JWKInterface, contractSrc: string, initState: string, minFee?: number): Promise<string> {
-  const srcTx = await arweave.createTransaction({ data: contractSrc }, wallet)
+export async function createContract(
+  arweave: Arweave,
+  wallet: JWKInterface,
+  contractSrc: string,
+  initState: string,
+  minFee?: number,
+): Promise<string> {
+  const srcTx = await arweave.createTransaction({ data: contractSrc }, wallet);
 
-  srcTx.addTag('App-Name', 'SmartWeaveContractSource')
-  srcTx.addTag('App-Version', '0.3.0')
-  srcTx.addTag('Content-Type', 'application/javascript')
+  srcTx.addTag('App-Name', 'SmartWeaveContractSource');
+  srcTx.addTag('App-Version', '0.3.0');
+  srcTx.addTag('Content-Type', 'application/javascript');
 
-  await arweave.transactions.sign(srcTx, wallet)
+  await arweave.transactions.sign(srcTx, wallet);
 
-  const response = await arweave.transactions.post(srcTx)
+  const response = await arweave.transactions.post(srcTx);
 
-  if ((response.status === 200) || (response.status === 208)) {
-    return await createContractFromTx(arweave, wallet, srcTx.id, initState, minFee)
+  if (response.status === 200 || response.status === 208) {
+    return await createContractFromTx(arweave, wallet, srcTx.id, initState, minFee);
   } else {
-    throw new Error('Unable to write Contract Source.')
+    throw new Error('Unable to write Contract Source.');
   }
 }
 /**
@@ -37,23 +42,23 @@ export async function createContract (arweave: Arweave, wallet: JWKInterface, co
  * @param srcTxId   the contract source Tx id.
  * @param state     the initial state, as a JSON string.
  */
-export async function createContractFromTx (arweave: Arweave, wallet: JWKInterface, srcTxId: string, state: string, minFee?: number) {
+export async function createContractFromTx(arweave: Arweave, wallet: JWKInterface, srcTxId: string, state: string, minFee?: number) {
   // Create a contract from a stored source TXID, setting the default state.
-  const contractTX = await arweave.createTransaction({ data: state }, wallet)
-  contractTX.addTag('App-Name', 'SmartWeaveContract')
-  contractTX.addTag('App-Version', '0.3.0')
-  contractTX.addTag('Contract-Src', srcTxId)
-  contractTX.addTag('Content-Type', 'application/json')
+  const contractTX = await arweave.createTransaction({ data: state }, wallet);
+  contractTX.addTag('App-Name', 'SmartWeaveContract');
+  contractTX.addTag('App-Version', '0.3.0');
+  contractTX.addTag('Contract-Src', srcTxId);
+  contractTX.addTag('Content-Type', 'application/json');
   if (minFee) {
-    contractTX.addTag('Min-Fee', minFee.toString())
+    contractTX.addTag('Min-Fee', minFee.toString());
   }
 
-  await arweave.transactions.sign(contractTX, wallet)
+  await arweave.transactions.sign(contractTX, wallet);
 
-  const response = await arweave.transactions.post(contractTX)
-  if ((response.status === 200) || (response.status === 208)) {
-    return contractTX.id
+  const response = await arweave.transactions.post(contractTX);
+  if (response.status === 200 || response.status === 208) {
+    return contractTX.id;
   } else {
-    throw new Error('Unable to write Contract Initial State')
+    throw new Error('Unable to write Contract Initial State');
   }
 }
