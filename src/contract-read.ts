@@ -1,8 +1,12 @@
 import Arweave from 'arweave';
+import localPorridge from 'localporridge';
 import { loadContract } from './contract-load';
 import { arrayToHex, formatTags, log } from './utils';
 import { execute, ContractInteraction } from './contract-step';
 import { InteractionTx } from './interaction-tx';
+import { GQLEdgeInterface } from './interfaces/gqlResult';
+
+const storage = typeof localStorage !== 'undefined' ? localStorage : new localPorridge('./smartweave-cache.json');
 
 /**
  * Queries all interaction transactions and replays a contract to its latest state.
@@ -39,6 +43,15 @@ export async function readContract(arweave: Arweave, contractId: string, height?
   await sortTransactions(arweave, txInfos);
 
   const { handler, swGlobal } = contractInfo;
+
+  const r = storage.getItem('sw_latest');
+  if(r) {
+    const latest: {id: string, state: any } = JSON.parse(r);
+    
+    if(txInfos[txInfos.length - 1].node.id !== latest.id) {
+      return latest.state;
+    }
+  }
 
   for (let i = 0; i < txInfos.length; i++) {
     const tags = formatTags(txInfos[i].node.tags);
@@ -83,6 +96,7 @@ export async function readContract(arweave: Arweave, contractId: string, height?
 
     state = result.state;
   }
+  storage.setItem('sw_latest', JSON.stringify({id: txInfos[txInfos.length - 1].node.id, state}));
 
   return state;
 }
@@ -151,7 +165,7 @@ async function fetchTransactions(arweave: Arweave, contractId: string, height: n
 
   let transactions = await getNextPage(arweave, variables);
 
-  const txInfos = transactions.edges;
+  const txInfos: GQLEdgeInterface[] = transactions.edges;
 
   while (transactions.pageInfo.hasNextPage) {
     const cursor = transactions.edges[MAX_REQUEST - 1].cursor;
