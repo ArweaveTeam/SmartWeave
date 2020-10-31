@@ -72,7 +72,7 @@ export function arrayToHex (arr: Uint8Array) {
 }
 
 export function log (arweave?: Arweave, ...str: string[]) {
-  (arweave && typeof arweave.getConfig().api.logger === 'function')
-    ? arweave.getConfig().api.logger(...str)
-    : console.log(...str)
+  if(!arweave || !arweave.getConfig().api.logging) return;
+
+  typeof arweave.getConfig().api.logger === 'function' ? arweave.getConfig().api.logger(...str) : console.log(...str)
 }
