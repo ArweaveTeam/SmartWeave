@@ -1,12 +1,16 @@
 import Arweave from 'arweave';
-import localPorridge from 'localporridge';
 import { loadContract } from './contract-load';
 import { arrayToHex, formatTags, log } from './utils';
 import { execute, ContractInteraction } from './contract-step';
 import { InteractionTx } from './interaction-tx';
 import { GQLEdgeInterface } from './interfaces/gqlResult';
 
-const storage = typeof localStorage === 'undefined' ? new localPorridge('./.swcache.json') : localStorage;
+let storage = window?.localStorage;
+if(typeof localStorage === 'undefined') {
+  // tslint:disable-next-line: no-var-requires
+  const localPorridge = require('localporridge');
+  storage = new localPorridge('./.swcache.json');
+}
 
 /**
  * Queries all interaction transactions and replays a contract to its latest state.
