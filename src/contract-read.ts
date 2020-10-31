@@ -5,12 +5,8 @@ import { execute, ContractInteraction } from './contract-step';
 import { InteractionTx } from './interaction-tx';
 import { GQLEdgeInterface } from './interfaces/gqlResult';
 
-let storage = typeof window !== 'undefined' ? window.localStorage : undefined;
-if (typeof localStorage === 'undefined') {
-  // tslint:disable-next-line: no-var-requires
-  const localPorridge = require('localporridge');
-  storage = new localPorridge('./.swcache.json');
-}
+// tslint:disable-next-line: no-empty
+const storage = typeof window !== 'undefined' ? window.localStorage : { getItem: () => {}, setItem: () => {} };
 
 /**
  * Queries all interaction transactions and replays a contract to its latest state.

@@ -697,11 +697,6 @@ lcid@^2.0.0:
   dependencies:
     invert-kv "^2.0.0"
 
-localporridge@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/localporridge/-/localporridge-1.0.0.tgz#718eb86547b075ec78b369a26b7d1b6fddd171d5"
-  integrity sha512-mCaTeK+CMBUElyxQiLOIB0GdEOTZwvYl/VyqynJ+ApQbelItugJnp4+45jBcFbSAvFV9lStnkCK1ZbCNL75iUg==
-
 locate-path@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/locate-path/-/locate-path-3.0.0.tgz#dbec3b3ab759758071b58fe59fc41871af21400e"
