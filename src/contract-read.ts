@@ -6,7 +6,7 @@ import { execute, ContractInteraction } from './contract-step';
 import { InteractionTx } from './interaction-tx';
 import { GQLEdgeInterface } from './interfaces/gqlResult';
 
-const storage = typeof localStorage === "undefined" ? new localPorridge("./.swcache.json") : localStorage;
+const storage = typeof localStorage === 'undefined' ? new localPorridge('./.swcache.json') : localStorage;
 
 /**
  * Queries all interaction transactions and replays a contract to its latest state.
