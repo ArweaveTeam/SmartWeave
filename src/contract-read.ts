@@ -48,7 +48,7 @@ export async function readContract(arweave: Arweave, contractId: string, height?
   if (r) {
     const latest: { id: string; state: any } = JSON.parse(r);
 
-    if (txInfos[txInfos.length - 1].node.id !== latest.id) {
+    if (txInfos[txInfos.length - 1].node.id === latest.id) {
       return latest.state;
     }
   }
