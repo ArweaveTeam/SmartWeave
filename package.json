@@ -41,6 +41,7 @@
     "arweave": "^1.9.1",
     "bignumber.js": "^9.0.1",
     "loglevel": "^1.7.0",
+    "store": "^2.0.12",
     "yargs": "^16.1.0"
   },
   "devDependencies": {
