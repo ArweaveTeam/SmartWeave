@@ -44,8 +44,8 @@ export async function readContract(arweave: Arweave, contractId: string, height?
 
   const { handler, swGlobal } = contractInfo;
 
-  const lastId = txInfos.length? txInfos[txInfos.length - 1].node.id : null;
-  if(lastId !== null) {
+  const lastId = txInfos.length ? txInfos[txInfos.length - 1].node.id : null;
+  if (lastId !== null) {
     const stored = store.get(`${cache}-${lastId}`);
     if (stored && txInfos.length && stored.id === lastId) {
       return stored.state;
