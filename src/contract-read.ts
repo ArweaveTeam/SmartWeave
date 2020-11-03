@@ -44,9 +44,12 @@ export async function readContract(arweave: Arweave, contractId: string, height?
 
   const { handler, swGlobal } = contractInfo;
 
-  const stored = store.get(cache);
-  if (stored && stored.id === txInfos[txInfos.length - 1].node.id) {
-    return stored.state;
+  const lastId = txInfos.length? txInfos[txInfos.length - 1].node.id : null;
+  if(lastId !== null) {
+    const stored = store.get(`${cache}-${lastId}`);
+    if (stored && txInfos.length && stored.id === lastId) {
+      return stored.state;
+    }
   }
 
   for (const txInfo of txInfos) {
@@ -98,7 +101,7 @@ export async function readContract(arweave: Arweave, contractId: string, height?
     state = result.state;
   }
 
-  if (txInfos.length) store.set(cache, { id: txInfos[txInfos.length - 1].node.id, state });
+  if (lastId !== null) store.set(`${cache}-${lastId}`, { id: lastId, state });
 
   return state;
 }
