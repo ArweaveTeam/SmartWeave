@@ -65,7 +65,7 @@ export async function readContract(arweave: Arweave, contractId: string, height?
       continue;
     }
 
-    try { 
+    try {
       input = JSON.parse(input);
     } catch (e) {
       log(arweave, e);
