@@ -8,7 +8,7 @@
     "example": "examples"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node build.js",
     "format": "prettier --write \"src/**/*.ts\"",
     "clean": "rimraf ./lib",
     "lint": "tslint -p tsconfig.json",
@@ -50,6 +50,7 @@
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
     "cp-cli": "^2.0.0",
+    "esbuild": "^0.8.5",
     "prettier": "^2.1.2",
     "rimraf": "^3.0.2",
     "ts-node": "^9.0.0",
