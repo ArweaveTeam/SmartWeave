@@ -1,12 +1,9 @@
 import Arweave from 'arweave';
-import store from 'store';
 import { loadContract } from './contract-load';
 import { arrayToHex, formatTags, log } from './utils';
 import { execute, ContractInteraction } from './contract-step';
 import { InteractionTx } from './interaction-tx';
 import { GQLEdgeInterface } from './interfaces/gqlResult';
-
-const cache = 'sw-cache';
 
 /**
  * Queries all interaction transactions and replays a contract to its latest state.
@@ -43,14 +40,6 @@ export async function readContract(arweave: Arweave, contractId: string, height?
   await sortTransactions(arweave, txInfos);
 
   const { handler, swGlobal } = contractInfo;
-
-  const lastId = txInfos.length ? txInfos[txInfos.length - 1].node.id : null;
-  if (lastId !== null) {
-    const stored = store.get(`${cache}-${lastId}`);
-    if (stored && txInfos.length && stored.id === lastId) {
-      return stored.state;
-    }
-  }
 
   for (const txInfo of txInfos) {
     const tags = formatTags(txInfo.node.tags);
@@ -100,8 +89,6 @@ export async function readContract(arweave: Arweave, contractId: string, height?
 
     state = result.state;
   }
-
-  if (lastId !== null) store.set(`${cache}-${lastId}`, { id: lastId, state });
 
   return state;
 }
