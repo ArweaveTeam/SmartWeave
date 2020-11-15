@@ -109,7 +109,7 @@ class Transaction {
     if (!this.global._activeTx) {
       throw new Error('No current Tx');
     }
-    return this.global._activeTx.parent.id;
+    return this.global._activeTx.parent && this.global._activeTx.parent.id;
   }
 }
 
