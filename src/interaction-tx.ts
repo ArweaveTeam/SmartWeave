@@ -9,6 +9,7 @@ export interface InteractionTx {
   fee: Amount;
   quantity: Amount;
   block: Block;
+  parent: Parent;
 }
 
 interface Block {
@@ -22,4 +23,8 @@ interface Owner {
 
 interface Amount {
   winston: string;
+}
+
+interface Parent {
+  id: string;
 }

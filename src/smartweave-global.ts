@@ -26,7 +26,7 @@ import { readContract } from './contract-read';
 export class SmartWeaveGlobal {
   transaction: Transaction;
   block: Block;
-  arweave: Pick<Arweave, 'ar' | 'wallets' | 'utils' | 'crypto'>;
+  arweave: Pick<Arweave, 'ar' | 'wallets' | 'utils' | 'crypto' | 'transactions'>;
   contract: {
     id: string;
   };
@@ -47,6 +47,7 @@ export class SmartWeaveGlobal {
       utils: arweave.utils,
       wallets: arweave.wallets,
       crypto: arweave.crypto,
+      transactions: arweave.transactions,
     };
     this.contract = contract;
     this.transaction = new Transaction(this);
@@ -102,6 +103,13 @@ class Transaction {
       throw new Error('No current Tx');
     }
     return this.global._activeTx.fee.winston;
+  }
+
+  get parent() {
+    if (!this.global._activeTx) {
+      throw new Error('No current Tx');
+    }
+    return this.global._activeTx.parent.id;
   }
 }
 

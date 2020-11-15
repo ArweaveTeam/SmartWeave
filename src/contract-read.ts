@@ -196,6 +196,7 @@ async function getNextPage(arweave: Arweave, variables: ReqVariables) {
           }
           fee { winston }
           quantity { winston }
+          parent { id }
         }
         cursor
       }
