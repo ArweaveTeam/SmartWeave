@@ -6,7 +6,7 @@ import { getTag } from '../utils';
 import { assert, isExpectedType, getJsonInput } from './utils';
 
 const arweave = Arweave.init({
-  host: 'arweave.dev',
+  host: 'arweave.net',
   port: 443,
   protocol: 'https',
 });

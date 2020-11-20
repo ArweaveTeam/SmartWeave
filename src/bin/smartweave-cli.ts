@@ -10,7 +10,7 @@ const argv = yargs.argv;
 
 // Set Arweave parameters from commandline or defaults.
 const arweavePort: number = argv.arweavePort ? +argv.arweavePort : 443;
-const arweaveHost: string = argv.arweaveHost ? argv.arweaveHost.toString() : 'arweave.dev';
+const arweaveHost: string = argv.arweaveHost ? argv.arweaveHost.toString() : 'arweave.net';
 const arweaveProtocol: string = argv.arweaveProtocol ? argv.arweaveProtocol.toString() : 'https';
 
 if (!argv.keyFile && !argv.walletFile) {
