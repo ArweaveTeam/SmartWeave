@@ -13,8 +13,9 @@ import { GQLEdgeInterface } from './interfaces/gqlResult';
  * @param arweave     an Arweave client instance
  * @param contractId  the Transaction Id of the contract
  * @param height      if specified the contract will be replayed only to this block height
+ * @param details     if true, the function will return valid and invalid transaction IDs along with the state
  */
-export async function readContract(arweave: Arweave, contractId: string, height?: number): Promise<any> {
+export async function readContract(arweave: Arweave, contractId: string, height?: number, details?: boolean): Promise<any> {
   if (!height) {
     const networkInfo = await arweave.network.getInfo();
     height = networkInfo.height;
@@ -40,6 +41,9 @@ export async function readContract(arweave: Arweave, contractId: string, height?
   await sortTransactions(arweave, txInfos);
 
   const { handler, swGlobal } = contractInfo;
+
+  const validTxs = [];
+  const invalidTxs = [];
 
   for (const txInfo of txInfos) {
     const tags = formatTags(txInfo.node.tags);
@@ -87,10 +91,16 @@ export async function readContract(arweave: Arweave, contractId: string, height?
       log(arweave, `Executing of interaction: ${currentTx.id} returned error.`);
     }
 
+    if (result.type === 'ok') {
+      validTxs.push(currentTx.id);
+    } else {
+      invalidTxs.push(currentTx.id);
+    }
+
     state = result.state;
   }
 
-  return state;
+  return details ? { state, validTxs, invalidTxs } : state;
 }
 
 // Sort the transactions based on the sort key generated in addSortKey()
