@@ -42,8 +42,7 @@ export async function readContract(arweave: Arweave, contractId: string, height?
 
   const { handler, swGlobal } = contractInfo;
 
-  const validTxs = [];
-  const invalidTxs = [];
+  const valid: Record<string, boolean> = {};
 
   for (const txInfo of txInfos) {
     const tags = formatTags(txInfo.node.tags);
@@ -91,16 +90,12 @@ export async function readContract(arweave: Arweave, contractId: string, height?
       log(arweave, `Executing of interaction: ${currentTx.id} returned error.`);
     }
 
-    if (result.type === 'ok') {
-      validTxs.push(currentTx.id);
-    } else {
-      invalidTxs.push(currentTx.id);
-    }
+    valid[currentTx.id] = result.type === 'ok';
 
     state = result.state;
   }
 
-  return details ? { state, validTxs, invalidTxs } : state;
+  return details ? { state, valid } : state;
 }
 
 // Sort the transactions based on the sort key generated in addSortKey()
