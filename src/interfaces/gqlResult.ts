@@ -40,7 +40,7 @@ export interface GQLNodeInterface {
   data: GQLMetaDataInterface;
   tags: GQLTagInterface[];
   block: GQLBlockInterface;
-  parent: {
+  bundledIn: {
     id: string;
   };
 }

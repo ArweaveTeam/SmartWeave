@@ -3,7 +3,7 @@ import { loadContract } from './contract-load';
 import { arrayToHex, formatTags, log } from './utils';
 import { execute, ContractInteraction } from './contract-step';
 import { InteractionTx } from './interaction-tx';
-import { GQLEdgeInterface } from './interfaces/gqlResult';
+import GQLResultInterface, { GQLEdgeInterface, GQLNodeInterface, GQLTransactionsResultInterface } from './interfaces/gqlResult';
 
 /**
  * Queries all interaction transactions and replays a contract to its latest state.
@@ -162,7 +162,8 @@ async function fetchTransactions(arweave: Arweave, contractId: string, height: n
 
   let transactions = await getNextPage(arweave, variables);
 
-  const txInfos: GQLEdgeInterface[] = transactions.edges;
+  console.log(transactions.edges.length, transactions.edges.filter(tx => !tx.node.bundledIn || !tx.node.bundledIn.id).length);
+  const txInfos: GQLEdgeInterface[] = transactions.edges.filter(tx => !tx.node.bundledIn || !tx.node.bundledIn.id);
 
   while (transactions.pageInfo.hasNextPage) {
     const cursor = transactions.edges[MAX_REQUEST - 1].cursor;
@@ -174,13 +175,13 @@ async function fetchTransactions(arweave: Arweave, contractId: string, height: n
 
     transactions = await getNextPage(arweave, variables);
 
-    txInfos.push(...transactions.edges);
+    txInfos.push(...transactions.edges.filter(tx => !tx.node.bundledIn || !tx.node.bundledIn.id));
   }
 
   return txInfos;
 }
 
-async function getNextPage(arweave: Arweave, variables: ReqVariables) {
+async function getNextPage(arweave: Arweave, variables: ReqVariables): Promise<GQLTransactionsResultInterface> {
   const query = `query Transactions($tags: [TagFilter!]!, $blockFilter: BlockFilter!, $first: Int!, $after: String) {
     transactions(tags: $tags, block: $blockFilter, first: $first, sort: HEIGHT_ASC, after: $after) {
       pageInfo {
@@ -201,6 +202,7 @@ async function getNextPage(arweave: Arweave, variables: ReqVariables) {
           }
           fee { winston }
           quantity { winston }
+          bundledIn
         }
         cursor
       }
@@ -216,5 +218,8 @@ async function getNextPage(arweave: Arweave, variables: ReqVariables) {
     throw new Error(`Unable to retrieve transactions. Arweave gateway responded with status ${response.status}.`);
   }
 
-  return response.data.data.transactions;
+  const data: GQLResultInterface = response.data;
+  const txs = data.data.transactions;
+
+  return txs;
 }
