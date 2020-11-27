@@ -162,8 +162,8 @@ async function fetchTransactions(arweave: Arweave, contractId: string, height: n
 
   let transactions = await getNextPage(arweave, variables);
 
-  console.log(transactions.edges.length, transactions.edges.filter(tx => !tx.node.bundledIn || !tx.node.bundledIn.id).length);
-  const txInfos: GQLEdgeInterface[] = transactions.edges.filter(tx => !tx.node.bundledIn || !tx.node.bundledIn.id);
+  //console.log(transactions.edges.length, transactions.edges.filter(tx => !tx.node.parent || !tx.node.parent.id).length);
+  const txInfos: GQLEdgeInterface[] = transactions.edges.filter(tx => !tx.node.parent || !tx.node.parent.id);
 
   while (transactions.pageInfo.hasNextPage) {
     const cursor = transactions.edges[MAX_REQUEST - 1].cursor;
@@ -175,7 +175,7 @@ async function fetchTransactions(arweave: Arweave, contractId: string, height: n
 
     transactions = await getNextPage(arweave, variables);
 
-    txInfos.push(...transactions.edges.filter(tx => !tx.node.bundledIn || !tx.node.bundledIn.id));
+    txInfos.push(...transactions.edges.filter(tx => !tx.node.parent || !tx.node.parent.id));
   }
 
   return txInfos;
@@ -202,7 +202,7 @@ async function getNextPage(arweave: Arweave, variables: ReqVariables): Promise<G
           }
           fee { winston }
           quantity { winston }
-          bundledIn
+          parent { id }
         }
         cursor
       }
