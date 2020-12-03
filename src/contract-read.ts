@@ -162,7 +162,7 @@ async function fetchTransactions(arweave: Arweave, contractId: string, height: n
 
   let transactions = await getNextPage(arweave, variables);
 
-  const txInfos: GQLEdgeInterface[] = transactions.edges.filter(tx => !tx.node.parent || !tx.node.parent.id);
+  const txInfos: GQLEdgeInterface[] = transactions.edges.filter((tx) => !tx.node.parent || !tx.node.parent.id);
 
   while (transactions.pageInfo.hasNextPage) {
     const cursor = transactions.edges[MAX_REQUEST - 1].cursor;
@@ -174,7 +174,7 @@ async function fetchTransactions(arweave: Arweave, contractId: string, height: n
 
     transactions = await getNextPage(arweave, variables);
 
-    txInfos.push(...transactions.edges.filter(tx => !tx.node.parent || !tx.node.parent.id));
+    txInfos.push(...transactions.edges.filter((tx) => !tx.node.parent || !tx.node.parent.id));
   }
 
   return txInfos;
