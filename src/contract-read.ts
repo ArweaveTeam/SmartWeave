@@ -162,7 +162,6 @@ async function fetchTransactions(arweave: Arweave, contractId: string, height: n
 
   let transactions = await getNextPage(arweave, variables);
 
-  //console.log(transactions.edges.length, transactions.edges.filter(tx => !tx.node.parent || !tx.node.parent.id).length);
   const txInfos: GQLEdgeInterface[] = transactions.edges.filter(tx => !tx.node.parent || !tx.node.parent.id);
 
   while (transactions.pageInfo.hasNextPage) {
