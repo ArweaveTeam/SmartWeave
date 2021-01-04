@@ -44,18 +44,16 @@ if (argv.create) {
   if (argv.contractSrc) {
     // Create from a new source file.
     const contractSrc = fs.readFileSync(argv.contractSrc.toString(), 'utf8');
-    const minFee = argv.minFee ? +argv.minFee : 0;
     const initState = fs.readFileSync(argv.initState.toString(), 'utf8');
 
-    smartweave.createContract(arweave, wallet, contractSrc, initState, minFee).then((contractID: string) => {
+    smartweave.createContract(arweave, wallet, contractSrc, initState).then((contractID: string) => {
       console.log('Contract created in TX: ' + contractID);
     });
   } else {
     // Create from existing tx.
-    const minFee = argv.minFee ? +argv.minFee : 0;
     const initState = fs.readFileSync(argv.initState.toString(), 'utf8');
     const contractSrcTx = argv.contractSrcTx.toString();
-    smartweave.createContractFromTx(arweave, wallet, contractSrcTx, initState, minFee).then((contractID: string) => {
+    smartweave.createContractFromTx(arweave, wallet, contractSrcTx, initState).then((contractID: string) => {
       console.log('Contract created in TX: ' + contractID);
     });
   }
