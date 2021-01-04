@@ -1,4 +1,5 @@
 import Arweave from 'arweave';
+import Transaction from 'arweave/node/lib/transaction';
 import { JWKInterface } from 'arweave/node/lib/wallet';
 import { loadContract } from './contract-load';
 import { readContract } from './contract-read';
@@ -28,12 +29,12 @@ export async function interactWrite(
   tags: { name: string; value: string }[] = [],
   target: string = '',
   winstonQty: string = '',
-) {
+): Promise<string> {
   const interactionTx = await createTx(arweave, wallet, contractId, input, tags, target, winstonQty);
 
   const response = await arweave.transactions.post(interactionTx);
 
-  if (response.status !== 200) return false;
+  if (response.status !== 200) return null;
 
   return interactionTx.id;
 }
@@ -118,7 +119,7 @@ export async function interactRead(
   tags: { name: string; value: string }[] = [],
   target: string = '',
   winstonQty: string = '',
-): Promise<ContractInteractionResult> {
+): Promise<any> {
   const contractInfo = await loadContract(arweave, contractId);
   const latestState = await readContract(arweave, contractId);
   const from = wallet ? await arweave.wallets.jwkToAddress(wallet) : '';
@@ -167,7 +168,7 @@ async function createTx(
   tags: { name: string; value: string }[],
   target: string = '',
   winstonQty: string = '0',
-) {
+): Promise<Transaction> {
   const txData = {
     data: Math.random().toString().slice(-4),
     target: null,
