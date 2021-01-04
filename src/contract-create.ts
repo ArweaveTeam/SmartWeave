@@ -42,7 +42,13 @@ export async function createContract(
  * @param srcTxId   the contract source Tx id.
  * @param state     the initial state, as a JSON string.
  */
-export async function createContractFromTx(arweave: Arweave, wallet: JWKInterface, srcTxId: string, state: string, minFee?: number) {
+export async function createContractFromTx(
+  arweave: Arweave,
+  wallet: JWKInterface,
+  srcTxId: string,
+  state: string,
+  minFee?: number,
+) {
   // Create a contract from a stored source TXID, setting the default state.
   const contractTX = await arweave.createTransaction({ data: state }, wallet);
   contractTX.addTag('App-Name', 'SmartWeaveContract');

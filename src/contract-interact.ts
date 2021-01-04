@@ -23,8 +23,10 @@ export async function interactWrite(
   contractId: string,
   input: any,
   tags: { name: string; value: string }[] = [],
+  target: string = '',
+  winstonQty: string = ''
 ) {
-  const interactionTx = await createTx(arweave, wallet, contractId, input, tags);
+  const interactionTx = await createTx(arweave, wallet, contractId, input, tags, target, winstonQty);
 
   const response = await arweave.transactions.post(interactionTx);
 
@@ -48,6 +50,8 @@ export async function interactWriteDryRun(
   contractId: string,
   input: any,
   tags: { name: string; value: string }[] = [],
+  target: string = '',
+  winstonQty: string = ''
 ): Promise<ContractInteractionResult> {
   const contractInfo = await loadContract(arweave, contractId);
   const latestState = await readContract(arweave, contractId);
@@ -60,7 +64,7 @@ export async function interactWriteDryRun(
 
   const { height, current } = await arweave.network.getInfo();
 
-  const tx = await createTx(arweave, wallet, contractId, input, tags);
+  const tx = await createTx(arweave, wallet, contractId, input, tags, target, winstonQty);
 
   const ts = unpackTags(tx);
 
@@ -103,7 +107,9 @@ export async function interactRead(
   contractId: string,
   input: any,
   tags: { name: string; value: string }[] = [],
-): Promise<any> {
+  target: string = '',
+  winstonQty: string = ''
+): Promise<ContractInteractionResult> {
   const contractInfo = await loadContract(arweave, contractId);
   const latestState = await readContract(arweave, contractId);
   const from = wallet ? await arweave.wallets.jwkToAddress(wallet) : '';
@@ -115,7 +121,7 @@ export async function interactRead(
 
   const { height, current } = await arweave.network.getInfo();
 
-  const tx = await createTx(arweave, wallet, contractId, input, tags);
+  const tx = await createTx(arweave, wallet, contractId, input, tags, target, winstonQty);
 
   const ts = unpackTags(tx);
 
@@ -144,13 +150,26 @@ export async function interactRead(
   return result.result;
 }
 
-async function createTx(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any, tags: { name: string; value: string }[]) {
-  const interactionTx = await arweave.createTransaction(
-    {
-      data: Math.random().toString().slice(-4),
-    },
-    wallet,
-  );
+async function createTx(
+  arweave: Arweave,
+  wallet: JWKInterface,
+  contractId: string,
+  input: any,
+  tags: { name: string; value: string }[],
+  target: string = '',
+  winstonQty: string = '0'
+) {
+  const txData = {
+    data: Math.random().toString().slice(-4),
+    target: null,
+    quantity: null
+  };
+  if(target && winstonQty && target.length && (+winstonQty) > 0) {
+    txData.target = target;
+    txData.quantity = winstonQty;
+  }
+
+  const interactionTx = await arweave.createTransaction(txData, wallet);
 
   if (!input) {
     throw new Error(`Input should be a truthy value: ${JSON.stringify(input)}`);

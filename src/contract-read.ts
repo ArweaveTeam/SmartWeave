@@ -3,7 +3,11 @@ import { loadContract } from './contract-load';
 import { arrayToHex, formatTags, log } from './utils';
 import { execute, ContractInteraction } from './contract-step';
 import { InteractionTx } from './interaction-tx';
-import GQLResultInterface, { GQLEdgeInterface, GQLNodeInterface, GQLTransactionsResultInterface } from './interfaces/gqlResult';
+import GQLResultInterface, {
+  GQLEdgeInterface,
+  GQLNodeInterface,
+  GQLTransactionsResultInterface,
+} from './interfaces/gqlResult';
 
 /**
  * Queries all interaction transactions and replays a contract to its latest state.
@@ -15,7 +19,12 @@ import GQLResultInterface, { GQLEdgeInterface, GQLNodeInterface, GQLTransactions
  * @param height          if specified the contract will be replayed only to this block height
  * @param returnValidity  if true, the function will return valid and invalid transaction IDs along with the state
  */
-export async function readContract(arweave: Arweave, contractId: string, height?: number, returnValidity?: boolean): Promise<any> {
+export async function readContract(
+  arweave: Arweave,
+  contractId: string,
+  height?: number,
+  returnValidity?: boolean,
+): Promise<any> {
   if (!height) {
     const networkInfo = await arweave.network.getInfo();
     height = networkInfo.height;

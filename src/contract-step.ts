@@ -20,7 +20,10 @@ export interface ContractHandlerResult {
 /**
  * Function type for the contracts handle() method.
  */
-export type ContractHandler = (state: any, interaction: ContractInteraction) => ContractHandlerResult | Promise<ContractHandlerResult>;
+export type ContractHandler = (
+  state: any,
+  interaction: ContractInteraction,
+) => ContractHandlerResult | Promise<ContractHandlerResult>;
 
 /**
  * The end result of a single contract interaction.
@@ -44,7 +47,11 @@ export interface ContractInteractionResult {
  * @param state         the current state of the contract
  * @param caller        the wallet address of the caller who is interacting with the contract
  */
-export async function execute(handler: ContractHandler, interaction: ContractInteraction, state: any): Promise<ContractInteractionResult> {
+export async function execute(
+  handler: ContractHandler,
+  interaction: ContractInteraction,
+  state: any,
+): Promise<ContractInteractionResult> {
   try {
     const stateCopy = JSON.parse(JSON.stringify(state));
 

@@ -71,7 +71,12 @@ export async function createCommandHandler(argv: any) {
     assert(isExpectedType(contractSource, 'js'), 'The contract source must be a javascript file.');
 
     try {
-      const contractId = await Sdk.createContract(arweave, wallet, readFileSync(contractSource).toString(), readFileSync(initStateFile).toString());
+      const contractId = await Sdk.createContract(
+        arweave,
+        wallet,
+        readFileSync(contractSource).toString(),
+        readFileSync(initStateFile).toString(),
+      );
       console.log(`Contract ID: ${contractId}`);
     } catch (e) {
       logger.error(e);
@@ -85,7 +90,10 @@ export async function createCommandHandler(argv: any) {
 
       const appTag = getTag(sourceTx, 'App-Name');
 
-      assert(appTag && appTag === 'SmartWeaveContractSource', 'The source transaction must be a valid smartweave contract source.');
+      assert(
+        appTag && appTag === 'SmartWeaveContractSource',
+        'The source transaction must be a valid smartweave contract source.',
+      );
     } catch (e) {
       logger.error(e);
       logger.error(`Unable to find the transaction with your given contract source: ${contractSource}`);
@@ -93,7 +101,12 @@ export async function createCommandHandler(argv: any) {
     }
 
     try {
-      const contractId = await Sdk.createContractFromTx(arweave, wallet, sourceTx.id, readFileSync(initStateFile).toString());
+      const contractId = await Sdk.createContractFromTx(
+        arweave,
+        wallet,
+        sourceTx.id,
+        readFileSync(initStateFile).toString(),
+      );
       console.log(`Contract ID: ${contractId}`);
     } catch (e) {
       logger.error(e);

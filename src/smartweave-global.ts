@@ -53,7 +53,11 @@ export class SmartWeaveGlobal {
     this.block = new Block(this);
     this.contracts = {
       readContractState: (contractId: string, height?: number) =>
-        readContract(arweave, contractId, height || (this._isDryRunning ? Number.POSITIVE_INFINITY : this.block.height)),
+        readContract(
+          arweave,
+          contractId,
+          height || (this._isDryRunning ? Number.POSITIVE_INFINITY : this.block.height),
+        ),
     };
   }
 }

@@ -29,7 +29,10 @@ const arweave = Arweave.init({
 
 if (argv.create) {
   if (!argv.contractSrc && !argv.contractSrcTx) {
-    console.log('ERROR: Please specify contract source bundle using argument ' + "'--contract-src <PATH>' or --contract-src-tx <TX>.");
+    console.log(
+      'ERROR: Please specify contract source bundle using argument ' +
+        "'--contract-src <PATH>' or --contract-src-tx <TX>.",
+    );
     process.exit();
   }
 
@@ -72,7 +75,9 @@ if (argv.interact) {
   } else if (argv.input) {
     input = argv.input.toString();
   } else {
-    console.log('ERROR: Please specify input to the contract using ' + "'--input \"INPUT VAR\"' or '--input-file <FILE>'.");
+    console.log(
+      'ERROR: Please specify input to the contract using ' + "'--input \"INPUT VAR\"' or '--input-file <FILE>'.",
+    );
     process.exit();
   }
 
