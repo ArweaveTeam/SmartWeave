@@ -24,7 +24,7 @@ export async function interactWrite(
   input: any,
   tags: { name: string; value: string }[] = [],
   target: string = '',
-  winstonQty: string = ''
+  winstonQty: string = '',
 ) {
   const interactionTx = await createTx(arweave, wallet, contractId, input, tags, target, winstonQty);
 
@@ -51,7 +51,7 @@ export async function interactWriteDryRun(
   input: any,
   tags: { name: string; value: string }[] = [],
   target: string = '',
-  winstonQty: string = ''
+  winstonQty: string = '',
 ): Promise<ContractInteractionResult> {
   const contractInfo = await loadContract(arweave, contractId);
   const latestState = await readContract(arweave, contractId);
@@ -108,7 +108,7 @@ export async function interactRead(
   input: any,
   tags: { name: string; value: string }[] = [],
   target: string = '',
-  winstonQty: string = ''
+  winstonQty: string = '',
 ): Promise<ContractInteractionResult> {
   const contractInfo = await loadContract(arweave, contractId);
   const latestState = await readContract(arweave, contractId);
@@ -157,14 +157,14 @@ async function createTx(
   input: any,
   tags: { name: string; value: string }[],
   target: string = '',
-  winstonQty: string = '0'
+  winstonQty: string = '0',
 ) {
   const txData = {
     data: Math.random().toString().slice(-4),
     target: null,
-    quantity: null
+    quantity: null,
   };
-  if(target && winstonQty && target.length && (+winstonQty) > 0) {
+  if (target && winstonQty && target.length && +winstonQty > 0) {
     txData.target = target;
     txData.quantity = winstonQty;
   }
