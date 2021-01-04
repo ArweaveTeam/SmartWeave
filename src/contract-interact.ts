@@ -16,6 +16,9 @@ import { unpackTags } from './utils';
  * @param wallet        a wallet private key
  * @param contractId    the Transaction Id of the contract
  * @param input         the interaction input, will be serialized as Json.
+ * @param tags          an array of tags with name/value as objects.
+ * @param target        if needed to send AR to an address, this is the target.
+ * @param winstonQty    amount of winston to send to the target, if needed.
  */
 export async function interactWrite(
   arweave: Arweave,
@@ -43,6 +46,9 @@ export async function interactWrite(
  * @param wallet        a wallet private or public key
  * @param contractId    the Transaction Id of the contract
  * @param input         the interaction input.
+ * @param tags          an array of tags with name/value as objects.
+ * @param target        if needed to send AR to an address, this is the target.
+ * @param winstonQty    amount of winston to send to the target, if needed.
  */
 export async function interactWriteDryRun(
   arweave: Arweave,
@@ -100,6 +106,9 @@ export async function interactWriteDryRun(
  * @param wallet        a wallet private or public key
  * @param contractId    the Transaction Id of the contract
  * @param input         the interaction input.
+ * @param tags          an array of tags with name/value as objects.
+ * @param target        if needed to send AR to an address, this is the target.
+ * @param winstonQty    amount of winston to send to the target, if needed.
  */
 export async function interactRead(
   arweave: Arweave,
