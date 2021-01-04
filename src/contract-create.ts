@@ -15,7 +15,6 @@ export async function createContract(
   wallet: JWKInterface,
   contractSrc: string,
   initState: string,
-  minFee?: number,
 ): Promise<string> {
   const srcTx = await arweave.createTransaction({ data: contractSrc }, wallet);
 
@@ -28,7 +27,7 @@ export async function createContract(
   const response = await arweave.transactions.post(srcTx);
 
   if (response.status === 200 || response.status === 208) {
-    return await createContractFromTx(arweave, wallet, srcTx.id, initState, minFee);
+    return await createContractFromTx(arweave, wallet, srcTx.id, initState);
   } else {
     throw new Error('Unable to write Contract Source.');
   }
@@ -41,23 +40,41 @@ export async function createContract(
  * @param wallet    a wallet private or public key
  * @param srcTxId   the contract source Tx id.
  * @param state     the initial state, as a JSON string.
+ * @param tags          an array of tags with name/value as objects.
+ * @param target        if needed to send AR to an address, this is the target.
+ * @param winstonQty    amount of winston to send to the target, if needed.
  */
 export async function createContractFromTx(
   arweave: Arweave,
   wallet: JWKInterface,
   srcTxId: string,
   state: string,
-  minFee?: number,
+  tags: { name: string; value: string }[] = [],
+  target: string = '',
+  winstonQty: string = '',
 ) {
+  const txData = {
+    data: state,
+    target: null,
+    quantity: null,
+  };
+  if (target && winstonQty && target.length && +winstonQty > 0) {
+    txData.target = target;
+    txData.quantity = winstonQty;
+  }
+
   // Create a contract from a stored source TXID, setting the default state.
-  const contractTX = await arweave.createTransaction({ data: state }, wallet);
+  const contractTX = await arweave.createTransaction(txData, wallet);
+
+  if (tags && tags.length) {
+    for (const tag of tags) {
+      contractTX.addTag(tag.name, tag.value);
+    }
+  }
   contractTX.addTag('App-Name', 'SmartWeaveContract');
   contractTX.addTag('App-Version', '0.3.0');
   contractTX.addTag('Contract-Src', srcTxId);
   contractTX.addTag('Content-Type', 'application/json');
-  if (minFee) {
-    contractTX.addTag('Min-Fee', minFee.toString());
-  }
 
   await arweave.transactions.sign(contractTX, wallet);
 

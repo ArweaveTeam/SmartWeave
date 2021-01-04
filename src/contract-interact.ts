@@ -185,16 +185,15 @@ async function createTx(
     throw new Error(`Input should be a truthy value: ${JSON.stringify(input)}`);
   }
 
-  interactionTx.addTag('App-Name', 'SmartWeaveAction');
-  interactionTx.addTag('App-Version', '0.3.0');
-  interactionTx.addTag('Contract', contractId);
-  interactionTx.addTag('Input', JSON.stringify(input));
-
   if (tags && tags.length) {
     for (const tag of tags) {
       interactionTx.addTag(tag.name, tag.value);
     }
   }
+  interactionTx.addTag('App-Name', 'SmartWeaveAction');
+  interactionTx.addTag('App-Version', '0.3.0');
+  interactionTx.addTag('Contract', contractId);
+  interactionTx.addTag('Input', JSON.stringify(input));
 
   await arweave.transactions.sign(interactionTx, wallet);
   return interactionTx;
