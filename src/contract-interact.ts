@@ -17,8 +17,14 @@ import { unpackTags } from './utils';
  * @param contractId    the Transaction Id of the contract
  * @param input         the interaction input, will be serialized as Json.
  */
-export async function interactWrite(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any) {
-  const interactionTx = await createTx(arweave, wallet, contractId, input);
+export async function interactWrite(
+  arweave: Arweave,
+  wallet: JWKInterface,
+  contractId: string,
+  input: any,
+  tags: { name: string; value: string }[] = [],
+) {
+  const interactionTx = await createTx(arweave, wallet, contractId, input, tags);
 
   const response = await arweave.transactions.post(interactionTx);
 
@@ -41,6 +47,7 @@ export async function interactWriteDryRun(
   wallet: JWKInterface,
   contractId: string,
   input: any,
+  tags: { name: string; value: string }[] = [],
 ): Promise<ContractInteractionResult> {
   const contractInfo = await loadContract(arweave, contractId);
   const latestState = await readContract(arweave, contractId);
@@ -53,9 +60,9 @@ export async function interactWriteDryRun(
 
   const { height, current } = await arweave.network.getInfo();
 
-  const tx = await createTx(arweave, wallet, contractId, input);
+  const tx = await createTx(arweave, wallet, contractId, input, tags);
 
-  const tags = unpackTags(tx);
+  const ts = unpackTags(tx);
 
   const dummyActiveTx: InteractionTx = {
     id: tx.id,
@@ -63,7 +70,7 @@ export async function interactWriteDryRun(
       address: from,
     },
     recipient: tx.target,
-    tags,
+    tags: ts,
     fee: {
       winston: tx.reward,
     },
@@ -90,7 +97,13 @@ export async function interactWriteDryRun(
  * @param contractId    the Transaction Id of the contract
  * @param input         the interaction input.
  */
-export async function interactRead(arweave: Arweave, wallet: JWKInterface | undefined, contractId: string, input: any): Promise<any> {
+export async function interactRead(
+  arweave: Arweave,
+  wallet: JWKInterface | undefined,
+  contractId: string,
+  input: any,
+  tags: { name: string; value: string }[] = [],
+): Promise<any> {
   const contractInfo = await loadContract(arweave, contractId);
   const latestState = await readContract(arweave, contractId);
   const from = wallet ? await arweave.wallets.jwkToAddress(wallet) : '';
@@ -102,9 +115,9 @@ export async function interactRead(arweave: Arweave, wallet: JWKInterface | unde
 
   const { height, current } = await arweave.network.getInfo();
 
-  const tx = await createTx(arweave, wallet, contractId, input);
+  const tx = await createTx(arweave, wallet, contractId, input, tags);
 
-  const tags = unpackTags(tx);
+  const ts = unpackTags(tx);
 
   const dummyActiveTx: InteractionTx = {
     id: tx.id,
@@ -112,7 +125,7 @@ export async function interactRead(arweave: Arweave, wallet: JWKInterface | unde
       address: from,
     },
     recipient: tx.target,
-    tags,
+    tags: ts,
     fee: {
       winston: tx.reward,
     },
@@ -131,7 +144,7 @@ export async function interactRead(arweave: Arweave, wallet: JWKInterface | unde
   return result.result;
 }
 
-async function createTx(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any) {
+async function createTx(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any, tags: { name: string; value: string }[]) {
   const interactionTx = await arweave.createTransaction(
     {
       data: Math.random().toString().slice(-4),
@@ -147,6 +160,12 @@ async function createTx(arweave: Arweave, wallet: JWKInterface, contractId: stri
   interactionTx.addTag('App-Version', '0.3.0');
   interactionTx.addTag('Contract', contractId);
   interactionTx.addTag('Input', JSON.stringify(input));
+
+  if (tags && tags.length) {
+    for (const tag of tags) {
+      interactionTx.addTag(tag.name, tag.value);
+    }
+  }
 
   await arweave.transactions.sign(interactionTx, wallet);
   return interactionTx;
