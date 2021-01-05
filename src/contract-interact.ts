@@ -171,8 +171,8 @@ async function createTx(
 ): Promise<Transaction> {
   const txData = {
     data: Math.random().toString().slice(-4),
-    target: null,
-    quantity: null,
+    target: '',
+    quantity: ''
   };
   if (target && winstonQty && target.length && +winstonQty > 0) {
     txData.target = target;
