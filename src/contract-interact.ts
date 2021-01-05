@@ -172,7 +172,7 @@ async function createTx(
   const txData = {
     data: Math.random().toString().slice(-4),
     target: '',
-    quantity: ''
+    quantity: '',
   };
   if (target && winstonQty && target.length && +winstonQty > 0) {
     txData.target = target;
