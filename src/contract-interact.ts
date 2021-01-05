@@ -169,17 +169,18 @@ async function createTx(
   target: string = '',
   winstonQty: string = '0',
 ): Promise<Transaction> {
-  const txData = {
-    data: Math.random().toString().slice(-4),
-    target: '',
-    quantity: '',
-  };
-  if (target && winstonQty && target.length && +winstonQty > 0) {
-    txData.target = target;
-    txData.quantity = winstonQty;
-  }
+  let interactionTx = await arweave.createTransaction({ data: Math.random().toString().slice(-4) }, wallet);
 
-  const interactionTx = await arweave.createTransaction(txData, wallet);
+  if (target && winstonQty && target.length && +winstonQty > 0) {
+    interactionTx = await arweave.createTransaction(
+      {
+        data: Math.random().toString().slice(-4),
+        target,
+        quantity: winstonQty,
+      },
+      wallet,
+    );
+  }
 
   if (!input) {
     throw new Error(`Input should be a truthy value: ${JSON.stringify(input)}`);
