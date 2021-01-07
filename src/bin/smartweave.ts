@@ -1,12 +1,20 @@
 #!/usr/bin/env node
 
-import yargs from 'yargs';
+import yargs, { exit } from 'yargs';
+import figlet from 'figlet';
+import chalk from 'chalk';
 import { readCommandHandler, writeCommandHandler, createCommandHandler } from './handlers';
 
 // smartweave read [--input.function="hello"]   -- contractId
 // smartweave write --input.function --dry-run  -- contractId
 // smartweave create <sourceTx | sourceFile> <initStateFile>
 // smartweave info -- contractId
+
+
+const bannerSmartWeave = figlet.textSync('SmartWeave', {
+  horizontalLayout: 'universal smushing',
+});
+console.log(chalk.white(bannerSmartWeave));
 
 const readCommand: yargs.CommandModule = {
   command: 'read <contractId>',
