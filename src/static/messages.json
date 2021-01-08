@@ -1,0 +1,25 @@
+{
+    "common": {
+        "figletText": "SmartWeave"
+    },
+    "commands": {
+        "readCommand": {
+            "command": "read <contractId>",
+            "description": "Read a contracts state or executes a read interaction.",
+            "options": {
+                "input": {
+                    "description": "Input to the contract, if not provided, contracts full state will be read"
+                }
+            },
+            "positionals": {
+                "contractId": {
+                    "description": "The Contract ID"
+                }
+            }
+        },
+        "writeCommand": {
+        },
+        "createCommand": {
+        }
+    }
+}

@@ -1,30 +1,34 @@
 #!/usr/bin/env node
 
 import yargs, { exit } from 'yargs';
-import figlet from 'figlet';
-import chalk from 'chalk';
+import logger from 'loglevel';
+
+import initFiglet from './init-figlet';
 import { readCommandHandler, writeCommandHandler, createCommandHandler } from './handlers';
+
+// this contains all the messages printed by the CLI
+import messages from '../static/messages.json';
 
 // smartweave read [--input.function="hello"]   -- contractId
 // smartweave write --input.function --dry-run  -- contractId
 // smartweave create <sourceTx | sourceFile> <initStateFile>
 // smartweave info -- contractId
 
-
-const bannerSmartWeave = figlet.textSync('SmartWeave', {
-  horizontalLayout: 'universal smushing',
-});
-console.log(chalk.white(bannerSmartWeave));
+logger.info(messages.common.figletText);
+initFiglet(messages.common.figletText);
 
 const readCommand: yargs.CommandModule = {
   command: 'read <contractId>',
-  describe: 'Read a contracts state or executes a read interaction.',
+  describe: messages.commands.readCommand.description,
   builder: () =>
     yargs
       .options('input', {
-        describe: 'Optional input to the contract, if not provided, contracts full state will be read',
+        describe: messages.commands.readCommand.options.input.description,
+        demandOption:false,
       })
-      .positional('contractId', { describe: 'The Contract ID' }),
+      .positional('contractId', {
+        describe: messages.commands.readCommand.positionals.contractId.description,
+      }),
   handler: readCommandHandler,
 };
 
