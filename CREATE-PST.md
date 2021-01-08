@@ -30,7 +30,7 @@ There is an existing contract source ([ff8wOKWGIS6xKlhA8U6t70ydZOozixF5jQMp4yjoT
 
 First, copy and edit the example init state Json from `examples/token-pst.json`
 
-`cp examples/token.json my-pst-token-state.json`
+`cp examples/token-pst.json my-pst-token-state.json`
 
 Edit that file to change the a) ticker name, and importantly b) the wallet address that controls the initial tokens.
 
