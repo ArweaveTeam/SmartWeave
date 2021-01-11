@@ -5,6 +5,7 @@
 
 export function handle (state, action) {
   const balances = state.balances
+  const invocations = state.invocations
   const input = action.input
   const caller = action.caller
 
@@ -40,6 +41,27 @@ export function handle (state, action) {
     }
 
     return { state }
+  }
+
+  if (input.function === 'finvoke') {
+	const fstate = await SmartWeave.contracts.readContractState(input.contract)
+
+	const invocation = fstate.fcalls[input.id]
+	
+
+	// TODO: Check the invocation isn't already in our invocation list.
+	// TODO: Perhaps check contractSrc against a whitelist of allowed contracts.
+	let faction = action
+
+	faction.caller = input.contract
+	faction.input = invocation
+
+	const result_state = handle(state, faction)
+	
+	// TODO: This needs work. How will IDs work?
+	result_state.invoked.push(invocation)
+	
+	return { result_state }
   }
 
   if (input.function === 'balance') {
