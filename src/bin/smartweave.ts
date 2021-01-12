@@ -14,7 +14,6 @@ import messages from '../static/messages.json';
 // smartweave create <sourceTx | sourceFile> <initStateFile>
 // smartweave info -- contractId
 
-logger.info(messages.common.figletText);
 initFiglet(messages.common.figletText);
 
 const readCommand: yargs.CommandModule = {
@@ -51,7 +50,9 @@ const writeCommand: yargs.CommandModule = {
           boolean: true,
         },
       })
-      .positional('contractId', { describe: 'The Contract ID' }),
+      .positional('contractId', {
+        describe: 'The Contract ID'
+      }),
   handler: writeCommandHandler,
 };
 

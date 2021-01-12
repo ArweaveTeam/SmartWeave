@@ -2,6 +2,7 @@ import { readFileSync, existsSync } from 'fs';
 import * as Sdk from '..';
 import Arweave from 'arweave';
 import logger from 'loglevel';
+import CLI from 'clui';
 import { getTag } from '../utils';
 import { assert, isExpectedType, getJsonInput } from './utils';
 
@@ -12,6 +13,11 @@ const arweave = Arweave.init({
 });
 
 export async function readCommandHandler(argv: any) {
+  // creates a spinner for the read command 
+  const { Spinner } = CLI;
+  const status = new Spinner(`Loading the contract ${argv.contractId}, please wait...`);
+  status.start();
+
   const contractId = argv.contractId;
   let input = argv.input;
 
@@ -24,11 +30,12 @@ export async function readCommandHandler(argv: any) {
 
     if (input) result = await Sdk.interactRead(arweave, undefined, contractId, input);
     else result = await Sdk.readContract(arweave, contractId);
-
+    status.stop();
     console.log(result);
   } catch (e) {
     logger.error(e);
     logger.error(`Unable to read contract: ${contractId}`);
+    status.stop();
   }
 }
 

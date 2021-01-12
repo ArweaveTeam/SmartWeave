@@ -18,6 +18,24 @@
             }
         },
         "writeCommand": {
+            "command": "write <contractId>",
+            "description": "Writes an interaction with contract, or simulates a write interaction.",
+            "options": {
+                "keyFile": {
+                    "description": "Your key file"
+                },
+                "dryRun": {
+                    "description": "Input to the contract"
+                },
+                "input": {
+                    "description": "Input to the contract"
+                }
+            },
+            "positionals": {
+                "contractId": {
+                    "description": "The Contract ID"
+                }
+            }
         },
         "createCommand": {
         }
