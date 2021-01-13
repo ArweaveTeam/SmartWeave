@@ -1,13 +1,9 @@
 import Arweave from 'arweave';
 import { loadContract } from './contract-load';
-import { arrayToHex, formatTags, log } from './utils';
+import { arrayToHex, log } from './utils';
 import { execute, ContractInteraction } from './contract-step';
 import { InteractionTx } from './interaction-tx';
-import GQLResultInterface, {
-  GQLEdgeInterface,
-  GQLNodeInterface,
-  GQLTransactionsResultInterface,
-} from './interfaces/gqlResult';
+import GQLResultInterface, { GQLEdgeInterface, GQLTransactionsResultInterface } from './interfaces/gqlResult';
 
 /**
  * Queries all interaction transactions and replays a contract to its latest state.
@@ -54,20 +50,17 @@ export async function readContract(
   const validity: Record<string, boolean> = {};
 
   for (const txInfo of txInfos) {
-    const tags = formatTags(txInfo.node.tags);
+    const currentTx: InteractionTx = txInfo.node;
 
-    const currentTx: InteractionTx = {
-      ...txInfo.node,
-      tags,
-    };
+    const contractIndex = txInfo.node.tags.findIndex((tag) => tag.name === 'Contract' && tag.value === contractId);
+    const inputTag = txInfo.node.tags[contractIndex + 1];
 
-    let input = currentTx.tags.Input;
-
-    // Check that input is not an array. If a tx has multiple input tags, it will be an array
-    if (Array.isArray(input)) {
-      console.warn(`Skipping tx with multiple Input tags - ${currentTx.id}`);
+    if (!inputTag || inputTag.name !== 'Input') {
+      log(arweave, `Skipping tx with missing or invalid Input tag - ${currentTx.id}`);
       continue;
     }
+
+    let input = inputTag.value;
 
     try {
       input = JSON.parse(input);
