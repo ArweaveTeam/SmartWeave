@@ -68,7 +68,7 @@ export async function createContractFromTx(
 
   if (tags && tags.length) {
     for (const tag of tags) {
-      contractTX.addTag(tag.name, tag.value);
+      contractTX.addTag(tag.name.toString(), tag.value.toString());
     }
   }
   contractTX.addTag('App-Name', 'SmartWeaveContract');
