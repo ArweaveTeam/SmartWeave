@@ -45,7 +45,7 @@
     "clui": "^0.3.6",
     "figlet": "^1.5.0",
     "loglevel": "^1.7.0",
-    "yargs": "^16.1.0"
+    "yargs": "^16.2.0"
   },
   "devDependencies": {
     "@types/node": "^14.14.6",

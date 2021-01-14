@@ -10,6 +10,8 @@ const arweave = Arweave.init({
   host: 'arweave.net',
   port: 443,
   protocol: 'https',
+  logging: false,
+  timeout: 15000,
 });
 
 export async function readCommandHandler(argv: any) {

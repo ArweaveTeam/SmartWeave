@@ -55,8 +55,8 @@ export async function createContractFromTx(
 ) {
   const txData = {
     data: state,
-    target: null,
-    quantity: null,
+    target: '',
+    quantity: '',
   };
   if (target && winstonQty && target.length && +winstonQty > 0) {
     txData.target = target;
