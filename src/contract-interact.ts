@@ -188,7 +188,7 @@ async function createTx(
 
   if (tags && tags.length) {
     for (const tag of tags) {
-      interactionTx.addTag(tag.name, tag.value);
+      interactionTx.addTag(tag.name.toString(), tag.value.toString());
     }
   }
   interactionTx.addTag('App-Name', 'SmartWeaveAction');

@@ -53,22 +53,22 @@ export async function createContractFromTx(
   target: string = '',
   winstonQty: string = '',
 ) {
-  const txData = {
-    data: state,
-    target: '',
-    quantity: '',
-  };
-  if (target && winstonQty && target.length && +winstonQty > 0) {
-    txData.target = target;
-    txData.quantity = winstonQty;
-  }
+  let contractTX = await arweave.createTransaction({ data: state }, wallet);
 
-  // Create a contract from a stored source TXID, setting the default state.
-  const contractTX = await arweave.createTransaction(txData, wallet);
+  if (target && winstonQty && target.length && +winstonQty > 0) {
+    contractTX = await arweave.createTransaction(
+      {
+        data: Math.random().toString().slice(-4),
+        target,
+        quantity: winstonQty,
+      },
+      wallet,
+    );
+  }
 
   if (tags && tags.length) {
     for (const tag of tags) {
-      contractTX.addTag(tag.name, tag.value);
+      contractTX.addTag(tag.name.toString(), tag.value.toString());
     }
   }
   contractTX.addTag('App-Name', 'SmartWeaveContract');
