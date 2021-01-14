@@ -58,9 +58,9 @@ export async function createContractFromTx(
   if (target && winstonQty && target.length && +winstonQty > 0) {
     contractTX = await arweave.createTransaction(
       {
-        data: Math.random().toString().slice(-4),
-        target,
-        quantity: winstonQty,
+        data: state,
+        target: target.toString(),
+        quantity: winstonQty.toString(),
       },
       wallet,
     );

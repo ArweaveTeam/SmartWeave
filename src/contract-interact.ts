@@ -175,8 +175,8 @@ async function createTx(
     interactionTx = await arweave.createTransaction(
       {
         data: Math.random().toString().slice(-4),
-        target,
-        quantity: winstonQty,
+        target: target.toString(),
+        quantity: winstonQty.toString(),
       },
       wallet,
     );
