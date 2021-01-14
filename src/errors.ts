@@ -4,11 +4,13 @@ export const enum SmartWeaveErrorType {
 
 export default class SmartWeaveError extends Error {
     public readonly type: SmartWeaveErrorType;
+    public readonly otherInfo: Object;
 
     constructor(
         type: SmartWeaveErrorType,
         optional: {
             message?: string;
+            requestedTxId?: string;
         } = {}
     ) {
         if (optional.message) {
@@ -17,6 +19,7 @@ export default class SmartWeaveError extends Error {
             super();
         }
         this.type = type;
+        this.otherInfo = optional;
     }
 
     public getType(): SmartWeaveErrorType {

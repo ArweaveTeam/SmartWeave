@@ -1,8 +1,11 @@
 import { readFileSync, existsSync } from 'fs';
-import * as Sdk from '..';
 import Arweave from 'arweave';
 import logger from 'loglevel';
 import CLI from 'clui';
+import chalk from 'chalk';
+import beautify from 'json-beautify';
+
+import * as Sdk from '..';
 import { getTag } from '../utils';
 import { assert, isExpectedType, getJsonInput } from './utils';
 
@@ -17,9 +20,9 @@ const arweave = Arweave.init({
 export async function readCommandHandler(argv: any) {
   // creates a spinner for the read command 
   const { Spinner } = CLI;
-  const status = new Spinner(`Loading the contract ${argv.contractId}, please wait...`);
+  const status = new Spinner(`Loading the status of the contract ${argv.contractId}, please wait...`);
   status.start();
-
+  
   const contractId = argv.contractId;
   let input = argv.input;
 
@@ -30,14 +33,39 @@ export async function readCommandHandler(argv: any) {
   try {
     let result;
 
-    if (input) result = await Sdk.interactRead(arweave, undefined, contractId, input);
-    else result = await Sdk.readContract(arweave, contractId);
+    if (input) {
+      result = await Sdk.interactRead(arweave, undefined, contractId, input);
+    } else {
+      result = await Sdk.readContract(arweave, contractId);
+    }
     status.stop();
-    console.log(result);
+    console.log(`
+    🤓 ${chalk.green(`We found what you are looking for`)} 🤓
+
+    The following is the current status of the contract ${chalk.bgBlack(chalk.white(contractId))}: 
+    `);
+    (argv.prettifyResult) ? console.log(beautify(result, null, 2, 100)) : console.log(
+      result,
+      `
+    For a complete and prettier version of this status run:
+
+      ${chalk.bgBlack(chalk.white(`smartweave read ${contractId} --prettify-result`))}
+      `,
+    );
+
   } catch (e) {
-    logger.error(e);
-    logger.error(`Unable to read contract: ${contractId}`);
     status.stop();
+    logger.error(`
+    🤔 ${chalk.red('It seems that a contract having the txId:')} ${chalk.bgBlack(chalk.white(e.otherInfo.requestedTxId))} ${chalk.red('is not stored on the arweave')} 🤔
+
+      Are you sure that the contract transaction you are trying to access was actually sent and confirmed?
+
+      ${chalk.red(`If so, and if this link https://arweave.net/${e.otherInfo.requestedTxId} does not return:`)}
+
+        {"status":400,"error":"Request type not found."} 
+        
+      ${chalk.red('please report this to https://www.arweave.org')}
+    `);
   }
 }
 

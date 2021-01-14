@@ -7,7 +7,7 @@ import initFiglet from './init-figlet';
 import { readCommandHandler, writeCommandHandler, createCommandHandler } from './handlers';
 
 // this contains all the messages printed by the CLI
-import messages from '../static/messages.json';
+import messages from '../static/cli-command-messages.json';
 
 // smartweave read [--input.function="hello"]   -- contractId
 // smartweave write --input.function --dry-run  -- contractId
@@ -21,9 +21,14 @@ const readCommand: yargs.CommandModule = {
   describe: messages.commands.readCommand.description,
   builder: () =>
     yargs
-      .options('input', {
-        describe: messages.commands.readCommand.options.input.description,
-        demandOption:false,
+      .options({
+        'input': {
+          describe: messages.commands.readCommand.options.input.description,
+          demandOption: false,
+        },
+        'prettify-result': {
+          describe: messages.commands.readCommand.options.prettifyResult.description,
+        }
       })
       .positional('contractId', {
         describe: messages.commands.readCommand.positionals.contractId.description,

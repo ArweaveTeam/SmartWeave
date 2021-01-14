@@ -35,7 +35,8 @@ export async function readContract(
   const loadPromise = loadContract(arweave, contractId)
     .catch((err) => {
       const error: SmartWeaveError = new SmartWeaveError(SmartWeaveErrorType.CONTRACT_NOT_FOUND, {
-        message: `It seems that the contract ${contractId} is not stored on the Arweave`,
+        message: `Contract having txId: ${contractId} not found`,
+        requestedTxId: contractId,
       })
       throw error;
   });
