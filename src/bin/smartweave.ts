@@ -26,8 +26,8 @@ const readCommand: yargs.CommandModule = {
           describe: messages.commands.readCommand.options.input.description,
           demandOption: false,
         },
-        'prettify-result': {
-          describe: messages.commands.readCommand.options.prettifyResult.description,
+        'prettify': {
+          describe: messages.commands.readCommand.options.prettify.description,
         }
       })
       .positional('contractId', {

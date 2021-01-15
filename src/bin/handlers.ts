@@ -44,27 +44,23 @@ export async function readCommandHandler(argv: any) {
 
     The following is the current status of the contract ${chalk.bgBlack(chalk.white(contractId))}: 
     `);
-    (argv.prettifyResult) ? console.log(beautify(result, null, 2, 100)) : console.log(
+    (argv.prettify) ? console.log(beautify(result, null, 2, 100)) : console.log(
       result,
       `
     For a complete and prettier version of this status run:
 
-      ${chalk.bgBlack(chalk.white(`smartweave read ${contractId} --prettify-result`))}
+      ${chalk.bgBlack(chalk.white(`smartweave read ${contractId} --prettify`))}
       `,
     );
 
   } catch (e) {
     status.stop();
     logger.error(`
-    🤔 ${chalk.red('It seems that a contract having the txId:')} ${chalk.bgBlack(chalk.white(e.otherInfo.requestedTxId))} ${chalk.red('is not stored on the arweave')} 🤔
+    🤔 ${chalk.red('It seems that a contract having the TXID:')} ${chalk.bgBlack(chalk.white(e.otherInfo.requestedTxId))} ${chalk.red('is not stored on the arweave')} 🤔
 
       Are you sure that the contract transaction you are trying to access was actually sent and confirmed?
 
-      ${chalk.red(`If so, and if this link https://arweave.net/${e.otherInfo.requestedTxId} does not return:`)}
-
-        {"status":400,"error":"Request type not found."} 
-        
-      ${chalk.red('please report this to https://www.arweave.org')}
+      ${chalk.red('If you feel so, please report this incident to our team at https://www.arweave.org!')}
     `);
   }
 }
