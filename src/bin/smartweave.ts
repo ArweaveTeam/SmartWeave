@@ -1,22 +1,38 @@
 #!/usr/bin/env node
 
-import yargs from 'yargs';
+import yargs, { exit } from 'yargs';
+import logger from 'loglevel';
+
+import initFiglet from './init-figlet';
 import { readCommandHandler, writeCommandHandler, createCommandHandler } from './handlers';
+
+// this contains all the messages printed by the CLI
+import messages from '../static/cli-command-messages.json';
 
 // smartweave read [--input.function="hello"]   -- contractId
 // smartweave write --input.function --dry-run  -- contractId
 // smartweave create <sourceTx | sourceFile> <initStateFile>
 // smartweave info -- contractId
 
+initFiglet(messages.common.figletText);
+
 const readCommand: yargs.CommandModule = {
   command: 'read <contractId>',
-  describe: 'Read a contracts state or executes a read interaction.',
+  describe: messages.commands.readCommand.description,
   builder: () =>
     yargs
-      .options('input', {
-        describe: 'Optional input to the contract, if not provided, contracts full state will be read',
+      .options({
+        'input': {
+          describe: messages.commands.readCommand.options.input.description,
+          demandOption: false,
+        },
+        'prettify': {
+          describe: messages.commands.readCommand.options.prettify.description,
+        }
       })
-      .positional('contractId', { describe: 'The Contract ID' }),
+      .positional('contractId', {
+        describe: messages.commands.readCommand.positionals.contractId.description,
+      }),
   handler: readCommandHandler,
 };
 
@@ -39,7 +55,9 @@ const writeCommand: yargs.CommandModule = {
           boolean: true,
         },
       })
-      .positional('contractId', { describe: 'The Contract ID' }),
+      .positional('contractId', {
+        describe: 'The Contract ID'
+      }),
   handler: writeCommandHandler,
 };
 

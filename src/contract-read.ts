@@ -9,6 +9,8 @@ import GQLResultInterface, {
   GQLTransactionsResultInterface,
 } from './interfaces/gqlResult';
 
+import SmartWeaveError, { SmartWeaveErrorType } from './errors';
+
 /**
  * Queries all interaction transactions and replays a contract to its latest state.
  *
@@ -30,7 +32,14 @@ export async function readContract(
     height = networkInfo.height;
   }
 
-  const loadPromise = loadContract(arweave, contractId).catch((err) => err);
+  const loadPromise = loadContract(arweave, contractId)
+    .catch((err) => {
+      const error: SmartWeaveError = new SmartWeaveError(SmartWeaveErrorType.CONTRACT_NOT_FOUND, {
+        message: `Contract having txId: ${contractId} not found`,
+        requestedTxId: contractId,
+      })
+      throw error;
+  });
   const fetchTxPromise = fetchTransactions(arweave, contractId, height).catch((err) => err);
 
   const [contractInfo, txInfos] = await Promise.all([loadPromise, fetchTxPromise]);

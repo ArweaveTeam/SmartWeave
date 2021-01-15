@@ -2,6 +2,8 @@
 
 [![Gitopia](https://img.shields.io/endpoint?style=&url=https://gitopia.org/mirror-badge.json)](https://gitopia.org/#/BPr7vrFduuQqqVMu_tftxsScTKUq9ke0rx4q5C9ieQU/smartweave)
 
+BRANCH FOR OVERALL IMPROVEMENT OF THE UX
+
 ## Simple, scalable smart contracts on the Arweave protocol
 
 Uses lazy-evaluation to move the burden of contract execution from network nodes
