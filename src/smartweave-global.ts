@@ -22,6 +22,9 @@ import { readContract } from './contract-read';
  * - SmartWeave.arweave.wallets
  * - SmartWeave.arweave.ar
  *
+ * as well as access to the potentially non-deterministic full client:
+ * - SmartWeave.unsafeClient
+ *
  */
 export class SmartWeaveGlobal {
   transaction: Transaction;
@@ -30,6 +33,7 @@ export class SmartWeaveGlobal {
   contract: {
     id: string;
   };
+  unsafeClient: Arweave;
 
   contracts: {
     readContractState: (contractId: string) => Promise<any>;
@@ -42,11 +46,12 @@ export class SmartWeaveGlobal {
   }
 
   constructor(arweave: Arweave, contract: { id: string }) {
+	this.unsafeClient = arweave;
     this.arweave = {
       ar: arweave.ar,
       utils: arweave.utils,
       wallets: arweave.wallets,
-      crypto: arweave.crypto,
+      crypto: arweave.crypto
     };
     this.contract = contract;
     this.transaction = new Transaction(this);
