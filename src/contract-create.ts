@@ -1,5 +1,34 @@
 import Arweave from 'arweave';
+import Transaction from 'arweave/node/lib/transaction';
 import { JWKInterface } from 'arweave/node/lib/wallet';
+
+/**
+ * Simulates the creation of a new contract from a contract, so that the cost for the creation can be checked
+ * Returns the transaction describing the creation simulation.
+ *
+ * @param arweave       an Arweave client instance
+ * @param wallet        a wallet private or public key
+ * @param initState     the contract initial state, as a JSON string.
+ * @param [contractSrc] optional the contract source as string.
+ * @param [contractTXID] optional the contract TXID as string.
+ */
+export async function simulateCreateContract(
+  arweave: Arweave,
+  wallet: JWKInterface,
+  initState: string,
+  contractSrc?: string,
+  contractTXID?: string,
+): Promise<Transaction> {
+  const srcTx = await arweave.createTransaction({ data: contractSrc }, wallet);
+
+  srcTx.addTag('App-Name', 'SmartWeaveContractSource');
+  srcTx.addTag('App-Version', '0.3.0');
+  srcTx.addTag('Content-Type', 'application/javascript');
+
+  await arweave.transactions.sign(srcTx, wallet);
+  return srcTx;
+}
+
 
 /**
  * Create a new contract from a contract source file and an initial state.
@@ -33,7 +62,7 @@ export async function createContract(
   }
 }
 /**
- * Create a new conntract from an existing contract source tx, with an initial state.
+ * Create a new contract from an existing contract source tx, with an initial state.
  * Returns the contract id.
  *
  * @param arweave   an Arweave client instance
