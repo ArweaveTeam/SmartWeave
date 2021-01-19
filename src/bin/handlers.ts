@@ -208,7 +208,10 @@ export async function createCommandHandler(argv: any) {
       `);
       process.exit(0);
     }
-    
+
+    status = new Spinner(`Amazing! Let me deploy your contract, please wait...`);
+    status.start();
+
     console.log(resp);
     process.exit(0);
 
