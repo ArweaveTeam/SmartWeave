@@ -151,4 +151,6 @@ It provides a method to read another contracts state (this will read the state a
 SmartWeave.contracts.readContractState(contractId: string): Promise<any>
 ```
 
+Finally, it also provides complete access to the full Arweave.js client under `SmartWeave.unsafeClient`. Use of this library in your smart contracts can easily introduce non-determinism, which could cause your contract to have inconsistent state between users. It does, however, have a number of legitimate and safe uses if deployed carefully. You have been warned!
+
 See [examples/read-other-contract.js](examples/read-other-contract.js) for an example of reading another contracts state.
