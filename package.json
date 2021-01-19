@@ -8,13 +8,13 @@
     "example": "examples"
   },
   "scripts": {
-    "build": "tsc && node build.js",
+    "build": "npm run clean && tsc && node build.js",
     "format": "prettier --write \"src/**/*.ts\"",
     "clean": "rimraf ./lib",
     "lint": "tslint -p tsconfig.json",
     "lint:fix": "npm run lint --fix",
     "prepublishOnly": "npm run lint",
-    "preversion": "npm run lint",
+    "preversion": "npm run lint && npm run build",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags"
   },
