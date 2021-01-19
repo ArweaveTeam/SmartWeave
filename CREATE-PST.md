@@ -3,7 +3,8 @@
 - [PST Guide](#pst-guide)
   - [Introduction](#introduction)
   - [Creating a new PST contract](#creating-a-new-pst-contract)
-  - [Transferring tokens and viewing balances of your PST token](#transferring-tokens-and-viewing-balances-of-your-pst-token)
+  - [Transferring tokens](#transferring-tokens)
+  - [Viewing token balances](#viewing-token-balances)
   - [Using the SmartWeave SDK in your App](#using-the-smartweave-sdk-in-your-app)
   - [Distributing fees to PST holders](#distributing-fees-to-pst-holders)
 
@@ -11,14 +12,14 @@
 
 PSTs (Profit Sharing Tokens) are made up of two parts:
 
-1. The token, that represents ownership shares in the app.
-2. The app, that during usage, distributes usage-fees in AR to the token holders on a pro-rata basis.
+1. The token: represents ownership shares in the app.
+2. The app: during usage, distributes usage fees in AR to the token holders on a [pro-rata](https://en.wikipedia.org/wiki/Pro_rata) basis.
 
-This guide will give an overview of how to create your PST token, and how to use the SmartWeave SDK in the app to distribute usage fees to the token holders.
+This guide will give an overview of how to create your PST token, and how to use the SmartWeave SDK in your app to distribute usage fees to the token holders.
 
-To follow this, you will need an Arweave wallet, funded with some AR. You can get one at [arweave.org/tokens](https://arweave.org/tokens), or generate one offline with the [arweave-deploy](https://github.com/ArweaveTeam/arweave-deploy#arweave-deploy) CLI tools.
+To follow along, a non-empty Arweave wallet is required. You can obtain one at [arweave.org/tokens](https://arweave.org/tokens), or generate one offline with the [arweave-deploy](https://github.com/ArweaveTeam/arweave-deploy#arweave-deploy) CLI tools.
 
-You should also install the SmartWeave SDK. You can install it either globally (to have the cli available everywhere) or into your project folder:
+You should also install the SmartWeave SDK. You can install it either globally — to have the CLI available everywhere — or locally — into your project folder:
 
 ```
 npm install smartweave
@@ -26,33 +27,37 @@ npm install smartweave
 
 ## Creating a new PST contract
 
-There is an existing contract source ([ff8wOKWGIS6xKlhA8U6t70ydZOozixF5jQMp4yjoTc8](https://arweave.net/ff8wOKWGIS6xKlhA8U6t70ydZOozixF5jQMp4yjoTc8)) already deployed that you should use, and you can create new instance of this contract for your PST using the SmartWeave CLI tool.
+Using the SmartWeave CLI tool, we will leverage an already-deployed contract ([ff8wOKWGIS6xKlhA8U6t70ydZOozixF5jQMp4yjoTc8](https://arweave.net/ff8wOKWGIS6xKlhA8U6t70ydZOozixF5jQMp4yjoTc8)) to create your PST.
 
-First, copy and edit the example init state Json from `examples/token-pst.json`
+First, copy the example JSON found here: [examples/token-pst.json](examples/token-pst.json).
 
 `cp examples/token.json my-pst-token-state.json`
 
-Edit that file to change the a) ticker name, and importantly b) the wallet address that controls the initial tokens.
+Then, edit the initial state. Ensure you update a) the ticker name, and b) the wallet address that controls the initial tokens.
 
 Run the following command to deploy a new contract instance:
 
 `npx smartweave create ff8wOKWGIS6xKlhA8U6t70ydZOozixF5jQMp4yjoTc8 my-pst-token-state.json --key-file /path/to/keyfile.json`
 
-You will get back a transaction id, this is your Contract ID, and you don't need to keep around the .json file that initialized it. Once the transaction is mined, (it may take a few minutes), you can check the state of your PST token with the following command:
+You will get back a Transaction ID: this is equivalent to your Contract ID. (Note: you no longer need the .json file that initialized the contract.) Once the transaction is mined (this may take a few minutes), check the state of your PST token with the following command:
 
 `npx smartweave read CONTRACT_ID`
 
-## Transferring tokens and viewing balances of your PST token
+## Transferring tokens 
+
+To transfer tokens to a target wallet, use the following command:
 
 `npx smartweave write CONTRACT_ID --key-file /path/to/keyfile.json --input '{ "function": "transfer", "qty": 500, "target": "TARGETWALLET" }'`
 
-To view the balance of a particular address/wallet, you can use the following command:
+## Viewing token balances
+
+To view the balance of a particular address/wallet, use the following command:
 
 `npx smartweave write CONTRACTID --input '{ "function": "balance", "target": "TARGETWALLET" }' --key-file /path/to/keyfile.json --dry-run`
 
-## Using the SmartWeave SDK in your App
+## Using the SmartWeave SDK in your app
 
-More complete SDK documentation can be found [here](SDK.md), this section shows the basics of how you can use it in a PST app.
+This section conveys the basics of using the Smartwweave SDK in a PST app (note: more complete SDK documentation can be found [here](SDK.md)).
 
 An example of how to read the latest contract state:
 
@@ -67,18 +72,18 @@ const contractId = 'X1Mx-u6XE_aC7_k0gFQbLlHhxMYIRhTItdHkS3hs36c'
 
 readContract(arweave, contractId).then(contractState => {
   // contractState is the latest state of the contract.
-  // assuming its a PST token, dump all the balances to the console:
+  // assuming it's a PST token, dump all the balances to the console:
   console.log(contractState.balances)
 })
 ```
 
 ## Distributing fees to PST holders
 
-How and when exactly you distribute fees to the PST holders is up to you, it would typically be done when a user writes a transaction to your app, (for example, if they send a message or upload file that is stored on Arweave), but you could take some other approaches.
+How and when exactly you choose to distribute fees to PST holders is up to you. Typically, distributions are made when a user writes a transaction to Arweave using your app (eg. upon sending a message or uploading a file intended for storage on Arweave), though there is more than one approach.
 
-One model you should follow for it to be a PST, is that you must distribute the fees on a pro-rata basis according to the PST holders % holding in the PST. The correct way to do this not to split the fee among all the holders (and have to send many individual transactions), but to select one of the holders, probabilistically based on what percentage of the token they hold.
+> Note: you must distribute fees on a pro-rata basis in accordance to PST holders' percentage-holding in the PST. The correct way to do this is not to split a given fee among all holders (requiring multiple transactions), but to select one specific holder probabilistically, based on the percentage of their holdings.
 
-There is a utility function included in the SmartWeave SDK to select one token holder from a set of balances based on their holdings, so sending a fee to a PST holder looks like this:
+Included in the SmartWeave SDK is a ultility function, `selectWeightedPstHolder`, to select one token holder from a set of balances, based on their holdings. To send a fee to a PST holder:
 
 ```typescript
 
