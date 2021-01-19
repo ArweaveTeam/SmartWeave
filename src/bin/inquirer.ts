@@ -12,7 +12,7 @@ export const askForContractCreationConfirmation = async (
     {
       name: 'payFeeForContractCreation',
       type: 'input',
-      message: `💸 Do you want to pay a fee of ${expectedContractCreationFee} AR to publish your contract? 💸 If so, write ${randWord.toUpperCase()} and press ENTER (otherwise type anything else):`,
+      message: `💸 Do you want to pay a fee of ${expectedContractCreationFee} AR to publish your contract? 💸 If so, write this random adjective: ${randWord.toUpperCase()} and press ENTER (otherwise type anything else):`,
     },
   ];
   return inquirer.prompt(questions);
