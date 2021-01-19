@@ -38,14 +38,17 @@
   "homepage": "https://github.com/ArweaveTeam/SmartWeave#readme",
   "dependencies": {
     "@types/clui": "^0.3.0",
+    "@types/inquirer": "^7.3.1",
     "@weavery/clarity": "^0.1.5",
     "arweave": "^1.9.1",
     "bignumber.js": "^9.0.1",
     "chalk": "^4.1.0",
     "clui": "^0.3.6",
     "figlet": "^1.5.0",
+    "inquirer": "^7.3.3",
     "json-beautify": "^1.1.1",
     "loglevel": "^1.7.0",
+    "sentencer": "^0.2.1",
     "yargs": "^16.2.0"
   },
   "devDependencies": {

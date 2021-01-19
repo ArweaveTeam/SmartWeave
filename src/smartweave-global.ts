@@ -46,7 +46,7 @@ export class SmartWeaveGlobal {
   }
 
   constructor(arweave: Arweave, contract: { id: string }) {
-	this.unsafeClient = arweave;
+    this.unsafeClient = arweave;
     this.arweave = {
       ar: arweave.ar,
       utils: arweave.utils,
