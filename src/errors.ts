@@ -4,7 +4,7 @@ export const enum SmartWeaveErrorType {
 
 export default class SmartWeaveError extends Error {
   public readonly type: SmartWeaveErrorType;
-  public readonly otherInfo: Object;
+  public readonly otherInfo: object;
 
   constructor(
     type: SmartWeaveErrorType,

@@ -266,7 +266,7 @@ export async function createCommandHandler(argv: any) {
       // assert(
       //  appTag && appTag === 'SmartWeaveContractSource',
       //  'The source transaction must be a valid smartweave contract source.',
-      //);
+      // );
 
       // checks that the given transaction is actually a SmartWeave Contract source
       // this is a valid contract iTD2q-tNQ2Mavm1IBfxlFM_AUi6acr_npNivY4JUS80
