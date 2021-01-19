@@ -2,7 +2,7 @@ import {
   simulateCreateContractFromTx,
   simulateCreateContractFromSource,
   createContract,
-  createContractFromTx
+  createContractFromTx,
 } from './contract-create';
 import { loadContract } from './contract-load';
 import { interactWrite, interactWriteDryRun, interactRead } from './contract-interact';

@@ -22,13 +22,13 @@ const readCommand: yargs.CommandModule = {
   builder: () =>
     yargs
       .options({
-        'input': {
+        input: {
           describe: messages.commands.readCommand.options.input.description,
           demandOption: false,
         },
-        'prettify': {
+        prettify: {
           describe: messages.commands.readCommand.options.prettify.description,
-        }
+        },
       })
       .positional('contractId', {
         describe: messages.commands.readCommand.positionals.contractId.description,
@@ -56,7 +56,7 @@ const writeCommand: yargs.CommandModule = {
         },
       })
       .positional('contractId', {
-        describe: 'The Contract ID'
+        describe: 'The Contract ID',
       }),
   handler: writeCommandHandler,
 };

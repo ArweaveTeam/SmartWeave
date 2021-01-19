@@ -51,7 +51,7 @@ export class SmartWeaveGlobal {
       ar: arweave.ar,
       utils: arweave.utils,
       wallets: arweave.wallets,
-      crypto: arweave.crypto
+      crypto: arweave.crypto,
     };
     this.contract = contract;
     this.transaction = new Transaction(this);

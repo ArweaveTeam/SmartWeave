@@ -32,13 +32,12 @@ export async function readContract(
     height = networkInfo.height;
   }
 
-  const loadPromise = loadContract(arweave, contractId)
-    .catch((err) => {
-      const error: SmartWeaveError = new SmartWeaveError(SmartWeaveErrorType.CONTRACT_NOT_FOUND, {
-        message: `Contract having txId: ${contractId} not found`,
-        requestedTxId: contractId,
-      })
-      throw error;
+  const loadPromise = loadContract(arweave, contractId).catch((err) => {
+    const error: SmartWeaveError = new SmartWeaveError(SmartWeaveErrorType.CONTRACT_NOT_FOUND, {
+      message: `Contract having txId: ${contractId} not found`,
+      requestedTxId: contractId,
+    });
+    throw error;
   });
   const fetchTxPromise = fetchTransactions(arweave, contractId, height).catch((err) => err);
 

@@ -81,7 +81,6 @@ export async function simulateCreateContractFromTx(
   return contractTX;
 }
 
-
 /**
  * Create a new contract from a contract source file and an initial state.
  * Returns the contract id.
