@@ -71,27 +71,106 @@ export async function readCommandHandler(argv: any) {
 }
 
 export async function writeCommandHandler(argv: any) {
-  const contractId = argv.contractId;
-  let input = argv.input;
-  const dryRun = argv.dryRun;
-  const wallet = JSON.parse(readFileSync(argv.keyFile).toString());
+  // creates a spinner for the read command
+  const { Spinner } = CLI;
+  let status = new Spinner(``);
 
-  const jsonInput = getJsonInput(input);
-  input = jsonInput || input;
+  const contractId = argv.contractId;
+  const dryRun = argv.dryRun;
+  let input = argv.input;
+  let wallet;
+
+  status = new Spinner(`Checking your key-file, please wait...`);
+  status.start();
+  try {
+    wallet = JSON.parse(readFileSync(argv.keyFile).toString());
+    status.stop();
+  } catch (err) {
+    status.stop();
+    logger.error(`
+    🤔 ${chalk.red('It seems that the key-file')} ${chalk.bgBlack(chalk.white(argv.keyFile))} ${chalk.red(
+      'is not in your file system',
+    )} 🤔
+
+      Please double check the path of your key-file and try again! 
+    `);
+    process.exit(0);
+  }
+
+  status = new Spinner(`Checking the inputs you sent, please wait...`);
+  status.start();
+  try {
+    const jsonInput = getJsonInput(input);
+    input = jsonInput || input;
+    status.stop();
+  } catch (err) {
+    status.stop();
+    logger.error(`
+    🤔 ${chalk.red('It seems that the input')} ${chalk.bgBlack(chalk.white(input))} ${chalk.red(
+      'is not a valid JSON input',
+    )} 🤔
+
+      Please double check the path of your key-file and try again! 
+    `);
+    process.exit(0);
+  }
 
   try {
     let result;
-
     if (dryRun) {
+      status = new Spinner(`Trying to simulate a write to the contract, please wait...`);
+      status.start();
       result = await Sdk.interactWriteDryRun(arweave, wallet, contractId, input);
-      console.log(result);
+      status.stop();
+      console.log(`
+      🤓 ${chalk.green(`I simulated the contract write you are trying to perform!`)} 🤓
+  
+      The following would be the status of the contract ${chalk.bgBlack(chalk.white(contractId))} after that write: 
+      `);
+      argv.prettify
+        ? console.log(beautify(result, null, 2, 100))
+        : console.log(
+            result,
+            `
+      For a complete and prettier version of this status run:
+  
+      ${chalk.bgBlack(
+        chalk.white(
+          `smartweave write ${contractId} --key-file ${argv.keyFile} --input '${argv.input}' --dry-run --prettify`,
+        ),
+      )}
+      `,
+          );
+      process.exit(0);
     } else {
+      status = new Spinner(`Trying to write the contract, please wait...`);
+      status.start();
       result = await Sdk.interactWrite(arweave, wallet, contractId, input);
-      console.log(`Interaction posted at: ${result}`);
+      status.stop();
+      console.log(`     🥳 ${chalk.green(
+        `Your write to the contract ${contractId} was successfully posted at TXID ${chalk.bgBlack(
+          chalk.white(result),
+        )}!`,
+      )} 🥳
+
+      To check the confirmation status of this interaction run:
+      
+      ${chalk.bgBlack(chalk.white(`arweave status ${result}`))}
+      `);
+      process.exit(0);
     }
   } catch (e) {
-    logger.error(e);
-    logger.error('Unable to excute write.');
+    status.stop();
+    logger.error(`
+    🤔 ${chalk.red('It seems that a contract having the TXID:')} ${chalk.bgBlack(chalk.white(contractId))} ${chalk.red(
+      'is not stored on the arweave',
+    )} 🤔
+
+      Are you sure that the contract you are trying to access was actually deployed and that the related transaction was confirmed?
+
+      ${chalk.red('If you feel so, please report this incident to our team at https://www.arweave.org!')}
+    `);
+    process.exit(0);
   }
 }
 
@@ -250,8 +329,6 @@ export async function createCommandHandler(argv: any) {
       ${chalk.red('If you feel so, please report this incident to our team at https://www.arweave.org!')}
       `);
       process.exit(0);
-      // logger.error(e);
-      // logger.error('Unable create contract');
     }
   } else {
     let sourceTx;
