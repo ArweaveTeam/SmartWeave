@@ -16,7 +16,8 @@
     "prepublishOnly": "npm run lint",
     "preversion": "npm run lint && npm run build",
     "version": "npm run format && git add -A src",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push && git push --tags",
+    "test": "mocha --require ts-node/register test/index.ts"
   },
   "files": [
     "lib/**/*"
@@ -52,12 +53,16 @@
     "yargs": "^16.2.0"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.14",
+    "@types/mocha": "^8.2.0",
     "@types/node": "^14.14.6",
     "@types/yargs": "^15.0.9",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
+    "chai": "^4.2.0",
     "cp-cli": "^2.0.0",
     "esbuild": "^0.8.5",
+    "mocha": "^8.2.1",
     "prettier": "^2.1.2",
     "rimraf": "^3.0.2",
     "ts-node": "^9.0.0",
