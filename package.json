@@ -1,6 +1,6 @@
 {
   "name": "smartweave",
-  "version": "0.4.24",
+  "version": "0.4.25",
   "description": "Simple, scalable smart contracts on the Arweave protocol.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
