@@ -17,8 +17,8 @@ const testRead = () => {
                 arDriveContract,
             );
         })
-        it("should have balance for aLemOhg9OGovn-0o4cOCbueiHT9VgdYnpJpq7NgMA1A equal to 0", async function () {
-            expect(status.balances['aLemOhg9OGovn-0o4cOCbueiHT9VgdYnpJpq7NgMA1A']).to.equal(0);
+        it("should have balance for aLemOhg9OGovn-0o4cOCbueiHT9VgdYnpJpq7NgMA1A equal to 2", async function () {
+            expect(status.balances['aLemOhg9OGovn-0o4cOCbueiHT9VgdYnpJpq7NgMA1A']).to.equal(2);
         });
         it("the total supply of the token (balances + vaults) should be equal to 6,282,550", async function () {
             // sum the balances
