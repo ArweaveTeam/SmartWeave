@@ -54,6 +54,9 @@ const writeCommand: yargs.CommandModule = {
           describe: 'Simulate interaction and output contract state',
           boolean: true,
         },
+        prettify: {
+          describe: 'If set prints the eventual output state as a stringified and prettified JSON',
+        },
       })
       .positional('contractId', {
         describe: 'The Contract ID',
