@@ -122,6 +122,21 @@ export async function writeCommandHandler(argv: any) {
     process.exit(0);
   }
 
+  if (tags) {
+    status = new Spinner(`Checking the inputs you sent, please wait...`);
+    status.start();
+    console.log(tags);
+    try {
+      const parsedTags = JSON.parse(tags);
+      console.log(tags);
+    } catch (e) {
+      console.log('I was not able to read your tags');
+      console.log(e);
+    }
+    status.stop();
+    process.exit(0);
+  }
+
   if (input) {
     status = new Spinner(`Checking the inputs you sent, please wait...`);
     status.start();

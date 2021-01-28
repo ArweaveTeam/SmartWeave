@@ -58,7 +58,7 @@ const writeCommand: yargs.CommandModule = {
           describe: 'If set prints the eventual output state as a stringified and prettified JSON',
         },
         tags: {
-          describe: 'The tags to be sent along with the Contract interaction',
+          describe: 'The tags to be sent along with the Contract interaction. They should be a string containing an array of Objects {key:value} (i.e. \'[{"arweave":"rocks"},{"smartweave":"rocks too"}]\')',
         },
         quantity: {
           describe: 'The amount of Winston to be sent along with the Contract interaction',
