@@ -77,6 +77,9 @@ export async function writeCommandHandler(argv: any) {
 
   const contractId = argv.contractId;
   const dryRun = argv.dryRun;
+  const quantity = argv.quantity;
+  const target = argv.target;
+  let tags = argv.tags;
   let input = argv.input;
   let wallet;
 
@@ -97,22 +100,46 @@ export async function writeCommandHandler(argv: any) {
     process.exit(0);
   }
 
-  status = new Spinner(`Checking the inputs you sent, please wait...`);
-  status.start();
-  try {
-    const jsonInput = getJsonInput(input);
-    input = jsonInput || input;
-    status.stop();
-  } catch (err) {
+  if (!target && quantity) {
     status.stop();
     logger.error(`
-    🤔 ${chalk.red('It seems that the input')} ${chalk.bgBlack(chalk.white(input))} ${chalk.red(
-      'is not a valid JSON input',
+    🤔 ${chalk.red('You are trying to send an amount of')} ${chalk.bgBlack(chalk.white(quantity))} ${chalk.red(
+      'WINSTON but you did not specified a target receiver! Why would you do that?',
     )} 🤔
 
-      Please double check the path of your key-file and try again! 
+      This interaction cannot be accepted! Please double check what you are trying to do and retry! 
     `);
     process.exit(0);
+  } else if (target && !quantity) {
+    status.stop();
+    logger.error(`
+    🤔 ${chalk.red('You have specified the target receiver')} ${chalk.bgBlack(chalk.white(target))} ${chalk.red(
+      'but you did not specified any amount of WINSTON to send to it! Why would you do that?',
+    )} 🤔
+
+      This interaction cannot be accepted! Please double check what you are trying to do and retry! 
+    `);
+    process.exit(0);
+  }
+
+  if (input) {
+    status = new Spinner(`Checking the inputs you sent, please wait...`);
+    status.start();
+    try {
+      const jsonInput = getJsonInput(input);
+      input = jsonInput || input;
+      status.stop();
+    } catch (err) {
+      status.stop();
+      logger.error(`
+      🤔 ${chalk.red('It seems that the input')} ${chalk.bgBlack(chalk.white(input))} ${chalk.red(
+        'is not a valid JSON input',
+      )} 🤔
+  
+        Please double check the path of your key-file and try again! 
+      `);
+      process.exit(0);
+    }
   }
 
   try {
@@ -120,7 +147,7 @@ export async function writeCommandHandler(argv: any) {
     if (dryRun) {
       status = new Spinner(`Trying to simulate a write to the contract, please wait...`);
       status.start();
-      result = await Sdk.interactWriteDryRun(arweave, wallet, contractId, input);
+      result = await Sdk.interactWriteDryRun(arweave, wallet, contractId, input, tags, target, quantity);
       status.stop();
       console.log(`
       🤓 ${chalk.green(`I simulated the contract write you are trying to perform!`)} 🤓
@@ -145,7 +172,7 @@ export async function writeCommandHandler(argv: any) {
     } else {
       status = new Spinner(`Trying to write the contract, please wait...`);
       status.start();
-      result = await Sdk.interactWrite(arweave, wallet, contractId, input);
+      result = await Sdk.interactWrite(arweave, wallet, contractId, input, tags, target, quantity);
       status.stop();
       console.log(`     🥳 ${chalk.green(
         `Your write to the contract ${contractId} was successfully posted at TXID ${chalk.bgBlack(

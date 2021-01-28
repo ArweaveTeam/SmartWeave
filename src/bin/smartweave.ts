@@ -57,6 +57,15 @@ const writeCommand: yargs.CommandModule = {
         prettify: {
           describe: 'If set prints the eventual output state as a stringified and prettified JSON',
         },
+        tags: {
+          describe: 'The tags to be sent along with the Contract interaction',
+        },
+        quantity: {
+          describe: 'The amount of Winston to be sent along with the Contract interaction',
+        },
+        target: {
+          describe: 'The wallet to which send the winston send along with the Contract interaction',
+        },
       })
       .positional('contractId', {
         describe: 'The Contract ID',
