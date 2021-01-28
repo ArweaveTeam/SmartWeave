@@ -123,18 +123,23 @@ export async function writeCommandHandler(argv: any) {
   }
 
   if (tags) {
-    status = new Spinner(`Checking the inputs you sent, please wait...`);
+    status = new Spinner(`Checking the tags you sent, please wait...`);
     status.start();
-    console.log(tags);
     try {
       const parsedTags = JSON.parse(tags);
-      console.log(tags);
+      tags = Object.values(parsedTags);
+      status.stop();
     } catch (e) {
-      console.log('I was not able to read your tags');
-      console.log(e);
+      logger.error(`
+      🤔 ${chalk.red('It seems that the tags')} ${chalk.bgBlack(chalk.white(tags))} ${chalk.red(
+        'are not formatted as a valid JSON array.',
+      )} 🤔
+  
+        Please double check the path of your key-file and try again! 
+      `);
+      status.stop();
+      process.exit(0);
     }
-    status.stop();
-    process.exit(0);
   }
 
   if (input) {
