@@ -9,7 +9,7 @@ import Sentencer from 'sentencer';
 import * as Sdk from '..';
 import { getTag } from '../utils';
 import { assert, isExpectedType, getJsonInput } from './utils';
-import { askForContractCreationConfirmation } from './inquirer';
+import { askForContractCreationConfirmation, askForContractInteractionConfirmation } from './inquirer';
 
 const arweave = Arweave.init({
   host: 'arweave.net',
@@ -77,7 +77,7 @@ export async function writeCommandHandler(argv: any) {
 
   const contractId = argv.contractId;
   const dryRun = argv.dryRun;
-  const quantity = argv.quantity;
+  const quant = argv.quantity;
   const target = argv.target;
   let tags = argv.tags;
   let input = argv.input;
@@ -100,17 +100,17 @@ export async function writeCommandHandler(argv: any) {
     process.exit(0);
   }
 
-  if (!target && quantity) {
+  if (!target && quant) {
     status.stop();
     logger.error(`
-    🤔 ${chalk.red('You are trying to send an amount of')} ${chalk.bgBlack(chalk.white(quantity))} ${chalk.red(
+    🤔 ${chalk.red('You are trying to send an amount of')} ${chalk.bgBlack(chalk.white(quant))} ${chalk.red(
       'winston but you did not specified a target receiver!',
     )} 🤔
 
       This interaction cannot be accepted! Please double check what you are trying to do and retry! 
     `);
     process.exit(0);
-  } else if (target && !quantity) {
+  } else if (target && !quant) {
     status.stop();
     logger.error(`
     🤔 ${chalk.red('You have specified the target receiver')} ${chalk.bgBlack(chalk.white(target))} ${chalk.red(
@@ -167,12 +167,28 @@ export async function writeCommandHandler(argv: any) {
     if (dryRun) {
       status = new Spinner(`Trying to simulate a write to the contract, please wait...`);
       status.start();
-      result = await Sdk.interactWriteDryRun(arweave, wallet, contractId, input, tags, target, quantity);
+      const { reward, quantity } = await Sdk.simulateInteractWrite(
+        arweave,
+        wallet,
+        contractId,
+        input,
+        tags,
+        target,
+        quant,
+      );
+      const totalAmount = arweave.ar.winstonToAr((parseFloat(reward) + parseFloat(quantity)).toString());
+      result = await Sdk.interactWriteDryRun(arweave, wallet, contractId, input, tags, target, quant);
       status.stop();
       console.log(`
       🤓 ${chalk.green(`I simulated the contract write you are trying to perform!`)} 🤓
   
-      The following would be the state of the contract ${chalk.bgBlack(chalk.white(contractId))} after that write: 
+      For this interaction you will spend a total amount of ${chalk.bgBlack(
+        chalk.white(totalAmount),
+      )} AR (including the eventual quantity you have specified and the network fee).
+      
+      The following would be the state of the contract ${chalk.bgBlack(
+        chalk.white(contractId),
+      )} after this interaction: 
       `);
       argv.prettify
         ? console.log(beautify(result, null, 2, 100))
@@ -192,10 +208,71 @@ export async function writeCommandHandler(argv: any) {
     } else {
       status = new Spinner(`Trying to write the contract, please wait...`);
       status.start();
-      result = await Sdk.interactWrite(arweave, wallet, contractId, input, tags, target, quantity);
+
+      // firstly simulate the contract call compute the rewards and ask for the user confirmation
+      const { reward, quantity } = await Sdk.simulateInteractWrite(
+        arweave,
+        wallet,
+        contractId,
+        input,
+        tags,
+        target,
+        quant,
+      );
+      const totalAmount = arweave.ar.winstonToAr((parseFloat(reward) + parseFloat(quantity)).toString());
+
+      const userAddress = await arweave.wallets.jwkToAddress(wallet);
+      const userBalance = arweave.ar.winstonToAr(await arweave.wallets.getBalance(userAddress));
+      const expectedContractInteractionFee = totalAmount;
+      const userBalanceAfterCreation = parseFloat(userBalance) - parseFloat(expectedContractInteractionFee);
+      const confirmRandomWord: string = Sentencer.make('{{ adjective }}');
+
+      if (userBalanceAfterCreation < 0) {
+        status.stop();
+        logger.error(`
+        😭 ${chalk.red('It seems that you do not have enough AR to interact with this contract')} 😭
+    
+        - To interact with this contract you need to pay a fee of ~${chalk.bgBlack(
+          chalk.white(expectedContractInteractionFee),
+        )} AR (including the network fees and the quantity you have eventually specified);
+        - Your current wallet balance is ~${chalk.bgBlack(chalk.white(userBalance))} AR;
+  
+        ${chalk.red('So sorry for this ...')}
+        `);
+        process.exit(0);
+      }
+
+      status.stop();
+      console.log(`
+        🤓 ${chalk.green(`Everything is ready for interacting with the contract! Please review the following info:`)} 🤓
+  
+        - To interact with this contract you need to pay a fee of ~${chalk.bgBlack(
+          chalk.white(expectedContractInteractionFee),
+        )} AR (including the network fees and the quantity you have eventually specified);
+        - Your current wallet balance is ${chalk.bgBlack(chalk.white(userBalance))} AR;
+        - After the interaction your wallet balance will be ~${chalk.bgBlack(
+          chalk.white(userBalanceAfterCreation),
+        )} AR.     
+      `);
+
+      const resp = await askForContractInteractionConfirmation(confirmRandomWord, expectedContractInteractionFee);
+
+      if (resp.payFeeForContractInteraction.toUpperCase() !== confirmRandomWord.toUpperCase()) {
+        logger.error(`
+        🤷🏽‍♀️ ${chalk.red('Ok! No problem I will not send this contract interaction')} 🤷🏽‍♀️
+    
+        See you next time! 👋
+        `);
+        process.exit(0);
+      }
+
+      console.log('\n');
+      status = new Spinner(`Amazing! Let me post this interaction, please wait...`);
+      status.start();
+      result = await Sdk.interactWrite(arweave, wallet, contractId, input, tags, target, quant);
       status.stop();
       console.log(`     🥳 ${chalk.green(
-        `Your write to the contract ${contractId} was successfully posted at TXID ${chalk.bgBlack(
+        `The interaction with the contract ${contractId} was successfully posted at TXID ${chalk.bgBlack(
           chalk.white(result),
         )}!`,
       )} 🥳

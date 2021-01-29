@@ -5,6 +5,7 @@ import { readContract } from "../src/index";
 import Ar from "arweave/node/ar";
 
 const arDriveContract = '-8A6RexFkpfWwuyVO98wzSFZh0d6VJuI-buTJvlwOJQ';
+const testVerseContract = 'p6uhGhOrsDin0yNbFKmY7g9ho6_nXqV_Yg3BrSxphnQ';
 const expect = chai.expect;
 
 const testRead = () => {
