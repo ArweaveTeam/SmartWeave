@@ -22,7 +22,7 @@ const arweave = Arweave.init({
 export async function readCommandHandler(argv: any) {
   // creates a spinner for the read command
   const { Spinner } = CLI;
-  const status = new Spinner(`Loading the status of the contract ${argv.contractId}, please wait...`);
+  const status = new Spinner(`Loading the state of the contract ${argv.contractId}, please wait...`);
   status.start();
 
   const contractId = argv.contractId;
@@ -44,14 +44,14 @@ export async function readCommandHandler(argv: any) {
     console.log(`
     🤓 ${chalk.green(`We found what you are looking for`)} 🤓
 
-    The following is the current status of the contract ${chalk.bgBlack(chalk.white(contractId))}: 
+    The following is the current state of the contract ${chalk.bgBlack(chalk.white(contractId))}: 
     `);
     argv.prettify
       ? console.log(beautify(result, null, 2, 100))
       : console.log(
           result,
           `
-    For a complete and prettier version of this status run:
+    For a complete and prettier version of this state run:
 
       ${chalk.bgBlack(chalk.white(`smartweave read ${contractId} --prettify`))}
       `,
@@ -104,7 +104,7 @@ export async function writeCommandHandler(argv: any) {
     status.stop();
     logger.error(`
     🤔 ${chalk.red('You are trying to send an amount of')} ${chalk.bgBlack(chalk.white(quantity))} ${chalk.red(
-      'WINSTON but you did not specified a target receiver! Why would you do that?',
+      'winston but you did not specified a target receiver!',
     )} 🤔
 
       This interaction cannot be accepted! Please double check what you are trying to do and retry! 
@@ -114,7 +114,7 @@ export async function writeCommandHandler(argv: any) {
     status.stop();
     logger.error(`
     🤔 ${chalk.red('You have specified the target receiver')} ${chalk.bgBlack(chalk.white(target))} ${chalk.red(
-      'but you did not specified any amount of WINSTON to send to it! Why would you do that?',
+      'but you did not specified any amount of winston to send to it!',
     )} 🤔
 
       This interaction cannot be accepted! Please double check what you are trying to do and retry! 
@@ -172,14 +172,14 @@ export async function writeCommandHandler(argv: any) {
       console.log(`
       🤓 ${chalk.green(`I simulated the contract write you are trying to perform!`)} 🤓
   
-      The following would be the status of the contract ${chalk.bgBlack(chalk.white(contractId))} after that write: 
+      The following would be the state of the contract ${chalk.bgBlack(chalk.white(contractId))} after that write: 
       `);
       argv.prettify
         ? console.log(beautify(result, null, 2, 100))
         : console.log(
             result,
             `
-      For a complete and prettier version of this status run:
+      For a complete and prettier version of this state run:
   
       ${chalk.bgBlack(
         chalk.white(
@@ -248,7 +248,7 @@ export async function createCommandHandler(argv: any) {
   }
 
   // checks if the user sent a json as the initial status of the contract
-  status = new Spinner(`Checking the initial JSON status you passed in, please wait...`);
+  status = new Spinner(`Checking the initial JSON state you passed in, please wait...`);
   status.start();
   if (!isExpectedType(initStateFile, 'json')) {
     status.stop();

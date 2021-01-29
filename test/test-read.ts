@@ -29,12 +29,12 @@ const testRead = () => {
             const vaults: Array<Object> = Object.entries(status.vault);
             let vaultsSum = 0; 
             vaults.forEach((v) => {
-                const vaultSum = v[1].map(a => a.balance).reduce((a, b) => a + b);
+                const vaultSum = (v[1].length) ? v[1].map(a => a.balance).reduce((a, b) => a + b) : 0;
                 vaultsSum = vaultsSum + vaultSum; 
             });
 
-            expect(sum).to.equal(2887671);
-            expect(vaultsSum).to.equal(3394879);
+            expect(sum).to.equal(2894615);
+            expect(vaultsSum).to.equal(3387935);
             expect(vaultsSum + sum).to.equal(6282550);
         });
     });

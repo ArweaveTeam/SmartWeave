@@ -62,7 +62,7 @@ const writeCommand: yargs.CommandModule = {
             'The tags to be sent along with the Contract interaction. They should be a string containing an array of Objects {name:tagName, value:tagValue} (i.e. \'[{"name":"arweave", "value":"rocks"},{"name":"smartweave", "value":"rocks too"}]\')',
         },
         quantity: {
-          describe: 'The amount of Winston to be sent along with the Contract interaction',
+          describe: 'The amount of winston to be sent along with the Contract interaction',
         },
         target: {
           describe: 'The wallet to which send the winston send along with the Contract interaction',
