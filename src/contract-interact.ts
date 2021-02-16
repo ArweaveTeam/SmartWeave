@@ -23,7 +23,7 @@ import { unpackTags } from './utils';
  */
 export async function interactWrite(
   arweave: Arweave,
-  wallet: JWKInterface,
+  wallet: JWKInterface | 'use_wallet',
   contractId: string,
   input: any,
   tags: { name: string; value: string }[] = [],
@@ -53,7 +53,7 @@ export async function interactWrite(
  */
 export async function interactWriteDryRun(
   arweave: Arweave,
-  wallet: JWKInterface,
+  wallet: JWKInterface | 'use_wallet',
   contractId: string,
   input: any,
   tags: { name: string; value: string }[] = [],
@@ -62,7 +62,7 @@ export async function interactWriteDryRun(
 ): Promise<ContractInteractionResult> {
   const contractInfo = await loadContract(arweave, contractId);
   const latestState = await readContract(arweave, contractId);
-  const from = await arweave.wallets.jwkToAddress(wallet);
+  const from = await arweave.wallets.getAddress(wallet);
 
   const interaction: ContractInteraction = {
     input,
@@ -113,7 +113,7 @@ export async function interactWriteDryRun(
  */
 export async function interactRead(
   arweave: Arweave,
-  wallet: JWKInterface | undefined,
+  wallet: JWKInterface | 'use_wallet' | undefined,
   contractId: string,
   input: any,
   tags: { name: string; value: string }[] = [],
@@ -122,7 +122,7 @@ export async function interactRead(
 ): Promise<any> {
   const contractInfo = await loadContract(arweave, contractId);
   const latestState = await readContract(arweave, contractId);
-  const from = wallet ? await arweave.wallets.jwkToAddress(wallet) : '';
+  const from = wallet ? await arweave.wallets.getAddress(wallet) : '';
 
   const interaction: ContractInteraction = {
     input,
@@ -162,7 +162,7 @@ export async function interactRead(
 
 async function createTx(
   arweave: Arweave,
-  wallet: JWKInterface,
+  wallet: JWKInterface | 'use_wallet',
   contractId: string,
   input: any,
   tags: { name: string; value: string }[],

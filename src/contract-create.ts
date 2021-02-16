@@ -13,7 +13,7 @@ import { JWKInterface } from 'arweave/node/lib/wallet';
  */
 export async function simulateCreateContractFromSource(
   arweave: Arweave,
-  wallet: JWKInterface,
+  wallet: JWKInterface | 'use_wallet',
   initState: string,
   contractSrc: string,
 ): Promise<Transaction> {
@@ -47,7 +47,7 @@ export async function simulateCreateContractFromSource(
  */
 export async function simulateCreateContractFromTx(
   arweave: Arweave,
-  wallet: JWKInterface,
+  wallet: JWKInterface | 'use_wallet',
   srcTxId: string,
   state: string,
   tags: { name: string; value: string }[] = [],
@@ -92,7 +92,7 @@ export async function simulateCreateContractFromTx(
  */
 export async function createContract(
   arweave: Arweave,
-  wallet: JWKInterface,
+  wallet: JWKInterface | 'use_wallet',
   contractSrc: string,
   initState: string,
 ): Promise<string> {
@@ -126,7 +126,7 @@ export async function createContract(
  */
 export async function createContractFromTx(
   arweave: Arweave,
-  wallet: JWKInterface,
+  wallet: JWKInterface | 'use_wallet',
   srcTxId: string,
   state: string,
   tags: { name: string; value: string }[] = [],
