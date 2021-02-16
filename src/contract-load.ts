@@ -18,7 +18,16 @@ export async function loadContract(arweave: Arweave, contractID: string) {
   const minFee = getTag(contractTX, 'Min-Fee');
   const contractSrcTX = await arweave.transactions.get(contractSrcTXID);
   const contractSrc = contractSrcTX.get('data', { decode: true, string: true });
-  const state = contractTX.get('data', { decode: true, string: true });
+
+  let state: string;
+  if (getTag(contractTX, 'Init-State')) {
+    state = getTag(contractTX, 'Init-State');
+  } else if (getTag(contractTX, 'Init-State-TX')) {
+    const stateTX = await arweave.transactions.get(getTag(contractTX, 'Init-State-TX'));
+    state = stateTX.get('data', { decode: true, string: true });
+  } else {
+    state = contractTX.get('data', { decode: true, string: true });
+  }
 
   const { handler, swGlobal } = createContractExecutionEnvironment(arweave, contractSrc, contractID);
 
