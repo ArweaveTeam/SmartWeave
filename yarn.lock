@@ -234,15 +234,15 @@ articles@~0.2.1:
   resolved "https://registry.npmjs.org/articles/-/articles-0.2.2.tgz"
   integrity sha512-S3Y4MPp+LD/l0HHm/4yrr6MoXhUkKT98ZdsV2tkTuBNywqUXEtvJT+NBO3KTSQEttc5EOwEJe2Xw8cZ9TI5Hrw==
 
-arweave@^1.10.2:
-  version "1.10.2"
-  resolved "https://registry.yarnpkg.com/arweave/-/arweave-1.10.2.tgz#937707e9620e05d62eb59e941748e7716a3c1507"
-  integrity sha512-1OuVjHB6TMMvDc+N1O2l6q5qjS6sPoWJ5OrXHty3bcvefSM2bkNARdbgIhMLlwRwL1PMHFkPaoE4xK5LypvYtA==
+arweave@^1.10.10:
+  version "1.10.10"
+  resolved "https://registry.yarnpkg.com/arweave/-/arweave-1.10.10.tgz#eadad5d503008481104aeabf5a36b4f5a7143994"
+  integrity sha512-rG8U2NW0KMSzTT9KnjTgCxfHOsJJpulAde+eLGyTbe7IW80m6meJ4hW+By3hSNRSzmiPJuuBUt8L9gUGj6kx2Q==
   dependencies:
     asn1.js "^5.4.1"
     axios "^0.21.1"
     base64-js "^1.3.1"
-    bignumber.js "^8.1.1"
+    bignumber.js "^9.0.1"
 
 asn1.js@^5.4.1:
   version "5.4.1"
@@ -270,11 +270,6 @@ base64-js@^1.3.1:
   version "1.5.1"
   resolved "https://registry.npmjs.org/base64-js/-/base64-js-1.5.1.tgz"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
-
-bignumber.js@^8.1.1:
-  version "8.1.1"
-  resolved "https://registry.npmjs.org/bignumber.js/-/bignumber.js-8.1.1.tgz"
-  integrity sha512-QD46ppGintwPGuL1KqmwhR0O+N2cZUg8JG/VzwI2e28sM9TqHjQB10lI4QAaMHVbLzwVLLAwEglpKPViWX+5NQ==
 
 bignumber.js@^9.0.1:
   version "9.0.1"

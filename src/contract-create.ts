@@ -13,11 +13,11 @@ import { JWKInterface } from 'arweave/node/lib/wallet';
  */
 export async function simulateCreateContractFromSource(
   arweave: Arweave,
-  wallet: JWKInterface,
+  wallet: JWKInterface | 'use_wallet',
   initState: string,
   contractSrc: string,
 ): Promise<Transaction> {
-  const srcTx = await arweave.createTransaction({ data: contractSrc }, wallet);
+  const srcTx = await arweave.createTransaction({ data: contractSrc });
 
   srcTx.addTag('App-Name', 'SmartWeaveContractSource');
   srcTx.addTag('App-Version', '0.3.0');
@@ -47,24 +47,21 @@ export async function simulateCreateContractFromSource(
  */
 export async function simulateCreateContractFromTx(
   arweave: Arweave,
-  wallet: JWKInterface,
+  wallet: JWKInterface | 'use_wallet',
   srcTxId: string,
   state: string,
   tags: { name: string; value: string }[] = [],
   target: string = '',
   winstonQty: string = '',
 ): Promise<Transaction> {
-  let contractTX = await arweave.createTransaction({ data: state }, wallet);
+  let contractTX = await arweave.createTransaction({ data: state });
 
   if (target && winstonQty && target.length && +winstonQty > 0) {
-    contractTX = await arweave.createTransaction(
-      {
-        data: state,
-        target: target.toString(),
-        quantity: winstonQty.toString(),
-      },
-      wallet,
-    );
+    contractTX = await arweave.createTransaction({
+      data: state,
+      target: target.toString(),
+      quantity: winstonQty.toString(),
+    });
   }
 
   if (tags && tags.length) {
@@ -92,11 +89,11 @@ export async function simulateCreateContractFromTx(
  */
 export async function createContract(
   arweave: Arweave,
-  wallet: JWKInterface,
+  wallet: JWKInterface | 'use_wallet',
   contractSrc: string,
   initState: string,
 ): Promise<string> {
-  const srcTx = await arweave.createTransaction({ data: contractSrc }, wallet);
+  const srcTx = await arweave.createTransaction({ data: contractSrc });
 
   srcTx.addTag('App-Name', 'SmartWeaveContractSource');
   srcTx.addTag('App-Version', '0.3.0');
@@ -126,24 +123,21 @@ export async function createContract(
  */
 export async function createContractFromTx(
   arweave: Arweave,
-  wallet: JWKInterface,
+  wallet: JWKInterface | 'use_wallet',
   srcTxId: string,
   state: string,
   tags: { name: string; value: string }[] = [],
   target: string = '',
   winstonQty: string = '',
 ) {
-  let contractTX = await arweave.createTransaction({ data: state }, wallet);
+  let contractTX = await arweave.createTransaction({ data: state });
 
   if (target && winstonQty && target.length && +winstonQty > 0) {
-    contractTX = await arweave.createTransaction(
-      {
-        data: state,
-        target: target.toString(),
-        quantity: winstonQty.toString(),
-      },
-      wallet,
-    );
+    contractTX = await arweave.createTransaction({
+      data: state,
+      target: target.toString(),
+      quantity: winstonQty.toString(),
+    });
   }
 
   if (tags && tags.length) {
