@@ -169,14 +169,17 @@ async function createTx(
   target: string = '',
   winstonQty: string = '0',
 ): Promise<Transaction> {
-  let interactionTx = await arweave.createTransaction({ data: Math.random().toString().slice(-4) });
+  let interactionTx = await arweave.createTransaction({ data: Math.random().toString().slice(-4) }, wallet);
 
   if (target && winstonQty && target.length && +winstonQty > 0) {
-    interactionTx = await arweave.createTransaction({
-      data: Math.random().toString().slice(-4),
-      target: target.toString(),
-      quantity: winstonQty.toString(),
-    });
+    interactionTx = await arweave.createTransaction(
+      {
+        data: Math.random().toString().slice(-4),
+        target: target.toString(),
+        quantity: winstonQty.toString(),
+      },
+      wallet,
+    );
   }
 
   if (!input) {

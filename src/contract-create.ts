@@ -17,7 +17,7 @@ export async function simulateCreateContractFromSource(
   initState: string,
   contractSrc: string,
 ): Promise<Transaction> {
-  const srcTx = await arweave.createTransaction({ data: contractSrc });
+  const srcTx = await arweave.createTransaction({ data: contractSrc }, wallet);
 
   srcTx.addTag('App-Name', 'SmartWeaveContractSource');
   srcTx.addTag('App-Version', '0.3.0');
@@ -54,14 +54,17 @@ export async function simulateCreateContractFromTx(
   target: string = '',
   winstonQty: string = '',
 ): Promise<Transaction> {
-  let contractTX = await arweave.createTransaction({ data: state });
+  let contractTX = await arweave.createTransaction({ data: state }, wallet);
 
   if (target && winstonQty && target.length && +winstonQty > 0) {
-    contractTX = await arweave.createTransaction({
-      data: state,
-      target: target.toString(),
-      quantity: winstonQty.toString(),
-    });
+    contractTX = await arweave.createTransaction(
+      {
+        data: state,
+        target: target.toString(),
+        quantity: winstonQty.toString(),
+      },
+      wallet,
+    );
   }
 
   if (tags && tags.length) {
@@ -93,7 +96,7 @@ export async function createContract(
   contractSrc: string,
   initState: string,
 ): Promise<string> {
-  const srcTx = await arweave.createTransaction({ data: contractSrc });
+  const srcTx = await arweave.createTransaction({ data: contractSrc }, wallet);
 
   srcTx.addTag('App-Name', 'SmartWeaveContractSource');
   srcTx.addTag('App-Version', '0.3.0');
@@ -130,14 +133,17 @@ export async function createContractFromTx(
   target: string = '',
   winstonQty: string = '',
 ) {
-  let contractTX = await arweave.createTransaction({ data: state });
+  let contractTX = await arweave.createTransaction({ data: state }, wallet);
 
   if (target && winstonQty && target.length && +winstonQty > 0) {
-    contractTX = await arweave.createTransaction({
-      data: state,
-      target: target.toString(),
-      quantity: winstonQty.toString(),
-    });
+    contractTX = await arweave.createTransaction(
+      {
+        data: state,
+        target: target.toString(),
+        quantity: winstonQty.toString(),
+      },
+      wallet,
+    );
   }
 
   if (tags && tags.length) {
