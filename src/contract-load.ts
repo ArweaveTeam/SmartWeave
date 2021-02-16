@@ -20,10 +20,10 @@ export async function loadContract(arweave: Arweave, contractID: string) {
   const contractSrc = contractSrcTX.get('data', { decode: true, string: true });
 
   let state: string;
-  if (getTag(contractTX, 'initState')) {
-    state = getTag(contractTX, 'initState');
-  } else if (getTag(contractTX, 'initStateTx')) {
-    const stateTX = await arweave.transactions.get(getTag(contractTX, 'initStateTx'));
+  if (getTag(contractTX, 'Init-State')) {
+    state = getTag(contractTX, 'Init-State');
+  } else if (getTag(contractTX, 'Init-State-TX')) {
+    const stateTX = await arweave.transactions.get(getTag(contractTX, 'Init-State-TX'));
     state = stateTX.get('data', { decode: true, string: true });
   } else {
     state = contractTX.get('data', { decode: true, string: true });
