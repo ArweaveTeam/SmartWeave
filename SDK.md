@@ -44,7 +44,7 @@ Returns the contract id.
 
  ```typescript
 async function createContractFromTx(arweave: Arweave, wallet: JWKInterface, srcTxId: string, state: string, minFee?: number): Promise<string>
-```
+ ```
 
 Create a new contract from an existing contract source tx, with an initial state. Returns the contract id.
 
@@ -56,7 +56,7 @@ Create a new contract from an existing contract source tx, with an initial state
 ### `interactWrite`
 
 ```typescript
-async function interactWrite(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any): Promise<string>
+async function interactWrite(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any, tags: { name: string; value: string }[] = [], target: string = '', winstonQty: string = ''): Promise<string>
 ```
 
 Writes an interaction on the blockchain. This creates an interaction tx and posts it, it does not need to know the current state of the contract.
@@ -65,11 +65,14 @@ Writes an interaction on the blockchain. This creates an interaction tx and post
 - `wallet`        a wallet private key
 - `contractId`    the Transaction Id of the contract
 - `input`         the interaction input, will be serialized as Json.
+- `tags`         an array of tags with name/value as objects
+-  `target`         if needed to send AR to an address, this is the target
+-  `winstonQty`         amount of winston to send to the target, if needed
 
 ### `interactWriteDryRun`
 
 ```typescript
-async function interactWriteDryRun(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any): Promise<ContractInteractionResult>
+async function interactWriteDryRun(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any, tags: { name: string; value: string }[] = [], target: string = '', winstonQty: string = ''): Promise<ContractInteractionResult>
 ```
 
 This will load a contract to its latest state, and do a dry run of an interaction, without writing anything to the chain, simulating a write.
@@ -77,12 +80,15 @@ This will load a contract to its latest state, and do a dry run of an interactio
 - `arweave`       an Arweave client instance
 - `wallet`        a wallet private or public key
 - `contractId`    the Transaction Id of the contract
-- `input`         the interaction input.
+- `input`         the interaction input
+- `tags`         an array of tags with name/value as objects
+-  `target`         if needed to send AR to an address, this is the target
+-  `winstonQty`         amount of winston to send to the target, if needed
 
 ### `interactRead`
 
 ```typescript
-async function interactRead(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any): Promise<any>
+async function interactRead(arweave: Arweave, wallet: JWKInterface, contractId: string, input: any, tags: { name: string; value: string }[] = [], target: string = '', winstonQty: string = ''): Promise<any>
 ```
 
 Load a contract to its latest state, and execute a read interaction that does not change any state.
@@ -90,12 +96,15 @@ Load a contract to its latest state, and execute a read interaction that does no
 - `arweave`       an Arweave client instance
 - `wallet`        a wallet private or public key
 - `contractId`    the Transaction Id of the contract
-- `input`         the interaction input.
+- `input`         the interaction input
+- `tags`         an array of tags with name/value as objects
+-  `target`         if needed to send AR to an address, this is the target
+-  `winstonQty`         amount of winston to send to the target, if needed
 
 ### `readContract`
 
 ```typescript
-async function readContract(arweave: Arweave, contractId: string, height?: number): Promise<any>
+async function readContract(arweave: Arweave, contractId: string, height?: number, returnValidity?: boolean): Promise<any>
 ```
 
 Queries all interaction transactions and replays a contract to its latest state. If height is provided, will replay only to that block height.
@@ -103,6 +112,7 @@ Queries all interaction transactions and replays a contract to its latest state.
 - `arweave`     an Arweave client instance
 - `contractId`  the Transaction Id of the contract
 - `height`      if specified the contract will be replayed only to this block height
+- `returnValidity`  if true, the function will return valid and invalid transaction IDs along with the state
 
 ### `selectWeightedPstHolder`
 
