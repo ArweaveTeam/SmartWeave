@@ -11,7 +11,7 @@ import BigNumber from 'bignumber.js';
  * @param arweave     an Arweave client instance
  * @param contractID  the Transaction Id of the contract
  */
-export async function loadContract(arweave: Arweave, contractID: string) {
+export async function loadContract(arweave: Arweave, contractID: string, latestState?: any) {
   // Generate an object containing the details about a contract in one place.
   const contractTX = await arweave.transactions.get(contractID);
   const contractSrcTXID = getTag(contractTX, 'Contract-Src');
@@ -20,13 +20,17 @@ export async function loadContract(arweave: Arweave, contractID: string) {
   const contractSrc = contractSrcTX.get('data', { decode: true, string: true });
 
   let state: string;
-  if (getTag(contractTX, 'Init-State')) {
-    state = getTag(contractTX, 'Init-State');
-  } else if (getTag(contractTX, 'Init-State-TX')) {
-    const stateTX = await arweave.transactions.get(getTag(contractTX, 'Init-State-TX'));
-    state = stateTX.get('data', { decode: true, string: true });
+  if (latestState) {
+    state = latestState;
   } else {
-    state = contractTX.get('data', { decode: true, string: true });
+    if (getTag(contractTX, 'Init-State')) {
+      state = getTag(contractTX, 'Init-State');
+    } else if (getTag(contractTX, 'Init-State-TX')) {
+      const stateTX = await arweave.transactions.get(getTag(contractTX, 'Init-State-TX'));
+      state = stateTX.get('data', { decode: true, string: true });
+    } else {
+      state = contractTX.get('data', { decode: true, string: true });
+    }
   }
 
   const { handler, swGlobal } = createContractExecutionEnvironment(arweave, contractSrc, contractID);

@@ -25,6 +25,8 @@ export async function readContract(
   arweave: Arweave,
   contractId: string,
   height?: number,
+  latestInteraction?: string,
+  latestState?: any,
   returnValidity?: boolean,
 ): Promise<any> {
   if (!height) {
@@ -32,14 +34,14 @@ export async function readContract(
     height = networkInfo.height;
   }
 
-  const loadPromise = loadContract(arweave, contractId).catch((err) => {
+  const loadPromise = loadContract(arweave, contractId, latestState).catch((err) => {
     const error: SmartWeaveError = new SmartWeaveError(SmartWeaveErrorType.CONTRACT_NOT_FOUND, {
       message: `Contract having txId: ${contractId} not found`,
       requestedTxId: contractId,
     });
     throw error;
   });
-  const fetchTxPromise = fetchTransactions(arweave, contractId, height).catch((err) => err);
+  const fetchTxPromise = fetchTransactions(arweave, contractId, height, latestInteraction).catch((err) => err);
 
   const [contractInfo, txInfos] = await Promise.all([loadPromise, fetchTxPromise]);
 
@@ -148,6 +150,7 @@ interface TagFilter {
 }
 
 interface BlockFilter {
+  min: number;
   max: number;
 }
 
@@ -159,7 +162,28 @@ interface ReqVariables {
 }
 
 // fetch all contract interactions up to the specified block height
-async function fetchTransactions(arweave: Arweave, contractId: string, height: number) {
+async function fetchTransactions(arweave: Arweave, contractId: string, height: number, latestInteraction?: string) {
+  let min: number;
+  if (latestInteraction) {
+    const { data: res } = await arweave.api.post('/graphql', {
+      query: `
+        query($id: ID!) {
+          transactions(ids: [$id]) {
+            edges {
+              node {
+                block {
+                  height
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: latestInteraction },
+    });
+    min = res.data.transactions.edges[0].node.block.height;
+  }
+
   let variables: ReqVariables = {
     tags: [
       {
@@ -172,12 +196,20 @@ async function fetchTransactions(arweave: Arweave, contractId: string, height: n
       },
     ],
     blockFilter: {
+      min,
       max: height,
     },
     first: MAX_REQUEST,
   };
 
   let transactions = await getNextPage(arweave, variables);
+
+  if (latestInteraction) {
+    const index = transactions.edges.findIndex((tx) => tx.node.id === latestInteraction);
+    if (index > -1) {
+      transactions.edges = transactions.edges.slice(index + 1);
+    }
+  }
 
   const txInfos: GQLEdgeInterface[] = transactions.edges.filter((tx) => !tx.node.parent || !tx.node.parent.id);
 
