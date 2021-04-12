@@ -91,7 +91,7 @@ export async function interactWriteDryRun(
     block: {
       height,
       id: current,
-      timestamp: null
+      timestamp: null,
     },
   };
 
@@ -152,7 +152,7 @@ export async function interactRead(
     block: {
       height,
       id: current,
-      timestamp: null
+      timestamp: null,
     },
   };
 
