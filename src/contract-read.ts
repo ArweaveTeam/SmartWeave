@@ -215,6 +215,7 @@ async function getNextPage(arweave: Arweave, variables: ReqVariables): Promise<G
           block {
             height
             id
+            timestamp
           }
           fee { winston }
           quantity { winston }
