@@ -14,6 +14,7 @@ export interface InteractionTx {
 interface Block {
   height: number;
   id: string;
+  timestamp: number;
 }
 
 interface Owner {
