@@ -33,6 +33,8 @@ foreach (action in actions) {
 
 The ordering of actions, is determined, firstly, by when they are mined in the chain, and secondly, by `sha256(transactionId + blockHash)`. So, the full ordering is `[ block_height, sha256(transactionId + blockHash) ]`. In this way they inherit the same consensus properties and finality of the chain, and influencing the order of transactions in a particular block is at least as expensive as mining a block.
 
+The following articles provide an in detail example on how Smartweave works: [Let’s BUIDL: SmartWeave contracts (1)](https://cedriking.medium.com/lets-buidl-smartweave-contracts-6353d22c4561) [Let’s BUIDL: SmartWeave contracts (2)](https://cedriking.medium.com/lets-buidl-smartweave-contracts-2-16c904a8692d)
+
 ## Hello World Contract
 
 A simple contract that waits for any users to call "Hello" and "World". Once both have been called, it sets it's state to `happy: true`
