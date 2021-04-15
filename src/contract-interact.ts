@@ -50,6 +50,7 @@ export async function interactWrite(
  * @param tags          an array of tags with name/value as objects.
  * @param target        if needed to send AR to an address, this is the target.
  * @param winstonQty    amount of winston to send to the target, if needed.
+ * @param myState       a locally-generated state variable
  */
 export async function interactWriteDryRun(
   arweave: Arweave,
@@ -59,9 +60,10 @@ export async function interactWriteDryRun(
   tags: { name: string; value: string }[] = [],
   target: string = '',
   winstonQty: string = '',
+  myState: any,
 ): Promise<ContractInteractionResult> {
   const contractInfo = await loadContract(arweave, contractId);
-  const latestState = await readContract(arweave, contractId);
+  const latestState = myState || await readContract(arweave, contractId);
   const from = await arweave.wallets.getAddress(wallet);
 
   const interaction: ContractInteraction = {
