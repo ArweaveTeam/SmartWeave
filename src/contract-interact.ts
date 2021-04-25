@@ -178,8 +178,12 @@ async function createTx(
     data: Math.random().toString().slice(-4)
   };
 
-  if (target && target.length) options.target = target.toString();
-  if (winstonQty && +winstonQty > 0) options.quantity = winstonQty.toString();
+  if (target && target.length) {
+    options.target = target.toString();
+    if (winstonQty && +winstonQty > 0) {
+      options.quantity = winstonQty.toString();
+    }
+  }
 
   const interactionTx = await arweave.createTransaction(options, wallet);
 
