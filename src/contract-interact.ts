@@ -1,4 +1,5 @@
 import Arweave from 'arweave';
+import { CreateTransactionInterface } from 'arweave/node/common';
 import Transaction from 'arweave/node/lib/transaction';
 import { JWKInterface } from 'arweave/node/lib/wallet';
 import { loadContract } from './contract-load';
@@ -173,18 +174,14 @@ async function createTx(
   target: string = '',
   winstonQty: string = '0',
 ): Promise<Transaction> {
-  let interactionTx = await arweave.createTransaction({ data: Math.random().toString().slice(-4) }, wallet);
+  const options: Partial<CreateTransactionInterface> = {
+    data: Math.random().toString().slice(-4)
+  };
 
-  if (target && winstonQty && target.length && +winstonQty > 0) {
-    interactionTx = await arweave.createTransaction(
-      {
-        data: Math.random().toString().slice(-4),
-        target: target.toString(),
-        quantity: winstonQty.toString(),
-      },
-      wallet,
-    );
-  }
+  if (target && target.length) options.target = target.toString();
+  if (winstonQty && +winstonQty > 0) options.quantity = winstonQty.toString();
+
+  const interactionTx = await arweave.createTransaction(options, wallet);
 
   if (!input) {
     throw new Error(`Input should be a truthy value: ${JSON.stringify(input)}`);
