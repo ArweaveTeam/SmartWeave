@@ -131,4 +131,11 @@ class Block {
     }
     return this.global._activeTx.block.id;
   }
+
+  get timestamp() {
+    if (!this.global._activeTx) {
+      throw new Error('No current tx');
+    }
+    return this.global._activeTx.block.timestamp;
+  }
 }
