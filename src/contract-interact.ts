@@ -159,6 +159,7 @@ export async function interactWriteDryRunCustom(
     block: {
       height,
       id: current,
+      timestamp: null,
     },
   };
 
