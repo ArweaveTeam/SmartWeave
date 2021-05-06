@@ -5,7 +5,7 @@ import {
   createContractFromTx,
 } from './contract-create';
 import { loadContract } from './contract-load';
-import { interactWrite, interactWriteDryRun, interactRead } from './contract-interact';
+import { interactWrite, interactWriteDryRun, interactRead, interactWriteDryRunCustom } from './contract-interact';
 import { readContract } from './contract-read';
 import { selectWeightedPstHolder } from './weighted-pst-holder';
 
@@ -17,6 +17,7 @@ const smartweave = {
   loadContract,
   interactWrite,
   interactWriteDryRun,
+  interactWriteDryRunCustom,
   interactRead,
   readContract,
   selectWeightedPstHolder,
@@ -30,6 +31,7 @@ export {
   loadContract,
   interactWrite,
   interactWriteDryRun,
+  interactWriteDryRunCustom,
   interactRead,
   readContract,
   selectWeightedPstHolder,

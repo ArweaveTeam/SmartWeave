@@ -51,6 +51,8 @@ export async function interactWrite(
  * @param target        if needed to send AR to an address, this is the target.
  * @param winstonQty    amount of winston to send to the target, if needed.
  * @param myState       a locally-generated state variable
+ * @param fromParam     The from address of the transaction
+ * @param contractInfoParam The loaded contract
  */
 export async function interactWriteDryRun(
   arweave: Arweave,
@@ -76,6 +78,66 @@ export async function interactWriteDryRun(
   const { height, current } = await arweave.network.getInfo();
 
   const tx = await createTx(arweave, wallet, contractId, input, tags, target, winstonQty);
+
+  const ts = unpackTags(tx);
+
+  const dummyActiveTx: InteractionTx = {
+    id: tx.id,
+    owner: {
+      address: from,
+    },
+    recipient: tx.target,
+    tags: ts,
+    fee: {
+      winston: tx.reward,
+    },
+    quantity: {
+      winston: tx.quantity,
+    },
+    block: {
+      height,
+      id: current,
+    },
+  };
+
+  contractInfo.swGlobal._activeTx = dummyActiveTx;
+
+  return await execute(contractInfo.handler, interaction, latestState);
+}
+
+/**
+ * This will load a contract to its latest state, and do a dry run of an interaction,
+ * without writing anything to the chain.
+ *
+ * @param arweave       an Arweave client instance
+ * @param tx            a signed transaction
+ * @param contractId    the Transaction Id of the contract
+ * @param input         the interaction input.
+ * @param myState       a locally-generated state variable
+ * @param fromParam     The from address of the transaction
+ * @param contractInfoParam The loaded contract
+ */
+export async function interactWriteDryRunCustom(
+  arweave: Arweave,
+  tx: any,
+  contractId: string,
+  input: any,
+  myState: any={},
+  fromParam:any={},
+  contractInfoParam:any={},
+): Promise<ContractInteractionResult> {
+  const contractInfo = contractInfoParam || await loadContract(arweave, contractId);
+  const latestState = myState || await readContract(arweave, contractId);
+  const from = fromParam;
+
+  const interaction: ContractInteraction = {
+    input,
+    caller: from,
+  };
+
+  const { height, current } = await arweave.network.getInfo();
+
+  //const tx = await createTx(arweave, wallet, contractId, input, tags, target, winstonQty);
 
   const ts = unpackTags(tx);
 
