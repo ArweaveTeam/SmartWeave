@@ -63,13 +63,13 @@ export async function interactWriteDryRun(
   tags: { name: string; value: string }[] = [],
   target: string = '',
   winstonQty: string = '',
-  myState: any={},
-  fromParam:any={},
-  contractInfoParam:any={},
+  myState: any = {},
+  fromParam: any = {},
+  contractInfoParam: any = {},
 ): Promise<ContractInteractionResult> {
-  const contractInfo = contractInfoParam || await loadContract(arweave, contractId);
-  const latestState = myState || await readContract(arweave, contractId);
-  const from = fromParam || await arweave.wallets.getAddress(wallet);
+  const contractInfo = contractInfoParam || (await loadContract(arweave, contractId));
+  const latestState = myState || (await readContract(arweave, contractId));
+  const from = fromParam || (await arweave.wallets.getAddress(wallet));
 
   const interaction: ContractInteraction = {
     input,
@@ -124,12 +124,12 @@ export async function interactWriteDryRunCustom(
   tx: any,
   contractId: string,
   input: any,
-  myState: any={},
-  fromParam:any={},
-  contractInfoParam:any={},
+  myState: any = {},
+  fromParam: any = {},
+  contractInfoParam: any = {},
 ): Promise<ContractInteractionResult> {
-  const contractInfo = contractInfoParam || await loadContract(arweave, contractId);
-  const latestState = myState || await readContract(arweave, contractId);
+  const contractInfo = contractInfoParam || (await loadContract(arweave, contractId));
+  const latestState = myState || (await readContract(arweave, contractId));
   const from = fromParam;
 
   const interaction: ContractInteraction = {
@@ -139,7 +139,7 @@ export async function interactWriteDryRunCustom(
 
   const { height, current } = await arweave.network.getInfo();
 
-  //const tx = await createTx(arweave, wallet, contractId, input, tags, target, winstonQty);
+  // const tx = await createTx(arweave, wallet, contractId, input, tags, target, winstonQty);
 
   const ts = unpackTags(tx);
 
@@ -240,7 +240,7 @@ async function createTx(
   winstonQty: string = '0',
 ): Promise<Transaction> {
   const options: Partial<CreateTransactionInterface> = {
-    data: Math.random().toString().slice(-4)
+    data: Math.random().toString().slice(-4),
   };
 
   if (target && target.length) {
