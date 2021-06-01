@@ -24,6 +24,10 @@ export function handle (state, action) {
     if (qty <= 0 || caller === target) {
       throw new ContractError('Invalid token transfer')
     }
+    
+    if (!(caller in balances)) {
+      throw new ContractError("Caller doesn't have a balance.");
+    }
 
     if (balances[caller] < qty) {
       throw new ContractError(`Caller balance not high enough to send ${qty} token(s)!`)
