@@ -7,7 +7,7 @@ interface UnformattedTag {
 }
 
 export function getTag(tx: Transaction, name: string) {
-  const tags = tx.get('tags') as any;
+  const tags = tx['tags'] as any;
 
   for (const tag of tags) {
     // decoding tags can throw on invalid utf8 data.
