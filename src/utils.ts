@@ -30,7 +30,7 @@ export function getTag(tx: Transaction, name: string) {
  * @param tx
  */
 export function unpackTags(tx: Transaction): Record<string, string | string[]> {
-  const tags = tx.get('tags') as any;
+  const tags = tx['tags'] as any;
   const result: Record<string, string | string[]> = {};
 
   for (const tag of tags) {
