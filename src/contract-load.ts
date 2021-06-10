@@ -1,6 +1,6 @@
 import Arweave from 'arweave';
 import * as clarity from '@weavery/clarity';
-import {getTag, normalizeContractSource} from './utils';
+import { getTag, normalizeContractSource } from './utils';
 import { ContractHandler } from './contract-step';
 import { SmartWeaveGlobal } from './smartweave-global';
 import BigNumber from 'bignumber.js';
