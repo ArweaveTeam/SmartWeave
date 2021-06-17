@@ -56,7 +56,12 @@ export async function loadContract(arweave: Arweave, contractID: string) {
  *
  * @param contractSrc the javascript source for the contract. Must declare a handle() function
  */
-export function createContractExecutionEnvironment(arweave: Arweave, contractSrc: string, contractId: string, contractOwner: string) {
+export function createContractExecutionEnvironment(
+  arweave: Arweave,
+  contractSrc: string,
+  contractId: string,
+  contractOwner: string,
+) {
   const returningSrc = normalizeContractSource(contractSrc);
   const swGlobal = new SmartWeaveGlobal(arweave, { id: contractId, owner: contractOwner });
   const getContractFunction = new Function(returningSrc); // eslint-disable-line
