@@ -170,25 +170,7 @@ export async function interactWriteDryRunCustom(
 
   const ts = unpackTags(tx);
 
-  const dummyActiveTx: InteractionTx = {
-    id: tx.id,
-    owner: {
-      address: from,
-    },
-    recipient: tx.target,
-    tags: ts,
-    fee: {
-      winston: tx.reward,
-    },
-    quantity: {
-      winston: tx.quantity,
-    },
-    block: {
-      height,
-      id: current,
-      timestamp: null,
-    },
-  };
+  const dummyActiveTx: InteractionTx = createDummyTx(tx, from, ts, height, current);
 
   contractInfo.swGlobal._activeTx = dummyActiveTx;
 
@@ -231,25 +213,7 @@ export async function interactRead(
 
   const ts = unpackTags(tx);
 
-  const dummyActiveTx: InteractionTx = {
-    id: tx.id,
-    owner: {
-      address: from,
-    },
-    recipient: tx.target,
-    tags: ts,
-    fee: {
-      winston: tx.reward,
-    },
-    quantity: {
-      winston: tx.quantity,
-    },
-    block: {
-      height,
-      id: current,
-      timestamp: null,
-    },
-  };
+  const dummyActiveTx: InteractionTx = createDummyTx(tx, from, ts, height, current);
 
   contractInfo.swGlobal._activeTx = dummyActiveTx;
 
@@ -295,4 +259,27 @@ async function createTx(
 
   await arweave.transactions.sign(interactionTx, wallet);
   return interactionTx;
+}
+
+
+function createDummyTx(tx: Transaction, from: string, tags: Record<string, string | string[]>, height: number, current: string) {
+  return {
+    id: tx.id,
+    owner: {
+      address: from,
+    },
+    recipient: tx.target,
+    tags,
+    fee: {
+      winston: tx.reward,
+    },
+    quantity: {
+      winston: tx.quantity,
+    },
+    block: {
+      height,
+      id: current,
+      timestamp: parseInt((Date.now() / 1000).toString(), 10),
+    },
+  };
 }
