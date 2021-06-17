@@ -10,7 +10,7 @@
 
 export function handle (state, action) {
   if (action.input.function === 'register') {
-    if (typeof action.input.name !== 'string' || action.input.name < 3) {
+    if (typeof action.input.name !== 'string' || action.input.name.length < 3) {
       throw new ContractError(`Invalid name provided: ${action.input.name}`)
     }
     if (typeof action.input.data !== 'string') {
@@ -28,7 +28,7 @@ export function handle (state, action) {
   }
 
   if (action.input.function === 'update') {
-    if (typeof action.input.name !== 'string' || action.input.name < 3) {
+    if (typeof action.input.name !== 'string' || action.input.name.length < 3) {
       throw new ContractError(`Invalid name provided: ${action.input.name}`)
     }
     if (typeof action.input.data !== 'string') {
@@ -37,7 +37,7 @@ export function handle (state, action) {
     if (!state.names[action.input.name]) {
       throw new ContractError('Name not registered')
     }
-    if (!state.names[action.input.name].ownedBy !== action.caller) {
+    if (state.names[action.input.name].ownedBy !== action.caller) {
       throw new ContractError('Name not owned by caller')
     }
 
@@ -47,7 +47,7 @@ export function handle (state, action) {
   }
 
   if (action.input.function === 'transfer') {
-    if (typeof action.input.name !== 'string' || action.input.name < 3) {
+    if (typeof action.input.name !== 'string' || action.input.name.length < 3) {
       throw new ContractError(`Invalid name provided: ${action.input.name}`)
     }
     if (typeof action.input.target !== 'string') {
@@ -56,7 +56,7 @@ export function handle (state, action) {
     if (!state.names[action.input.name]) {
       throw new ContractError('Name not registered')
     }
-    if (!state.names[action.input.name].ownedBy !== action.caller) {
+    if (state.names[action.input.name].ownedBy !== action.caller) {
       throw new ContractError('Name not owned by caller')
     }
 
@@ -66,13 +66,13 @@ export function handle (state, action) {
   }
 
   if (action.input.function === 'giveup') {
-    if (typeof action.input.name !== 'string' || action.input.name < 3) {
+    if (typeof action.input.name !== 'string' || action.input.name.length < 3) {
       throw new ContractError(`Invalid name provided: ${action.input.name}`)
     }
     if (!state.names[action.input.name]) {
       throw new ContractError('Name not registered')
     }
-    if (!state.names[action.input.name].ownedBy !== action.caller) {
+    if (state.names[action.input.name].ownedBy !== action.caller) {
       throw new ContractError('Name not owned by caller')
     }
 
