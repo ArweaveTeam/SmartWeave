@@ -9,7 +9,7 @@ import Sentencer from 'sentencer';
 import * as Sdk from '..';
 import { getTag } from '../utils';
 import { assert, isExpectedType, getJsonInput } from './utils';
-import { askForContractCreationConfirmation } from './inquirer';
+import { askForContractCreationConfirmation, askForContractInteractionConfirmation } from './inquirer';
 
 const arweave = Arweave.init({
   host: 'arweave.net',
@@ -22,7 +22,7 @@ const arweave = Arweave.init({
 export async function readCommandHandler(argv: any) {
   // creates a spinner for the read command
   const { Spinner } = CLI;
-  const status = new Spinner(`Loading the status of the contract ${argv.contractId}, please wait...`);
+  const status = new Spinner(`Loading the state of the contract ${argv.contractId}, please wait...`);
   status.start();
 
   const contractId = argv.contractId;
@@ -44,14 +44,14 @@ export async function readCommandHandler(argv: any) {
     console.log(`
     🤓 ${chalk.green(`We found what you are looking for`)} 🤓
 
-    The following is the current status of the contract ${chalk.bgBlack(chalk.white(contractId))}: 
+    The following is the current state of the contract ${chalk.bgBlack(chalk.white(contractId))}: 
     `);
     argv.prettify
       ? console.log(beautify(result, null, 2, 100))
       : console.log(
           result,
           `
-    For a complete and prettier version of this status run:
+    For a complete and prettier version of this state run:
 
       ${chalk.bgBlack(chalk.white(`smartweave read ${contractId} --prettify`))}
       `,
@@ -71,27 +71,230 @@ export async function readCommandHandler(argv: any) {
 }
 
 export async function writeCommandHandler(argv: any) {
-  const contractId = argv.contractId;
-  let input = argv.input;
-  const dryRun = argv.dryRun;
-  const wallet = JSON.parse(readFileSync(argv.keyFile).toString());
+  // creates a spinner for the read command
+  const { Spinner } = CLI;
+  let status = new Spinner(``);
 
-  const jsonInput = getJsonInput(input);
-  input = jsonInput || input;
+  const contractId = argv.contractId;
+  const dryRun = argv.dryRun;
+  const quant = argv.quantity;
+  const target = argv.target;
+  let tags = argv.tags;
+  let input = argv.input;
+  let wallet;
+
+  status = new Spinner(`Checking your key-file, please wait...`);
+  status.start();
+  try {
+    wallet = JSON.parse(readFileSync(argv.keyFile).toString());
+    status.stop();
+  } catch (err) {
+    status.stop();
+    logger.error(`
+    🤔 ${chalk.red('It seems that the key-file')} ${chalk.bgBlack(chalk.white(argv.keyFile))} ${chalk.red(
+      'is not in your file system',
+    )} 🤔
+
+      Please double check the path of your key-file and try again! 
+    `);
+    process.exit(0);
+  }
+
+  if (!target && quant) {
+    status.stop();
+    logger.error(`
+    🤔 ${chalk.red('You are trying to send an amount of')} ${chalk.bgBlack(chalk.white(quant))} ${chalk.red(
+      'winston but you did not specified a target receiver!',
+    )} 🤔
+
+      This interaction cannot be accepted! Please double check what you are trying to do and retry! 
+    `);
+    process.exit(0);
+  } else if (target && !quant) {
+    status.stop();
+    logger.error(`
+    🤔 ${chalk.red('You have specified the target receiver')} ${chalk.bgBlack(chalk.white(target))} ${chalk.red(
+      'but you did not specified any amount of winston to send to it!',
+    )} 🤔
+
+      This interaction cannot be accepted! Please double check what you are trying to do and retry! 
+    `);
+    process.exit(0);
+  }
+
+  if (tags) {
+    status = new Spinner(`Checking the tags you sent, please wait...`);
+    status.start();
+    try {
+      const parsedTags = JSON.parse(tags);
+      tags = Object.values(parsedTags);
+      status.stop();
+    } catch (e) {
+      logger.error(`
+      🤔 ${chalk.red('It seems that the tags')} ${chalk.bgBlack(chalk.white(tags))} ${chalk.red(
+        'are not formatted as a valid JSON array.',
+      )} 🤔
+  
+        Please double check the path of your key-file and try again! 
+      `);
+      status.stop();
+      process.exit(0);
+    }
+  }
+
+  if (input) {
+    status = new Spinner(`Checking the inputs you sent, please wait...`);
+    status.start();
+    try {
+      const jsonInput = getJsonInput(input);
+      input = jsonInput || input;
+      status.stop();
+    } catch (err) {
+      status.stop();
+      logger.error(`
+      🤔 ${chalk.red('It seems that the input')} ${chalk.bgBlack(chalk.white(input))} ${chalk.red(
+        'is not a valid JSON input',
+      )} 🤔
+  
+        Please double check the path of your key-file and try again! 
+      `);
+      process.exit(0);
+    }
+  }
 
   try {
     let result;
-
     if (dryRun) {
-      result = await Sdk.interactWriteDryRun(arweave, wallet, contractId, input);
-      console.log(result);
+      status = new Spinner(`Trying to simulate a write to the contract, please wait...`);
+      status.start();
+      const { reward, quantity } = await Sdk.simulateInteractWrite(
+        arweave,
+        wallet,
+        contractId,
+        input,
+        tags,
+        target,
+        quant,
+      );
+      const totalAmount = arweave.ar.winstonToAr((parseFloat(reward) + parseFloat(quantity)).toString());
+      result = await Sdk.interactWriteDryRun(arweave, wallet, contractId, input, tags, target, quant);
+      status.stop();
+      console.log(`
+      🤓 ${chalk.green(`I simulated the contract write you are trying to perform!`)} 🤓
+  
+      For this interaction you will spend a total amount of ${chalk.bgBlack(
+        chalk.white(totalAmount),
+      )} AR (including the eventual quantity you have specified and the network fee).
+      
+      The following would be the state of the contract ${chalk.bgBlack(
+        chalk.white(contractId),
+      )} after this interaction: 
+      `);
+      argv.prettify
+        ? console.log(beautify(result, null, 2, 100))
+        : console.log(
+            result,
+            `
+      For a complete and prettier version of this state run:
+  
+      ${chalk.bgBlack(
+        chalk.white(
+          `smartweave write ${contractId} --key-file ${argv.keyFile} --input '${argv.input}' --dry-run --prettify`,
+        ),
+      )}
+      `,
+          );
+      process.exit(0);
     } else {
-      result = await Sdk.interactWrite(arweave, wallet, contractId, input);
-      console.log(`Interaction posted at: ${result}`);
+      status = new Spinner(`Trying to write the contract, please wait...`);
+      status.start();
+
+      // firstly simulate the contract call compute the rewards and ask for the user confirmation
+      const { reward, quantity } = await Sdk.simulateInteractWrite(
+        arweave,
+        wallet,
+        contractId,
+        input,
+        tags,
+        target,
+        quant,
+      );
+      const totalAmount = arweave.ar.winstonToAr((parseFloat(reward) + parseFloat(quantity)).toString());
+
+      const userAddress = await arweave.wallets.jwkToAddress(wallet);
+      const userBalance = arweave.ar.winstonToAr(await arweave.wallets.getBalance(userAddress));
+      const expectedContractInteractionFee = totalAmount;
+      const userBalanceAfterCreation = parseFloat(userBalance) - parseFloat(expectedContractInteractionFee);
+      const confirmRandomWord: string = Sentencer.make('{{ adjective }}');
+
+      if (userBalanceAfterCreation < 0) {
+        status.stop();
+        logger.error(`
+        😭 ${chalk.red('It seems that you do not have enough AR to interact with this contract')} 😭
+    
+        - To interact with this contract you need to pay a fee of ~${chalk.bgBlack(
+          chalk.white(expectedContractInteractionFee),
+        )} AR (including the network fees and the quantity you have eventually specified);
+        - Your current wallet balance is ~${chalk.bgBlack(chalk.white(userBalance))} AR;
+  
+        ${chalk.red('So sorry for this ...')}
+        `);
+        process.exit(0);
+      }
+
+      status.stop();
+      console.log(`
+        🤓 ${chalk.green(`Everything is ready for interacting with the contract! Please review the following info:`)} 🤓
+  
+        - To interact with this contract you need to pay a fee of ~${chalk.bgBlack(
+          chalk.white(expectedContractInteractionFee),
+        )} AR (including the network fees and the quantity you have eventually specified);
+        - Your current wallet balance is ${chalk.bgBlack(chalk.white(userBalance))} AR;
+        - After the interaction your wallet balance will be ~${chalk.bgBlack(
+          chalk.white(userBalanceAfterCreation),
+        )} AR.     
+      `);
+
+      const resp = await askForContractInteractionConfirmation(confirmRandomWord, expectedContractInteractionFee);
+
+      if (resp.payFeeForContractInteraction.toUpperCase() !== confirmRandomWord.toUpperCase()) {
+        logger.error(`
+        🤷🏽‍♀️ ${chalk.red('Ok! No problem I will not send this contract interaction')} 🤷🏽‍♀️
+    
+        See you next time! 👋
+        `);
+        process.exit(0);
+      }
+
+      console.log('\n');
+      status = new Spinner(`Amazing! Let me post this interaction, please wait...`);
+      status.start();
+      result = await Sdk.interactWrite(arweave, wallet, contractId, input, tags, target, quant);
+      status.stop();
+      console.log(`     🥳 ${chalk.green(
+        `The interaction with the contract ${contractId} was successfully posted at TXID ${chalk.bgBlack(
+          chalk.white(result),
+        )}!`,
+      )} 🥳
+
+      To check the confirmation status of this interaction run:
+      
+      ${chalk.bgBlack(chalk.white(`arweave status ${result}`))}
+      `);
+      process.exit(0);
     }
   } catch (e) {
-    logger.error(e);
-    logger.error('Unable to excute write.');
+    status.stop();
+    logger.error(`
+    🤔 ${chalk.red('It seems that a contract having the TXID:')} ${chalk.bgBlack(chalk.white(contractId))} ${chalk.red(
+      'is not stored on the arweave',
+    )} 🤔
+
+      Are you sure that the contract you are trying to access was actually deployed and that the related transaction was confirmed?
+
+      ${chalk.red('If you feel so, please report this incident to our team at https://www.arweave.org!')}
+    `);
+    process.exit(0);
   }
 }
 
@@ -122,7 +325,7 @@ export async function createCommandHandler(argv: any) {
   }
 
   // checks if the user sent a json as the initial status of the contract
-  status = new Spinner(`Checking the initial JSON status you passed in, please wait...`);
+  status = new Spinner(`Checking the initial JSON state you passed in, please wait...`);
   status.start();
   if (!isExpectedType(initStateFile, 'json')) {
     status.stop();
@@ -250,8 +453,6 @@ export async function createCommandHandler(argv: any) {
       ${chalk.red('If you feel so, please report this incident to our team at https://www.arweave.org!')}
       `);
       process.exit(0);
-      // logger.error(e);
-      // logger.error('Unable create contract');
     }
   } else {
     let sourceTx;

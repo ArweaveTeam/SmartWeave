@@ -41,6 +41,33 @@ export async function interactWrite(
 }
 
 /**
+ * Simulates an interaction on the blockchain and returns the simulated transaction.
+ *
+ * This simply creates an interaction tx and posts it.
+ * It does not need to know the current state of the contract.
+ *
+ * @param arweave       an Arweave client instance
+ * @param wallet        a wallet private key
+ * @param contractId    the Transaction Id of the contract
+ * @param input         the interaction input, will be serialized as Json.
+ * @param tags          an array of tags with name/value as objects.
+ * @param target        if needed to send AR to an address, this is the target.
+ * @param winstonQty    amount of winston to send to the target, if needed.
+ */
+export async function simulateInteractWrite(
+  arweave: Arweave,
+  wallet: JWKInterface,
+  contractId: string,
+  input: any,
+  tags: { name: string; value: string }[] = [],
+  target: string = '',
+  winstonQty: string = '',
+): Promise<Transaction> {
+  const interactionTx = await createTx(arweave, wallet, contractId, input, tags, target, winstonQty);
+  return interactionTx;
+}
+
+/**
  * This will load a contract to its latest state, and do a dry run of an interaction,
  * without writing anything to the chain.
  *
