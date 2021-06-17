@@ -32,6 +32,7 @@ export class SmartWeaveGlobal {
   arweave: Pick<Arweave, 'ar' | 'wallets' | 'utils' | 'crypto'>;
   contract: {
     id: string;
+    owner: string;
   };
   unsafeClient: Arweave;
 
@@ -45,8 +46,7 @@ export class SmartWeaveGlobal {
     return !this._activeTx;
   }
 
-  constructor(arweave: Arweave, contract: { id: string }) {
-    this.unsafeClient = arweave;
+  constructor(arweave: Arweave, contract: { id: string; owner: string }) {
     this.arweave = {
       ar: arweave.ar,
       utils: arweave.utils,
