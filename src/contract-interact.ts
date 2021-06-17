@@ -261,8 +261,13 @@ async function createTx(
   return interactionTx;
 }
 
-
-function createDummyTx(tx: Transaction, from: string, tags: Record<string, string | string[]>, height: number, current: string) {
+function createDummyTx(
+  tx: Transaction,
+  from: string,
+  tags: Record<string, string | string[]>,
+  height: number,
+  current: string,
+) {
   return {
     id: tx.id,
     owner: {
