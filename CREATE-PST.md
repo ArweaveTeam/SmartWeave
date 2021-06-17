@@ -31,7 +31,7 @@ Using the SmartWeave CLI tool, we will leverage an already-deployed contract ([f
 
 First, copy the example JSON found here: [examples/token-pst.json](examples/token-pst.json).
 
-`cp examples/token.json my-pst-token-state.json`
+`cp examples/token-pst.json my-pst-token-state.json`
 
 Then, edit the initial state. Ensure you update a) the ticker name, and b) the wallet address that controls the initial tokens.
 
