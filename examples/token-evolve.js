@@ -1,3 +1,4 @@
+// WARNING: Dot not use this function, used for testing purposes.
 
 export function handle (state, action) {
   const balances = state.balances

@@ -37,12 +37,13 @@ export async function readContract(
   });
   const fetchTxPromise = fetchTransactions(arweave, contractId, height).catch((err) => err);
 
-  const [contractInfo, txInfos] = await Promise.all([loadPromise, fetchTxPromise]);
+  let [contractInfo, txInfos] = await Promise.all([loadPromise, fetchTxPromise]);
 
   if (contractInfo instanceof Error) throw contractInfo;
   if (txInfos instanceof Error) throw txInfos;
 
   let state: any;
+  let contractSrc: string = contractInfo.contractSrc;
   try {
     state = JSON.parse(contractInfo.initState);
   } catch (e) {
@@ -53,7 +54,7 @@ export async function readContract(
 
   await sortTransactions(arweave, txInfos);
 
-  const { handler, swGlobal } = contractInfo;
+  let { handler, swGlobal } = contractInfo;
 
   const validity: Record<string, boolean> = {};
 
@@ -103,6 +104,23 @@ export async function readContract(
     validity[currentTx.id] = result.type === 'ok';
 
     state = result.state;
+
+    const evolve: string = state.evolve || state.settings?.evolve;
+    if(evolve && /[a-z0-9_-]{43}/i.test(evolve) && (state.canEvolve || state.settings?.canEvolve)) {
+      if(contractSrc !== state.evolve) {
+        try {
+          console.log('inside evolve!', state.evolve);
+          contractInfo = await loadContract(arweave, contractId, evolve);
+          handler = contractInfo.handler;
+        } catch (e) {
+          const error: SmartWeaveError = new SmartWeaveError(SmartWeaveErrorType.CONTRACT_NOT_FOUND, {
+            message: `Contract having txId: ${contractId} not found`,
+            requestedTxId: contractId,
+          });
+          throw error;
+        }
+      }
+    }
   }
 
   return returnValidity ? { state, validity } : state;

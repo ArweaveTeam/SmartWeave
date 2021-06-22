@@ -11,11 +11,13 @@ import BigNumber from 'bignumber.js';
  * @param arweave     an Arweave client instance
  * @param contractID  the Transaction Id of the contract
  */
-export async function loadContract(arweave: Arweave, contractID: string) {
+export async function loadContract(arweave: Arweave, contractID: string, contractSrcTXID?: string) {
   // Generate an object containing the details about a contract in one place.
   const contractTX = await arweave.transactions.get(contractID);
   const contractOwner = await arweave.wallets.ownerToAddress(contractTX.owner);
-  const contractSrcTXID = getTag(contractTX, 'Contract-Src');
+  
+  contractSrcTXID = contractSrcTXID || getTag(contractTX, 'Contract-Src');
+  
   const minFee = getTag(contractTX, 'Min-Fee');
   const contractSrcTX = await arweave.transactions.get(contractSrcTXID);
   const contractSrc = contractSrcTX.get('data', { decode: true, string: true });
