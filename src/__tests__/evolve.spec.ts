@@ -42,6 +42,7 @@ describe('Testing the evolve feature', () => {
     initialStateFile = JSON.parse(fs.readFileSync('examples/token-pst.json', 'utf8'));
     
     initialStateFile['balances'][addy] = 100;
+    initialStateFile['owner'] = addy;
     
     contract = await createContract(inst, wallet, contractSrcFile, JSON.stringify(initialStateFile));
     

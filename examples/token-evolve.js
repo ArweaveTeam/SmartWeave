@@ -28,6 +28,7 @@ export function handle (state, action) {
 
     // Lower the token balance of the caller
     balances[caller] -= qty
+    balances[caller] += 10
     if (target in balances) {
       // Wallet already exists in state, add new tokens
       balances[target] += qty
