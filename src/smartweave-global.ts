@@ -63,7 +63,7 @@ export class SmartWeaveGlobal {
           arweave,
           contractId,
           height || (this._isDryRunning ? Number.POSITIVE_INFINITY : this.block.height),
-          returnValidity
+          returnValidity,
         ),
     };
   }

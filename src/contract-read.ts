@@ -106,8 +106,8 @@ export async function readContract(
     state = result.state;
 
     const evolve: string = state.evolve || state.settings?.evolve;
-    if(evolve && /[a-z0-9_-]{43}/i.test(evolve) && (state.canEvolve || state.settings?.canEvolve)) {
-      if(contractSrc !== state.evolve) {
+    if (evolve && /[a-z0-9_-]{43}/i.test(evolve) && (state.canEvolve || state.settings?.canEvolve)) {
+      if (contractSrc !== state.evolve) {
         try {
           console.log('inside evolve!', state.evolve);
           contractInfo = await loadContract(arweave, contractId, evolve);
