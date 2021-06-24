@@ -58,11 +58,12 @@ export class SmartWeaveGlobal {
     this.transaction = new Transaction(this);
     this.block = new Block(this);
     this.contracts = {
-      readContractState: (contractId: string, height?: number) =>
+      readContractState: (contractId: string, height?: number, returnValidity?: boolean) =>
         readContract(
           arweave,
           contractId,
           height || (this._isDryRunning ? Number.POSITIVE_INFINITY : this.block.height),
+          returnValidity,
         ),
     };
   }
