@@ -145,7 +145,10 @@ async function addSortKey(arweave: Arweave, txInfo: any) {
   const txIdBytes = arweave.utils.b64UrlToBuffer(node.id);
   const concatted = arweave.utils.concatBuffers([blockHashBytes, txIdBytes]);
   const hashed = arrayToHex(await arweave.crypto.hash(concatted));
-  const blockHeight = `000000${node.block.height}`.slice(-12);
+  // Note for the future:
+  // If Arweave ever surpasses a 12 digit block height,
+  // all contracts will be broken.
+  const blockHeight = `${node.block.height}`.padStart(12, '0');
 
   txInfo.sortKey = `${blockHeight},${hashed}`;
 }
