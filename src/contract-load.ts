@@ -63,12 +63,11 @@ export function createContractExecutionEnvironment(
   contractSrc: string,
   contractId: string,
   contractOwner: string,
+  customReadContract?: any,
 ) {
   const returningSrc = normalizeContractSource(contractSrc);
-  const swGlobal = new SmartWeaveGlobal(arweave, { id: contractId, owner: contractOwner });
+  const swGlobal = new SmartWeaveGlobal(arweave, { id: contractId, owner: contractOwner, customReadContract });
   const getContractFunction = new Function(returningSrc); // eslint-disable-line
-
-  // console.log(returningSrc);
 
   return {
     handler: getContractFunction(swGlobal, BigNumber, clarity) as ContractHandler,
