@@ -649,10 +649,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@textury/arlocal@^1.0.12":
-  version "1.0.12"
-  resolved "https://registry.yarnpkg.com/@textury/arlocal/-/arlocal-1.0.12.tgz#adf84f4ebf4c809b624e6554c61cb74cc42a2872"
-  integrity sha512-SjUUQWxs1oYbHdidHIuP2aRfyrqObeOyq9PNKdcz6xdKuLSb6yG0GeYB6VSal2LXSd+4n7UUcqop+ab1qN12cw==
+"@textury/arlocal@^1.0.14":
+  version "1.0.14"
+  resolved "https://registry.yarnpkg.com/@textury/arlocal/-/arlocal-1.0.14.tgz#a09b215b27f53afaeec0cb00986d8008827db3a5"
+  integrity sha512-yezq9qnB0M5qhhQ3zHK6ug/k8fXAtVHSUyvEiVPh3V3UNrEgGf/Dg73kmSnhxhrqzws7DrGck0lA+zsvS/pY5w==
   dependencies:
     "@koa/cors" "^3.1.0"
     apollo-server-koa "^2.25.1"
