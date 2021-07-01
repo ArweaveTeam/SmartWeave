@@ -14,6 +14,7 @@ import { readContract } from './contract-read';
  * - SmartWeave.transaction.id
  * - SmartWeave.transaction.reward
  * - SmartWeave.block.height
+ * - SmartWeave.block.timestamp
  * - etc
  *
  * and access to some of the arweave utils:
@@ -58,11 +59,12 @@ export class SmartWeaveGlobal {
     this.transaction = new Transaction(this);
     this.block = new Block(this);
     this.contracts = {
-      readContractState: (contractId: string, height?: number) =>
+      readContractState: (contractId: string, height?: number, returnValidity?: boolean) =>
         readContract(
           arweave,
           contractId,
           height || (this._isDryRunning ? Number.POSITIVE_INFINITY : this.block.height),
+          returnValidity,
         ),
     };
   }
