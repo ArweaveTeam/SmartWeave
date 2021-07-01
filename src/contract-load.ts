@@ -68,8 +68,6 @@ export function createContractExecutionEnvironment(
   const swGlobal = new SmartWeaveGlobal(arweave, { id: contractId, owner: contractOwner });
   const getContractFunction = new Function(returningSrc); // eslint-disable-line
 
-  // console.log(returningSrc);
-
   return {
     handler: getContractFunction(swGlobal, BigNumber, clarity) as ContractHandler,
     swGlobal,

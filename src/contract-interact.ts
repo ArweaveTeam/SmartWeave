@@ -5,8 +5,8 @@ import { JWKInterface } from 'arweave/node/lib/wallet';
 import { loadContract } from './contract-load';
 import { readContract } from './contract-read';
 import { execute, ContractInteraction, ContractInteractionResult } from './contract-step';
-import { InteractionTx } from './interaction-tx';
 import { unpackTags } from './utils';
+import { BlockData } from 'arweave/node/blocks';
 
 /**
  * Writes an interaction on the blockchain.
@@ -94,7 +94,7 @@ export async function interactWriteDryRun(
   fromParam: any = {},
   contractInfoParam: any = {},
 ): Promise<ContractInteractionResult> {
-  const contractInfo = contractInfoParam || (await loadContract(arweave, contractId));
+  const { handler, swGlobal } = contractInfoParam || (await loadContract(arweave, contractId));
   const latestState = myState || (await readContract(arweave, contractId));
   const from = fromParam || (await arweave.wallets.getAddress(wallet));
 
@@ -103,35 +103,15 @@ export async function interactWriteDryRun(
     caller: from,
   };
 
-  const { height, current } = await arweave.network.getInfo();
-
   const tx = await createTx(arweave, wallet, contractId, input, tags, target, winstonQty);
 
   const ts = unpackTags(tx);
 
-  const dummyActiveTx: InteractionTx = {
-    id: tx.id,
-    owner: {
-      address: from,
-    },
-    recipient: tx.target,
-    tags: ts,
-    fee: {
-      winston: tx.reward,
-    },
-    quantity: {
-      winston: tx.quantity,
-    },
-    block: {
-      height,
-      id: current,
-      timestamp: null,
-    },
-  };
+  const currentBlock: BlockData = await arweave.blocks.getCurrent();
 
-  contractInfo.swGlobal._activeTx = dummyActiveTx;
+  swGlobal._activeTx = createDummyTx(tx, from, ts, currentBlock);
 
-  return await execute(contractInfo.handler, interaction, latestState);
+  return await execute(handler, interaction, latestState);
 }
 
 /**
@@ -155,7 +135,7 @@ export async function interactWriteDryRunCustom(
   fromParam: any = {},
   contractInfoParam: any = {},
 ): Promise<ContractInteractionResult> {
-  const contractInfo = contractInfoParam || (await loadContract(arweave, contractId));
+  const { handler, swGlobal } = contractInfoParam || (await loadContract(arweave, contractId));
   const latestState = myState || (await readContract(arweave, contractId));
   const from = fromParam;
 
@@ -164,17 +144,13 @@ export async function interactWriteDryRunCustom(
     caller: from,
   };
 
-  const { height, current } = await arweave.network.getInfo();
-
-  // const tx = await createTx(arweave, wallet, contractId, input, tags, target, winstonQty);
-
   const ts = unpackTags(tx);
 
-  const dummyActiveTx: InteractionTx = createDummyTx(tx, from, ts, height, current);
+  const currentBlock: BlockData = await arweave.blocks.getCurrent();
 
-  contractInfo.swGlobal._activeTx = dummyActiveTx;
+  swGlobal._activeTx = createDummyTx(tx, from, ts, currentBlock);
 
-  return await execute(contractInfo.handler, interaction, latestState);
+  return await execute(handler, interaction, latestState);
 }
 
 /**
@@ -198,7 +174,7 @@ export async function interactRead(
   target: string = '',
   winstonQty: string = '',
 ): Promise<any> {
-  const contractInfo = await loadContract(arweave, contractId);
+  const { handler, swGlobal } = await loadContract(arweave, contractId);
   const latestState = await readContract(arweave, contractId);
   const from = wallet ? await arweave.wallets.getAddress(wallet) : '';
 
@@ -207,17 +183,14 @@ export async function interactRead(
     caller: from,
   };
 
-  const { height, current } = await arweave.network.getInfo();
-
   const tx = await createTx(arweave, wallet, contractId, input, tags, target, winstonQty);
-
   const ts = unpackTags(tx);
+  const currentBlock: BlockData = await arweave.blocks.getCurrent();
 
-  const dummyActiveTx: InteractionTx = createDummyTx(tx, from, ts, height, current);
+  swGlobal._activeTx = createDummyTx(tx, from, ts, currentBlock);
 
-  contractInfo.swGlobal._activeTx = dummyActiveTx;
+  const result = await execute(handler, interaction, latestState);
 
-  const result = await execute(contractInfo.handler, interaction, latestState);
   return result.result;
 }
 
@@ -261,13 +234,7 @@ async function createTx(
   return interactionTx;
 }
 
-function createDummyTx(
-  tx: Transaction,
-  from: string,
-  tags: Record<string, string | string[]>,
-  height: number,
-  current: string,
-) {
+function createDummyTx(tx: Transaction, from: string, tags: Record<string, string | string[]>, block: BlockData) {
   return {
     id: tx.id,
     owner: {
@@ -282,9 +249,9 @@ function createDummyTx(
       winston: tx.quantity,
     },
     block: {
-      height,
-      id: current,
-      timestamp: parseInt((Date.now() / 1000).toString(), 10),
+      id: block.indep_hash,
+      height: block.height,
+      timestamp: block.timestamp,
     },
   };
 }

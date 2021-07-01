@@ -94,7 +94,7 @@ async function interactRead(arweave: Arweave, wallet: JWKInterface, contractId: 
 Load a contract to its latest state, and execute a read interaction that does not change any state.
 
 - `arweave`       an Arweave client instance
-- `wallet`        a wallet private or public key
+- `wallet`        a wallet private or public key (optional)
 - `contractId`    the Transaction Id of the contract
 - `input`         the interaction input
 - `tags`         an array of tags with name/value as objects

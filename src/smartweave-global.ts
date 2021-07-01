@@ -14,6 +14,7 @@ import { readContract } from './contract-read';
  * - SmartWeave.transaction.id
  * - SmartWeave.transaction.reward
  * - SmartWeave.block.height
+ * - SmartWeave.block.timestamp
  * - etc
  *
  * and access to some of the arweave utils:

@@ -95,6 +95,7 @@ The contract handler takes it's current state, and a ContractInteraction object 
 
 - `caller` the wallet address of the user interacting with the contract.
 - `input` the user controlled input to the contract. This will always be a truthy Javascript value that has been passed through JSON.parse() but otherwise, it is a caller controlled value.
+The input size is limited to ~2000 bytes (as it is being saved as "tags" - the total size of the names and values may not exceed 2048 bytes).
 
 The handler function should terminate by one of:
 
@@ -136,6 +137,7 @@ SmartWeave.transaction.reward
 SmartWeave.transaction.tags
 SmartWeave.block.height
 SmartWeave.block.indep_hash
+SmartWeave.block.timestamp
 ```
 
 It provides access to some utility APIs from arweave-js:
