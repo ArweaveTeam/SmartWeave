@@ -1,8 +1,6 @@
 import fs from 'fs';
 
-// Init ArLocal
 import ArLocal from '@textury/arlocal';
-// Import Arweave
 import Arweave from 'arweave';
 
 import {createContract} from '../contract-create';
@@ -25,7 +23,7 @@ describe('Testing the evolve feature', () => {
   
 
   beforeAll(async () => {
-    arlocal = new ArLocal();
+    arlocal = new ArLocal(1984, false);
     await arlocal.start();
     
     inst = Arweave.init({
@@ -84,10 +82,6 @@ describe('Testing the evolve feature', () => {
     console.log(stateEvolved);
     expect(stateEvolved.balances[addy]).toBe(10);
   });
-
-  // test('evolve a PSC contract', () => {
-
-  // })
 
 });
 
