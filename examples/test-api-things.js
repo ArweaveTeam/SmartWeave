@@ -15,8 +15,7 @@ export async function handle (state, input) {
     SmartWeave.arweave.utils.bufferToB64Url(
       await SmartWeave.arweave.utils.crypto.hash(ownerBytes)
     )
-  const from2 = SmartWeave.utils.wallets.ownerToAddress(txOwner)
 
-  state.log = [...state.log, { blockHeight, blockIndepHash, txId, txOwner: txOwner, txTarget, txQuantity, txReward, txTags, from, from2, contractId }]
+  state.log = [...state.log, { blockHeight, blockIndepHash, txId, txOwner: txOwner, txTarget, txQuantity, txReward, txTags, from, contractId }]
   return { state }
 }
