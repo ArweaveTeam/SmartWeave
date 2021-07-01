@@ -88,7 +88,6 @@ describe('Testing the evolve feature', () => {
     console.log(stateEvolved);
     expect(stateEvolved.balances[addy]).toBe(10);
   });
-
 });
 
 async function mine() {

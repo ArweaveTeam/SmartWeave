@@ -1,8 +1,8 @@
 import ArLocal from '@textury/arlocal';
-import Arweave from "arweave";
+import Arweave from 'arweave';
 
-import {createContract} from '../contract-create';
-import {interactWrite } from '../contract-interact';
+import { createContract } from '../contract-create';
+import { interactWrite } from '../contract-interact';
 import { JWKInterface } from 'arweave/node/lib/wallet';
 import { readContract } from '../contract-read';
 
@@ -825,20 +825,20 @@ const contractSrcEvolved = `export function handle(state, action) {
 `;
 
 const contractState = {
-  "name": "My DAO Name",
-  "ticker": "TOK",
-  "balances": {},
-  "vault": {},
-  "votes": [],
-  "roles": {},
-  "settings": [
-    ["quorum", 0.5],
-    ["support", 0.5],
-    ["voteLength", 2000],
-    ["lockMinLength", 5],
-    ["lockMaxLength",720]
-  ]
-}
+  name: 'My DAO Name',
+  ticker: 'TOK',
+  balances: {},
+  vault: {},
+  votes: [],
+  roles: {},
+  settings: [
+    ['quorum', 0.5],
+    ['support', 0.5],
+    ['voteLength', 2000],
+    ['lockMinLength', 5],
+    ['lockMaxLength', 720],
+  ],
+};
 
 let arlocal: ArLocal;
 let inst: Arweave;
@@ -849,30 +849,31 @@ describe('contract source evolve', () => {
 
   let wallet: JWKInterface;
   let addy = '';
-  
 
   beforeAll(async () => {
     arlocal = new ArLocal(1984, false);
     await arlocal.start();
-    
+
     inst = Arweave.init({
       host: 'localhost',
       port: 1984,
-      protocol: 'http'
+      protocol: 'http',
     });
-    
+
     wallet = await inst.wallets.generate();
     addy = await inst.wallets.jwkToAddress(wallet);
-    
+
     contractState.balances[addy] = 100;
-    contractState.vault[addy] = [{
-      "balance": 100,
-      "end": 100,
-      "start": 0
-    }];
-    
+    contractState.vault[addy] = [
+      {
+        balance: 100,
+        end: 100,
+        start: 0,
+      },
+    ];
+
     contract = await createContract(inst, wallet, contractSrc, JSON.stringify(contractState));
-    
+
     const tx = await inst.createTransaction({ data: contractSrcEvolved }, wallet);
     tx.addTag('App-Name', 'SmartWeaveContractSource');
     tx.addTag('App-Version', '0.3.0');
@@ -889,10 +890,13 @@ describe('contract source evolve', () => {
     await arlocal.stop();
   });
 
-
   test('evolve PSC contract', async () => {
     // Reduce balance, should be at 50
-    await interactWrite(inst, wallet, contract, {function: 'transfer', target: 'uhE-QeYS8i4pmUtnxQyHD7dzXFNaJ9oMK-IM-QPNY6M', qty: 50});
+    await interactWrite(inst, wallet, contract, {
+      function: 'transfer',
+      target: 'uhE-QeYS8i4pmUtnxQyHD7dzXFNaJ9oMK-IM-QPNY6M',
+      qty: 50,
+    });
     await mine();
 
     let state = await readContract(inst, contract);
@@ -902,30 +906,32 @@ describe('contract source evolve', () => {
     await mine();
 
     // Let's propose the evolve vote
-    await interactWrite(inst, wallet, contract, {function: 'propose', key: 'evolve', value: evolvedContractTxId });
+    await interactWrite(inst, wallet, contract, { function: 'propose', key: 'evolve', value: evolvedContractTxId });
     await mine();
 
     // Let's vote on the proposal
     state = await readContract(inst, contract);
-    await interactWrite(inst, wallet, contract, {function: 'vote', id: state.votes.length-1, cast: 'yay' });
+    await interactWrite(inst, wallet, contract, { function: 'vote', id: state.votes.length - 1, cast: 'yay' });
     await mine(2001); // Mine 2001 times to make sure the proposal time ended.
 
     // Finalize the proposal
-    await interactWrite(inst, wallet, contract, {function: 'finalize', id: state.votes.length-1});
+    await interactWrite(inst, wallet, contract, { function: 'finalize', id: state.votes.length - 1 });
     await mine();
 
     // Reduce balance, should be 10
-    await interactWrite(inst, wallet, contract, {function: 'transfer', target: 'uhE-QeYS8i4pmUtnxQyHD7dzXFNaJ9oMK-IM-QPNY6M', qty: 50});
+    await interactWrite(inst, wallet, contract, {
+      function: 'transfer',
+      target: 'uhE-QeYS8i4pmUtnxQyHD7dzXFNaJ9oMK-IM-QPNY6M',
+      qty: 50,
+    });
     await mine();
 
     const stateEvolved = await readContract(inst, contract);
     console.log(stateEvolved);
     expect(stateEvolved.balances[addy]).toBe(10);
   });
-
 });
-
 
 async function mine(len: number = 1) {
   await inst.api.get(`mine/${len}`);
-};
+}

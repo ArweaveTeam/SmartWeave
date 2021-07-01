@@ -108,15 +108,15 @@ export async function readContract(
     state = result.state;
 
     const evolve: string = state.evolve || state.settings?.evolve;
-    let canEvolve = (state.canEvolve || state.settings?.canEvolve);
+    let canEvolve = state.canEvolve || state.settings?.canEvolve;
 
     // By default, contracts can evolve if there's not an explicit `false`.
-    if(canEvolve !== false) {
+    if (canEvolve !== false) {
       canEvolve = true;
     }
 
-    if(evolve && /[a-z0-9_-]{43}/i.test(evolve) && canEvolve) {
-      if(contractSrc !== state.evolve) {
+    if (evolve && /[a-z0-9_-]{43}/i.test(evolve) && canEvolve) {
+      if (contractSrc !== state.evolve) {
         try {
           contractInfo = await loadContract(arweave, contractId, evolve);
           handler = contractInfo.handler;
