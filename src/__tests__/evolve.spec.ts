@@ -22,12 +22,12 @@ describe('Testing the evolve feature', () => {
   let addy = '';
 
   beforeAll(async () => {
-    arlocal = new ArLocal(1984, false);
+    arlocal = new ArLocal(1985, false);
     await arlocal.start();
 
     inst = Arweave.init({
       host: 'localhost',
-      port: 1984,
+      port: 1985,
       protocol: 'http',
     });
 

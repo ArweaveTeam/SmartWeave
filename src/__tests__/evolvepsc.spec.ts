@@ -918,7 +918,7 @@ describe('contract source evolve', () => {
     // Let's vote on the proposal
     state = await readContract(inst, contract);
     await interactWrite(inst, wallet, contract, { function: 'vote', id: state.votes.length - 1, cast: 'yay' });
-    await mine(50);
+    await mine(60);
 
     // Finalize the proposal
     await interactWrite(inst, wallet, contract, { function: 'finalize', id: state.votes.length - 1 });

@@ -90,9 +90,9 @@ export async function interactWriteDryRun(
   tags: { name: string; value: string }[] = [],
   target: string = '',
   winstonQty: string = '',
-  myState: any = {},
-  fromParam: any = {},
-  contractInfoParam: any = {},
+  myState?: any,
+  fromParam?: any,
+  contractInfoParam?: any,
 ): Promise<ContractInteractionResult> {
   const { handler, swGlobal } = contractInfoParam || (await loadContract(arweave, contractId));
   const latestState = myState || (await readContract(arweave, contractId));
@@ -131,9 +131,9 @@ export async function interactWriteDryRunCustom(
   tx: any,
   contractId: string,
   input: any,
-  myState: any = {},
+  myState: any,
   fromParam: any = {},
-  contractInfoParam: any = {},
+  contractInfoParam: any,
 ): Promise<ContractInteractionResult> {
   const { handler, swGlobal } = contractInfoParam || (await loadContract(arweave, contractId));
   const latestState = myState || (await readContract(arweave, contractId));
