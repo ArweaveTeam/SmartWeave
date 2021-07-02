@@ -17,7 +17,8 @@ const runBuild = async (doClean = false) => {
     minify: false,
     bundle: true,
     outfile: './dist/smartweave.js',
-    platform: 'browser'
+    platform: 'browser',
+    target: ['es2020','chrome58','firefox57','safari11','edge16']
   }).catch((e) => {
     console.log(e);
     process.exit(1)
@@ -29,7 +30,8 @@ const runBuild = async (doClean = false) => {
     minify: true,
     bundle: true,
     outfile: './dist/smartweave.min.js',
-    platform: 'browser'
+    platform: 'browser',
+    target: ['es2020','chrome58','firefox57','safari11','edge16']
   }).catch((e) => {
     console.log(e);
     process.exit(1)
