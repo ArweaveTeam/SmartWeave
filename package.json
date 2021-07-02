@@ -4,6 +4,7 @@
   "description": "Simple, scalable smart contracts on the Arweave protocol.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "type": "module",
   "directories": {
     "example": "examples"
   },
@@ -17,15 +18,16 @@
     "preversion": "npm run lint && npm run build",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
-    "test": "jest"
+    "test": "jest",
+    "test:browser": "node test/browser/selenium.js",
+    "test:browser:dev": "http-server ./test/browser -c-1 --no-dotfiles",
+    "test:browser:ci": "nix-shell --pure --run 'node test/browser/selenium.js'"
   },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"
   },
-  "files": [
-    "lib/**/*"
-  ],
+  "files": ["lib/**/*"],
   "bin": {
     "smartweave-cli": "lib/bin/smartweave-cli.js",
     "smartweave": "lib/bin/smartweave.js"
@@ -65,7 +67,11 @@
     "@typescript-eslint/parser": "^4.28.0",
     "cp-cli": "^2.0.0",
     "esbuild": "^0.8.46",
+    "http-server": "^0.12.3",
     "jest": "^27.0.4",
+    "mocha": "^9.0.1",
+    "mocha-junit-reporter": "^2.0.0",
+    "mocha-webdriver-runner": "^0.6.3",
     "prettier": "^2.1.2",
     "rimraf": "^3.0.2",
     "ts-jest": "^27.0.3",

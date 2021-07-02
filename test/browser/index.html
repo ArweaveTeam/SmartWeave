@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SmartWeave Browser Test Suite</title>
+    <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
+  </head>
+  <body>
+    <script src="https://unpkg.com/chai/chai.js"></script>
+    <script src="https://unpkg.com/mocha/mocha.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sinon@3/pkg/sinon.js"></script>
+
+    <script>
+      window.assert = chai.assert;
+    </script>
+    <div id="mocha"></div>
+    <script src="https://cdn.jsdelivr.net/npm/mocha-webdriver-runner@0.6.3/dist/mocha-webdriver-client.js"></script>
+
+    <script type="module">
+      const url = '/dist/smartweave.esm.js';
+
+      (async () => {
+        const SmartWeave = await import(url);
+        console.log(SmartWeave);
+        async function handle(state, input) {
+          const txId = SmartWeave.transaction.id;
+          const txOwner = SmartWeave.transaction.owner;
+          const txTarget = SmartWeave.transaction.target;
+          const txQuantity = SmartWeave.transaction.quantity;
+          const txReward = SmartWeave.transaction.reward;
+          const txTags = SmartWeave.transaction.tags;
+          const blockHeight = SmartWeave.block.height;
+          const blockIndepHash = SmartWeave.block.indep_hash;
+          const contractId = SmartWeave.contract.id;
+
+          const ownerBytes = SmartWeave.arweave.utils.b64UrlToBuffer(txOwner);
+          const from = SmartWeave.arweave.utils.bufferToB64Url(await SmartWeave.arweave.utils.crypto.hash(ownerBytes));
+
+          state.log = [
+            ...state.log,
+            {
+              blockHeight,
+              blockIndepHash,
+              txId,
+              txOwner: txOwner,
+              txTarget,
+              txQuantity,
+              txReward,
+              txTags,
+              from,
+              contractId,
+            },
+          ];
+          return { state };
+        }
+
+        const nextState = await handle(
+          {},
+          {
+            log: [],
+          },
+        );
+        console.log(nextState);
+      })();
+    </script>
+  </body>
+</html>
