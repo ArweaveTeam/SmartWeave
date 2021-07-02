@@ -16,7 +16,8 @@ const runBuild = async (doClean = false) => {
     entryPoints: ['./src/index.ts'],
     minify: false,
     bundle: true,
-    outfile: './dist/smartweave.js'
+    outfile: './dist/smartweave.js',
+    platform: 'browser'
   }).catch((e) => {
     console.log(e);
     process.exit(1)
@@ -27,7 +28,8 @@ const runBuild = async (doClean = false) => {
     entryPoints: ['./src/index.ts'],
     minify: true,
     bundle: true,
-    outfile: './dist/smartweave.min.js'
+    outfile: './dist/smartweave.min.js',
+    platform: 'browser'
   }).catch((e) => {
     console.log(e);
     process.exit(1)
