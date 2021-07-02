@@ -834,7 +834,7 @@ const contractState = {
   settings: [
     ['quorum', 0.5],
     ['support', 0.5],
-    ['voteLength', 2000],
+    ['voteLength', 10],
     ['lockMinLength', 5],
     ['lockMaxLength', 720],
   ],
@@ -851,12 +851,12 @@ describe('contract source evolve', () => {
   let addy = '';
 
   beforeAll(async () => {
-    arlocal = new ArLocal(1984, false);
+    arlocal = new ArLocal(1986, false);
     await arlocal.start();
 
     inst = Arweave.init({
       host: 'localhost',
-      port: 1984,
+      port: 1986,
       protocol: 'http',
     });
 
@@ -867,7 +867,7 @@ describe('contract source evolve', () => {
     contractState.vault[addy] = [
       {
         balance: 100,
-        end: 100,
+        end: 10000000000,
         start: 0,
       },
     ];
@@ -906,13 +906,13 @@ describe('contract source evolve', () => {
     await mine();
 
     // Let's propose the evolve vote
-    await interactWrite(inst, wallet, contract, { function: 'propose', key: 'evolve', value: evolvedContractTxId });
+    await interactWrite(inst, wallet, contract, { function: 'propose', key: 'evolve', value: evolvedContractTxId, note: 'Test vote evolve', type: 'set' });
     await mine();
 
     // Let's vote on the proposal
     state = await readContract(inst, contract);
     await interactWrite(inst, wallet, contract, { function: 'vote', id: state.votes.length - 1, cast: 'yay' });
-    await mine(2001); // Mine 2001 times to make sure the proposal time ended.
+    await mine(50); 
 
     // Finalize the proposal
     await interactWrite(inst, wallet, contract, { function: 'finalize', id: state.votes.length - 1 });

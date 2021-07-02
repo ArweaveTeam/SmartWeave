@@ -69,7 +69,6 @@ describe('Testing the evolve feature', () => {
     await mine();
 
     const state = await readContract(inst, contract);
-    console.log(state);
     expect(state.balances[addy]).toBe(50);
 
     // Evolve
@@ -85,7 +84,6 @@ describe('Testing the evolve feature', () => {
     await mine();
 
     const stateEvolved = await readContract(inst, contract);
-    console.log(stateEvolved);
     expect(stateEvolved.balances[addy]).toBe(10);
   });
 });

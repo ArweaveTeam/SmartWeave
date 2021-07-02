@@ -14,7 +14,7 @@ import { interactRead } from '../contract-interact';
 
 jest.mock('../contract-load', () => ({
   loadContract: jest.fn().mockReturnValue({
-    swGlobal: swGlobal,
+    swGlobal,
     handler: new Function(normalizeContractSource(contractSrc))(swGlobal, {}, {}),
   }),
 }));

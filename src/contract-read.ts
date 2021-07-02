@@ -106,12 +106,15 @@ export async function readContract(
     validity[currentTx.id] = result.type === 'ok';
 
     state = result.state;
+    
+    const settings = state.settings? new Map(state.settings) : new Map();
 
-    const evolve: string = state.evolve || state.settings?.evolve;
-    let canEvolve = state.canEvolve || state.settings?.canEvolve;
+    const evolve: string = state.evolve || settings.get('evolve');
 
+    let canEvolve: boolean = state.canEvolve || settings.get('canEvolve');
+    
     // By default, contracts can evolve if there's not an explicit `false`.
-    if (canEvolve !== false) {
+    if(canEvolve === undefined || canEvolve === null) {
       canEvolve = true;
     }
 
