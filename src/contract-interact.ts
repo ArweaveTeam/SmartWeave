@@ -4,9 +4,11 @@ import Transaction from 'arweave/node/lib/transaction';
 import { JWKInterface } from 'arweave/node/lib/wallet';
 import { loadContract } from './contract-load';
 import { readContract } from './contract-read';
-import { execute, ContractInteraction, ContractInteractionResult } from './contract-step';
+import { execute, ContractInteraction, ContractInteractionResult, ContractHandler } from './contract-step';
 import { unpackTags } from './utils';
 import { BlockData } from 'arweave/node/blocks';
+import SmartWeaveError, { SmartWeaveErrorType } from './errors';
+import { SmartWeaveGlobal } from './smartweave-global';
 
 /**
  * Writes an interaction on the blockchain.
@@ -92,11 +94,44 @@ export async function interactWriteDryRun(
   winstonQty: string = '',
   myState?: any,
   fromParam?: any,
-  contractInfoParam?: any,
+  contractInfoParam?: {
+    id: string;
+    contractSrc: string;
+    initState: string;
+    minFee: any;
+    contractTX: Transaction;
+    handler: ContractHandler;
+    swGlobal: SmartWeaveGlobal;
+},
 ): Promise<ContractInteractionResult> {
-  const { handler, swGlobal } = contractInfoParam || (await loadContract(arweave, contractId));
+  // tslint:disable-next-line: prefer-const
+  let { handler, swGlobal, contractSrc } = contractInfoParam || (await loadContract(arweave, contractId));
   const latestState = myState || (await readContract(arweave, contractId));
   const from = fromParam || (await arweave.wallets.getAddress(wallet));
+
+  const settings = latestState.settings ? new Map(latestState.settings) : new Map();
+  const evolve: string = latestState.evolve || settings.get('evolve');
+  let canEvolve: boolean = latestState.canEvolve || settings.get('canEvolve');
+
+  // By default, contracts can evolve if there's not an explicit `false`.
+  if (canEvolve === undefined || canEvolve === null) {
+    canEvolve = true;
+  }
+
+  if (evolve && /[a-z0-9_-]{43}/i.test(evolve) && canEvolve) {
+    if (contractSrc !== latestState.evolve) {
+      try {
+        const contractInfo = await loadContract(arweave, contractId, evolve);
+        handler = contractInfo.handler;
+      } catch (e) {
+        const error: SmartWeaveError = new SmartWeaveError(SmartWeaveErrorType.CONTRACT_NOT_FOUND, {
+          message: `Contract having txId: ${contractId} not found`,
+          requestedTxId: contractId,
+        });
+        throw error;
+      }
+    }
+  }
 
   const interaction: ContractInteraction = {
     input,
@@ -135,9 +170,34 @@ export async function interactWriteDryRunCustom(
   fromParam: any = {},
   contractInfoParam: any,
 ): Promise<ContractInteractionResult> {
-  const { handler, swGlobal } = contractInfoParam || (await loadContract(arweave, contractId));
+  // tslint:disable-next-line: prefer-const
+  let { handler, swGlobal, contractSrc } = contractInfoParam || (await loadContract(arweave, contractId));
   const latestState = myState || (await readContract(arweave, contractId));
   const from = fromParam;
+
+  const settings = latestState.settings ? new Map(latestState.settings) : new Map();
+  const evolve: string = latestState.evolve || settings.get('evolve');
+  let canEvolve: boolean = latestState.canEvolve || settings.get('canEvolve');
+
+  // By default, contracts can evolve if there's not an explicit `false`.
+  if (canEvolve === undefined || canEvolve === null) {
+    canEvolve = true;
+  }
+
+  if (evolve && /[a-z0-9_-]{43}/i.test(evolve) && canEvolve) {
+    if (contractSrc !== latestState.evolve) {
+      try {
+        const contractInfo = await loadContract(arweave, contractId, evolve);
+        handler = contractInfo.handler;
+      } catch (e) {
+        const error: SmartWeaveError = new SmartWeaveError(SmartWeaveErrorType.CONTRACT_NOT_FOUND, {
+          message: `Contract having txId: ${contractId} not found`,
+          requestedTxId: contractId,
+        });
+        throw error;
+      }
+    }
+  }
 
   const interaction: ContractInteraction = {
     input,
@@ -174,9 +234,34 @@ export async function interactRead(
   target: string = '',
   winstonQty: string = '',
 ): Promise<any> {
-  const { handler, swGlobal } = await loadContract(arweave, contractId);
+  // tslint:disable-next-line: prefer-const
+  let { handler, swGlobal, contractSrc } = await loadContract(arweave, contractId);
   const latestState = await readContract(arweave, contractId);
   const from = wallet ? await arweave.wallets.getAddress(wallet) : '';
+
+  const settings = latestState.settings ? new Map(latestState.settings) : new Map();
+  const evolve: string = latestState.evolve || settings.get('evolve');
+  let canEvolve: boolean = latestState.canEvolve || settings.get('canEvolve');
+
+  // By default, contracts can evolve if there's not an explicit `false`.
+  if (canEvolve === undefined || canEvolve === null) {
+    canEvolve = true;
+  }
+
+  if (evolve && /[a-z0-9_-]{43}/i.test(evolve) && canEvolve) {
+    if (contractSrc !== latestState.evolve) {
+      try {
+        const contractInfo = await loadContract(arweave, contractId, evolve);
+        handler = contractInfo.handler;
+      } catch (e) {
+        const error: SmartWeaveError = new SmartWeaveError(SmartWeaveErrorType.CONTRACT_NOT_FOUND, {
+          message: `Contract having txId: ${contractId} not found`,
+          requestedTxId: contractId,
+        });
+        throw error;
+      }
+    }
+  }
 
   const interaction: ContractInteraction = {
     input,

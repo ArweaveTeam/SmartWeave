@@ -57,7 +57,7 @@
     "yargs": "^16.2.0"
   },
   "devDependencies": {
-    "@textury/arlocal": "1.0.20",
+    "@textury/arlocal": "^1.0.25",
     "@types/jest": "^26.0.23",
     "@types/node": "^14.14.28",
     "@types/yargs": "^16.0.0",
