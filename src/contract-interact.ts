@@ -102,7 +102,7 @@ export async function interactWriteDryRun(
     contractTX: Transaction;
     handler: ContractHandler;
     swGlobal: SmartWeaveGlobal;
-},
+  },
 ): Promise<ContractInteractionResult> {
   // tslint:disable-next-line: prefer-const
   let { handler, swGlobal, contractSrc } = contractInfoParam || (await loadContract(arweave, contractId));
