@@ -47,7 +47,14 @@ export class SmartWeaveGlobal {
     return !this._activeTx;
   }
 
-  constructor(arweave: Arweave, contract: { id: string; owner: string }) {
+  constructor(
+    arweave: Arweave,
+    contract: {
+      id: string;
+      owner: string;
+      customReadContract: (arweave: Arweave, contractId: string, height?: number, returnValidity?: boolean) => any;
+    },
+  ) {
     this.unsafeClient = arweave;
     this.arweave = {
       ar: arweave.ar,
@@ -58,9 +65,12 @@ export class SmartWeaveGlobal {
     this.contract = contract;
     this.transaction = new Transaction(this);
     this.block = new Block(this);
+
+    const readContractFn = contract.customReadContract || readContract;
+
     this.contracts = {
       readContractState: (contractId: string, height?: number, returnValidity?: boolean) =>
-        readContract(
+        readContractFn(
           arweave,
           contractId,
           height || (this._isDryRunning ? Number.POSITIVE_INFINITY : this.block.height),

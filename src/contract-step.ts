@@ -45,7 +45,6 @@ export interface ContractInteractionResult {
  * @param contractSrc   the source code of the contract
  * @param input         the input interaction, should be a plain Js object
  * @param state         the current state of the contract
- * @param caller        the wallet address of the caller who is interacting with the contract
  */
 export async function execute(
   handler: ContractHandler,
