@@ -36,6 +36,7 @@ export async function loadContract(arweave: Arweave, contractID: string, contrac
 
   return {
     id: contractID,
+    contractSrcTXID,
     contractSrc,
     initState: state,
     minFee,

@@ -97,6 +97,7 @@ export async function interactWriteDryRun(
   contractInfoParam?: {
     id: string;
     contractSrc: string;
+    contractSrcTXID: string;
     initState: string;
     minFee: any;
     contractTX: Transaction;
@@ -105,7 +106,7 @@ export async function interactWriteDryRun(
   },
 ): Promise<ContractInteractionResult> {
   // tslint:disable-next-line: prefer-const
-  let { handler, swGlobal, contractSrc } = contractInfoParam || (await loadContract(arweave, contractId));
+  let { handler, swGlobal, contractSrcTXID } = contractInfoParam || (await loadContract(arweave, contractId));
   const latestState = myState || (await readContract(arweave, contractId));
   const from = fromParam || (await arweave.wallets.getAddress(wallet));
 
@@ -119,7 +120,7 @@ export async function interactWriteDryRun(
   }
 
   if (evolve && /[a-z0-9_-]{43}/i.test(evolve) && canEvolve) {
-    if (contractSrc !== evolve) {
+    if (contractSrcTXID !== evolve) {
       try {
         const contractInfo = await loadContract(arweave, contractId, evolve);
         handler = contractInfo.handler;
@@ -171,7 +172,7 @@ export async function interactWriteDryRunCustom(
   contractInfoParam: any,
 ): Promise<ContractInteractionResult> {
   // tslint:disable-next-line: prefer-const
-  let { handler, swGlobal, contractSrc } = contractInfoParam || (await loadContract(arweave, contractId));
+  let { handler, swGlobal, contractSrcTXID } = contractInfoParam || (await loadContract(arweave, contractId));
   const latestState = myState || (await readContract(arweave, contractId));
   const from = fromParam;
 
@@ -185,7 +186,7 @@ export async function interactWriteDryRunCustom(
   }
 
   if (evolve && /[a-z0-9_-]{43}/i.test(evolve) && canEvolve) {
-    if (contractSrc !== evolve) {
+    if (contractSrcTXID !== evolve) {
       try {
         const contractInfo = await loadContract(arweave, contractId, evolve);
         handler = contractInfo.handler;
@@ -235,7 +236,7 @@ export async function interactRead(
   winstonQty: string = '',
 ): Promise<any> {
   // tslint:disable-next-line: prefer-const
-  let { handler, swGlobal, contractSrc } = await loadContract(arweave, contractId);
+  let { handler, swGlobal, contractSrcTXID } = await loadContract(arweave, contractId);
   const latestState = await readContract(arweave, contractId);
   const from = wallet ? await arweave.wallets.getAddress(wallet) : '';
 
@@ -249,7 +250,7 @@ export async function interactRead(
   }
 
   if (evolve && /[a-z0-9_-]{43}/i.test(evolve) && canEvolve) {
-    if (contractSrc !== evolve) {
+    if (contractSrcTXID !== evolve) {
       try {
         const contractInfo = await loadContract(arweave, contractId, evolve);
         handler = contractInfo.handler;
