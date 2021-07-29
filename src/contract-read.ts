@@ -119,7 +119,7 @@ export async function readContract(
     }
 
     if (evolve && /[a-z0-9_-]{43}/i.test(evolve) && canEvolve) {
-      if (contractSrc !== state.evolve) {
+      if (contractSrc !== evolve) {
         try {
           contractInfo = await loadContract(arweave, contractId, evolve);
           handler = contractInfo.handler;

@@ -119,7 +119,7 @@ export async function interactWriteDryRun(
   }
 
   if (evolve && /[a-z0-9_-]{43}/i.test(evolve) && canEvolve) {
-    if (contractSrc !== latestState.evolve) {
+    if (contractSrc !== evolve) {
       try {
         const contractInfo = await loadContract(arweave, contractId, evolve);
         handler = contractInfo.handler;
@@ -185,7 +185,7 @@ export async function interactWriteDryRunCustom(
   }
 
   if (evolve && /[a-z0-9_-]{43}/i.test(evolve) && canEvolve) {
-    if (contractSrc !== latestState.evolve) {
+    if (contractSrc !== evolve) {
       try {
         const contractInfo = await loadContract(arweave, contractId, evolve);
         handler = contractInfo.handler;
@@ -249,7 +249,7 @@ export async function interactRead(
   }
 
   if (evolve && /[a-z0-9_-]{43}/i.test(evolve) && canEvolve) {
-    if (contractSrc !== latestState.evolve) {
+    if (contractSrc !== evolve) {
       try {
         const contractInfo = await loadContract(arweave, contractId, evolve);
         handler = contractInfo.handler;
