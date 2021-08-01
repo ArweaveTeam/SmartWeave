@@ -44,7 +44,7 @@ export async function readContract(
   if (txInfos instanceof Error) throw txInfos;
 
   let state: any;
-  const contractSrcTXID: string = contractInfo.contractSrcTXID;
+  let currentContractSrcTXID: string = contractInfo.contractSrcTXID;
   try {
     state = JSON.parse(contractInfo.initState);
   } catch (e) {
@@ -119,10 +119,13 @@ export async function readContract(
     }
 
     if (evolve && /[a-z0-9_-]{43}/i.test(evolve) && canEvolve) {
-      if (contractSrcTXID !== evolve) {
+      if (currentContractSrcTXID !== evolve) {
         try {
+          console.time(`Loading evolved contract ${evolve}`);
           contractInfo = await loadContract(arweave, contractId, evolve);
+          console.timeEnd(`Loading evolved contract ${evolve}`);
           handler = contractInfo.handler;
+          currentContractSrcTXID = evolve;
         } catch (e) {
           const error: SmartWeaveError = new SmartWeaveError(SmartWeaveErrorType.CONTRACT_NOT_FOUND, {
             message: `Contract having txId: ${contractId} not found`,
