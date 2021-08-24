@@ -32,7 +32,7 @@ if (argv.create) {
   if (!argv.contractSrc && !argv.contractSrcTx) {
     console.log(
       'ERROR: Please specify contract source bundle using argument ' +
-      "'--contract-src <PATH>' or --contract-src-tx <TX>.",
+        "'--contract-src <PATH>' or --contract-src-tx <TX>.",
     );
     process.exit();
   }
