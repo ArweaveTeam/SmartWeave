@@ -128,7 +128,7 @@ export async function readContract(
             message: `Contract having txId: ${contractId} not found`,
             requestedTxId: contractId,
           });
-          throw error;
+          console.log(error);
         }
       }
     }

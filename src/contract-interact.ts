@@ -129,7 +129,7 @@ export async function interactWriteDryRun(
           message: `Contract having txId: ${contractId} not found`,
           requestedTxId: contractId,
         });
-        throw error;
+        console.log(error);
       }
     }
   }
@@ -195,7 +195,7 @@ export async function interactWriteDryRunCustom(
           message: `Contract having txId: ${contractId} not found`,
           requestedTxId: contractId,
         });
-        throw error;
+        console.log(error);
       }
     }
   }
@@ -259,7 +259,7 @@ export async function interactRead(
           message: `Contract having txId: ${contractId} not found`,
           requestedTxId: contractId,
         });
-        throw error;
+        console.log(error);
       }
     }
   }
