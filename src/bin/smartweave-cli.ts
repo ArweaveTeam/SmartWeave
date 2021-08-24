@@ -3,10 +3,11 @@
 // Include dependencies.
 import * as fs from 'fs';
 import Arweave from 'arweave';
-import * as yargs from 'yargs';
 import { smartweave } from '../';
+import yargs from 'yargs/yargs';
+import { hideBin } from 'yargs/helpers';
 
-const argv = yargs.argv;
+const argv = yargs(hideBin(process.argv)).argv as any;
 
 // Set Arweave parameters from commandline or defaults.
 const arweavePort: number = argv.arweavePort ? +argv.arweavePort : 443;
@@ -31,7 +32,7 @@ if (argv.create) {
   if (!argv.contractSrc && !argv.contractSrcTx) {
     console.log(
       'ERROR: Please specify contract source bundle using argument ' +
-        "'--contract-src <PATH>' or --contract-src-tx <TX>.",
+      "'--contract-src <PATH>' or --contract-src-tx <TX>.",
     );
     process.exit();
   }
