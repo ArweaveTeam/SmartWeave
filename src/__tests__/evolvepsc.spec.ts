@@ -14,7 +14,7 @@ const contractSrc = `export function handle(state, action) {
   const input = action.input;
   const caller = action.caller;
   if (input.function === "transfer") {
-    const target = isArweaveAddress(input.target);
+    const target = input.target;
     const qty = input.qty;
     if (!Number.isInteger(qty)) {
       throw new ContractError('Invalid value for "qty". Must be an integer.');
@@ -40,7 +40,7 @@ const contractSrc = `export function handle(state, action) {
     return {state};
   }
   if (input.function === "balance") {
-    const target = isArweaveAddress(input.target || caller);
+    const target = input.target || caller;
     if (typeof target !== "string") {
       throw new ContractError("Must specificy target to get balance for.");
     }
@@ -57,7 +57,7 @@ const contractSrc = `export function handle(state, action) {
     return {result: {target, balance}};
   }
   if (input.function === "unlockedBalance") {
-    const target = isArweaveAddress(input.target || caller);
+    const target = input.target || caller;
     if (typeof target !== "string") {
       throw new ContractError("Must specificy target to get balance for.");
     }
@@ -135,7 +135,7 @@ const contractSrc = `export function handle(state, action) {
     return {state};
   }
   if (input.function === "vaultBalance") {
-    const target = isArweaveAddress(input.target || caller);
+    const target = input.target || caller;
     let balance = 0;
     if (target in vault) {
       const blockHeight = +SmartWeave.block.height;
@@ -178,7 +178,7 @@ const contractSrc = `export function handle(state, action) {
       totalWeight
     };
     if (voteType === "mint" || voteType === "mintLocked") {
-      const recipient = isArweaveAddress(input.recipient);
+      const recipient = input.recipient;
       const qty = +input.qty;
       if (!recipient) {
         throw new ContractError("No recipient specified");
@@ -214,7 +214,7 @@ const contractSrc = `export function handle(state, action) {
       }, lockLength);
       votes.push(vote);
     } else if (voteType === "burnVault") {
-      const target = isArweaveAddress(input.target);
+      const target = input.target;
       if (!target || typeof target !== "string") {
         throw new ContractError("Target is required.");
       }
@@ -247,7 +247,7 @@ const contractSrc = `export function handle(state, action) {
         }
       }
       if (input.key === "role") {
-        const recipient = isArweaveAddress(input.recipient);
+        const recipient = input.recipient;
         if (!recipient) {
           throw new ContractError("No recipient specified");
         }
@@ -380,19 +380,12 @@ const contractSrc = `export function handle(state, action) {
     return {state};
   }
   if (input.function === "role") {
-    const target = isArweaveAddress(input.target || caller);
+    const target = input.target || caller;
     const role = target in state.roles ? state.roles[target] : "";
     if (!role.trim().length) {
-      throw new ContractError("Target doesn't have a role specified.");
+      throw new Error("Target doesn't have a role specified.");
     }
     return {result: {target, role}};
-  }
-  function isArweaveAddress(addy) {
-    const address = addy.toString().trim();
-    if (!/[a-z0-9_-]{43}/i.test(address)) {
-      throw new ContractError("Invalid Arweave address.");
-    }
-    return address;
   }
   throw new ContractError(\`No function supplied or function not recognised: "\${input.function}"\`);
 }
@@ -424,7 +417,6 @@ const contractSrcEvolved = `export function handle(state, action) {
       throw new ContractError(\`Caller balance not high enough to send \${qty} token(s)!\`);
     }
     balances[caller] -= qty;
-    balances[caller] += 10;
     if (target in balances) {
       balances[target] += qty;
     } else {
@@ -435,7 +427,7 @@ const contractSrcEvolved = `export function handle(state, action) {
   if (input.function === "transferLocked") {
     const target = isArweaveAddress(input.target);
     const qty = +input.qty;
-    const lockLength = +input.lockLength;
+    const lockLength = input.lockLength;
     if (!Number.isInteger(qty) || qty <= 0) {
       throw new ContractError("Quantity must be a positive integer.");
     }
@@ -821,7 +813,6 @@ const contractSrcEvolved = `export function handle(state, action) {
   }
   throw new ContractError(\`No function supplied or function not recognised: "\${input.function}"\`);
 }
-
 `;
 
 const contractState = {
@@ -891,16 +882,17 @@ describe('contract source evolve', () => {
   });
 
   test('evolve PSC contract', async () => {
+    const target = 'uhE-QeYS8i4pmUtnxQyHD7dzXFNaJ9oMK-IM-QPNY6M';
+
     // Reduce balance, should be at 50
     await interactWrite(inst, wallet, contract, {
       function: 'transfer',
-      target: 'uhE-QeYS8i4pmUtnxQyHD7dzXFNaJ9oMK-IM-QPNY6M',
+      target,
       qty: 50,
     });
     await mine();
 
     let state = await readContract(inst, contract);
-    console.log(state);
     expect(state.balances[addy]).toBe(50);
 
     await mine();
@@ -924,17 +916,19 @@ describe('contract source evolve', () => {
     await interactWrite(inst, wallet, contract, { function: 'finalize', id: state.votes.length - 1 });
     await mine();
 
-    // Reduce balance, should be 10
     await interactWrite(inst, wallet, contract, {
-      function: 'transfer',
-      target: 'uhE-QeYS8i4pmUtnxQyHD7dzXFNaJ9oMK-IM-QPNY6M',
+      function: 'transferLocked',
+      target,
       qty: 50,
+      lockLength: 10
     });
     await mine();
 
     const stateEvolved = await readContract(inst, contract);
-    console.log(stateEvolved);
-    expect(stateEvolved.balances[addy]).toBe(10);
+    expect(stateEvolved.balances[addy]).toBe(0);
+    expect(stateEvolved.vault[target]).toBeDefined();
+    expect(stateEvolved.vault[target].length).toBe(1);
+    expect(stateEvolved.vault[target][0].balance).toBe(50);
   });
 });
 

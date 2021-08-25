@@ -44,7 +44,7 @@ export async function readContract(
   if (txInfos instanceof Error) throw txInfos;
 
   let state: any;
-  const contractSrcTXID: string = contractInfo.contractSrcTXID;
+  let contractSrcTXID: string = contractInfo.contractSrcTXID;
   try {
     state = JSON.parse(contractInfo.initState);
   } catch (e) {
@@ -118,18 +118,18 @@ export async function readContract(
       canEvolve = true;
     }
 
-    if (evolve && /[a-z0-9_-]{43}/i.test(evolve) && canEvolve) {
-      if (contractSrcTXID !== evolve) {
-        try {
-          contractInfo = await loadContract(arweave, contractId, evolve);
-          handler = contractInfo.handler;
-        } catch (e) {
-          const error: SmartWeaveError = new SmartWeaveError(SmartWeaveErrorType.CONTRACT_NOT_FOUND, {
-            message: `Contract having txId: ${contractId} not found`,
-            requestedTxId: contractId,
-          });
-          console.log(error);
-        }
+    if (evolve && /[a-z0-9_-]{43}/i.test(evolve) && canEvolve && contractSrcTXID !== evolve) {
+      try {
+        contractInfo = await loadContract(arweave, contractId, evolve);
+        swGlobal = contractInfo.swGlobal;
+        handler = contractInfo.handler;
+        contractSrcTXID = evolve;
+      } catch (e) {
+        const error: SmartWeaveError = new SmartWeaveError(SmartWeaveErrorType.CONTRACT_NOT_FOUND, {
+          message: `Contract having txId: ${contractId} not found`,
+          requestedTxId: contractId,
+        });
+        console.log(error);
       }
     }
   }

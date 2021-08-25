@@ -123,7 +123,9 @@ export async function interactWriteDryRun(
     if (contractSrcTXID !== evolve) {
       try {
         const contractInfo = await loadContract(arweave, contractId, evolve);
+        swGlobal = contractInfo.swGlobal;
         handler = contractInfo.handler;
+        contractSrcTXID = evolve;
       } catch (e) {
         const error: SmartWeaveError = new SmartWeaveError(SmartWeaveErrorType.CONTRACT_NOT_FOUND, {
           message: `Contract having txId: ${contractId} not found`,
@@ -189,7 +191,9 @@ export async function interactWriteDryRunCustom(
     if (contractSrcTXID !== evolve) {
       try {
         const contractInfo = await loadContract(arweave, contractId, evolve);
+        swGlobal = contractInfo.swGlobal;
         handler = contractInfo.handler;
+        contractSrcTXID = evolve;
       } catch (e) {
         const error: SmartWeaveError = new SmartWeaveError(SmartWeaveErrorType.CONTRACT_NOT_FOUND, {
           message: `Contract having txId: ${contractId} not found`,
@@ -253,7 +257,9 @@ export async function interactRead(
     if (contractSrcTXID !== evolve) {
       try {
         const contractInfo = await loadContract(arweave, contractId, evolve);
+        swGlobal = contractInfo.swGlobal;
         handler = contractInfo.handler;
+        contractSrcTXID = evolve;
       } catch (e) {
         const error: SmartWeaveError = new SmartWeaveError(SmartWeaveErrorType.CONTRACT_NOT_FOUND, {
           message: `Contract having txId: ${contractId} not found`,

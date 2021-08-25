@@ -72,46 +72,46 @@ export class SmartWeaveGlobal {
 
 // tslint:disable-next-line: max-classes-per-file
 class Transaction {
-  constructor(private readonly global: SmartWeaveGlobal) {}
+  constructor(private readonly global: SmartWeaveGlobal) { }
 
   get id() {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx');
+      throw new Error('No current Tx on id');
     }
     return this.global._activeTx.id;
   }
 
   get owner() {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx');
+      throw new Error('No current Tx on owner');
     }
     return this.global._activeTx.owner.address;
   }
 
   get target() {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx');
+      throw new Error('No current Tx on target');
     }
     return this.global._activeTx.recipient;
   }
 
   get tags() {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx');
+      throw new Error('No current Tx on tags');
     }
     return this.global._activeTx.tags;
   }
 
   get quantity() {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx');
+      throw new Error('No current Tx on quantity');
     }
     return this.global._activeTx.quantity.winston;
   }
 
   get reward() {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx');
+      throw new Error('No current Tx on reward');
     }
     return this.global._activeTx.fee.winston;
   }
@@ -119,25 +119,25 @@ class Transaction {
 
 // tslint:disable-next-line: max-classes-per-file
 class Block {
-  constructor(private readonly global: SmartWeaveGlobal) {}
+  constructor(private readonly global: SmartWeaveGlobal) { }
 
   get height() {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx');
+      throw new Error('No current tx on block height');
     }
     return this.global._activeTx.block.height;
   }
 
   get indep_hash() {
     if (!this.global._activeTx) {
-      throw new Error('No current Tx');
+      throw new Error('No current tx on block id');
     }
     return this.global._activeTx.block.id;
   }
 
   get timestamp() {
     if (!this.global._activeTx) {
-      throw new Error('No current tx');
+      throw new Error('No current tx on block timestamp');
     }
     return this.global._activeTx.block.timestamp;
   }
