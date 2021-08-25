@@ -920,7 +920,7 @@ describe('contract source evolve', () => {
       function: 'transferLocked',
       target,
       qty: 50,
-      lockLength: 10
+      lockLength: 10,
     });
     await mine();
 

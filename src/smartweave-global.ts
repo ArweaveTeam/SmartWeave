@@ -72,7 +72,7 @@ export class SmartWeaveGlobal {
 
 // tslint:disable-next-line: max-classes-per-file
 class Transaction {
-  constructor(private readonly global: SmartWeaveGlobal) { }
+  constructor(private readonly global: SmartWeaveGlobal) {}
 
   get id() {
     if (!this.global._activeTx) {
@@ -119,7 +119,7 @@ class Transaction {
 
 // tslint:disable-next-line: max-classes-per-file
 class Block {
-  constructor(private readonly global: SmartWeaveGlobal) { }
+  constructor(private readonly global: SmartWeaveGlobal) {}
 
   get height() {
     if (!this.global._activeTx) {
