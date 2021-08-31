@@ -107,6 +107,19 @@ export async function readContract(
 
     state = result.state;
 
+    // console.log('State before await', state);
+    console.log('Regulator account before await:', {
+      balance: state.accounts.regulator.balance,
+      vaults: state.accounts.regulator.vaults,
+    });
+    await (async () => Promise.resolve());
+    console.log('\nRegulator account after await:', {
+      balance: state.accounts.regulator.balance,
+      vaults: state.accounts.regulator.vaults,
+    });
+    // console.log('\n\nState after await', state);
+    process.exit(0);
+
     const settings = state.settings ? new Map(state.settings) : new Map();
 
     const evolve: string = state.evolve || settings.get('evolve');
