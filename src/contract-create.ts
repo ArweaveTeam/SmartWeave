@@ -16,8 +16,9 @@ export async function simulateCreateContractFromSource(
   wallet: JWKInterface | 'use_wallet',
   initState: string,
   contractSrc: string,
+  reward?: string
 ): Promise<Transaction> {
-  const srcTx = await arweave.createTransaction({ data: contractSrc }, wallet);
+  const srcTx = await arweave.createTransaction({ data: contractSrc, reward }, wallet);
 
   srcTx.addTag('App-Name', 'SmartWeaveContractSource');
   srcTx.addTag('App-Version', '0.3.0');
@@ -53,8 +54,9 @@ export async function simulateCreateContractFromTx(
   tags: { name: string; value: string }[] = [],
   target: string = '',
   winstonQty: string = '',
+  reward?: string
 ): Promise<Transaction> {
-  let contractTX = await arweave.createTransaction({ data: state }, wallet);
+  let contractTX = await arweave.createTransaction({ data: state, reward }, wallet);
 
   if (target && winstonQty && target.length && +winstonQty > 0) {
     contractTX = await arweave.createTransaction(
@@ -62,6 +64,7 @@ export async function simulateCreateContractFromTx(
         data: state,
         target: target.toString(),
         quantity: winstonQty.toString(),
+        reward
       },
       wallet,
     );
@@ -95,8 +98,9 @@ export async function createContract(
   wallet: JWKInterface | 'use_wallet',
   contractSrc: string,
   initState: string,
+  reward?: string,
 ): Promise<string> {
-  const srcTx = await arweave.createTransaction({ data: contractSrc }, wallet);
+  const srcTx = await arweave.createTransaction({ data: contractSrc, reward }, wallet);
 
   srcTx.addTag('App-Name', 'SmartWeaveContractSource');
   srcTx.addTag('App-Version', '0.3.0');
@@ -132,8 +136,9 @@ export async function createContractFromTx(
   tags: { name: string; value: string }[] = [],
   target: string = '',
   winstonQty: string = '',
+  reward?: string,
 ) {
-  let contractTX = await arweave.createTransaction({ data: state }, wallet);
+  let contractTX = await arweave.createTransaction({ data: state, reward }, wallet);
 
   if (target && winstonQty && target.length && +winstonQty > 0) {
     contractTX = await arweave.createTransaction(
@@ -141,6 +146,7 @@ export async function createContractFromTx(
         data: state,
         target: target.toString(),
         quantity: winstonQty.toString(),
+        reward
       },
       wallet,
     );
