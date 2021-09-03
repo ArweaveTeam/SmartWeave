@@ -16,7 +16,7 @@ export async function simulateCreateContractFromSource(
   wallet: JWKInterface | 'use_wallet',
   initState: string,
   contractSrc: string,
-  reward?: string
+  reward?: string,
 ): Promise<Transaction> {
   const srcTx = await arweave.createTransaction({ data: contractSrc, reward }, wallet);
 
@@ -54,7 +54,7 @@ export async function simulateCreateContractFromTx(
   tags: { name: string; value: string }[] = [],
   target: string = '',
   winstonQty: string = '',
-  reward?: string
+  reward?: string,
 ): Promise<Transaction> {
   let contractTX = await arweave.createTransaction({ data: state, reward }, wallet);
 
@@ -64,7 +64,7 @@ export async function simulateCreateContractFromTx(
         data: state,
         target: target.toString(),
         quantity: winstonQty.toString(),
-        reward
+        reward,
       },
       wallet,
     );
@@ -146,7 +146,7 @@ export async function createContractFromTx(
         data: state,
         target: target.toString(),
         quantity: winstonQty.toString(),
-        reward
+        reward,
       },
       wallet,
     );

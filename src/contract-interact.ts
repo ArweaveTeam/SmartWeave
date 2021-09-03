@@ -294,11 +294,11 @@ async function createTx(
   tags: { name: string; value: string }[],
   target: string = '',
   winstonQty: string = '0',
-  reward?: string
+  reward?: string,
 ): Promise<Transaction> {
   const options: Partial<CreateTransactionInterface> = {
     data: Math.random().toString().slice(-4),
-    reward
+    reward,
   };
 
   if (target && target.length) {
