@@ -1,4 +1,4 @@
-import ArLocal from '@textury/arlocal';
+import ArLocal from 'arlocal';
 import Arweave from 'arweave';
 
 import { createContract } from '../contract-create';
