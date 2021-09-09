@@ -1,6 +1,6 @@
 import Arweave from 'arweave';
 import { loadContract } from './contract-load';
-import { arrayToHex, log } from './utils';
+import { arrayToHex, evalSettings, log } from './utils';
 import { execute, ContractInteraction } from './contract-step';
 import { InteractionTx } from './interaction-tx';
 import GQLResultInterface, { GQLEdgeInterface, GQLTransactionsResultInterface } from './interfaces/gqlResult';
@@ -107,7 +107,7 @@ export async function readContract(
 
     state = result.state;
 
-    const settings = state.settings ? new Map(state.settings) : new Map();
+    const settings = evalSettings(state.settings);
 
     const evolve: string = state.evolve || settings.get('evolve');
 

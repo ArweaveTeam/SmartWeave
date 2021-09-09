@@ -5,7 +5,7 @@ import { JWKInterface } from 'arweave/node/lib/wallet';
 import { loadContract } from './contract-load';
 import { readContract } from './contract-read';
 import { execute, ContractInteraction, ContractInteractionResult, ContractHandler } from './contract-step';
-import { unpackTags } from './utils';
+import { evalSettings, unpackTags } from './utils';
 import { BlockData } from 'arweave/node/blocks';
 import SmartWeaveError, { SmartWeaveErrorType } from './errors';
 import { SmartWeaveGlobal } from './smartweave-global';
@@ -110,7 +110,7 @@ export async function interactWriteDryRun(
   const latestState = myState || (await readContract(arweave, contractId));
   const from = fromParam || (await arweave.wallets.getAddress(wallet));
 
-  const settings = latestState.settings ? new Map(latestState.settings) : new Map();
+  const settings = evalSettings(latestState.settings);
   const evolve: string = latestState.evolve || settings.get('evolve');
   let canEvolve: boolean = latestState.canEvolve || settings.get('canEvolve');
 
@@ -178,7 +178,7 @@ export async function interactWriteDryRunCustom(
   const latestState = myState || (await readContract(arweave, contractId));
   const from = fromParam;
 
-  const settings = latestState.settings ? new Map(latestState.settings) : new Map();
+  const settings = evalSettings(latestState.settings);
   const evolve: string = latestState.evolve || settings.get('evolve');
   let canEvolve: boolean = latestState.canEvolve || settings.get('canEvolve');
 
@@ -244,7 +244,7 @@ export async function interactRead(
   const latestState = await readContract(arweave, contractId);
   const from = wallet ? await arweave.wallets.getAddress(wallet) : '';
 
-  const settings = latestState.settings ? new Map(latestState.settings) : new Map();
+  const settings = evalSettings(latestState.settings);
   const evolve: string = latestState.evolve || settings.get('evolve');
   let canEvolve: boolean = latestState.canEvolve || settings.get('canEvolve');
 

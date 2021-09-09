@@ -16,7 +16,7 @@ export function getTag(tx: Transaction, name: string) {
         return tag.get('value', { decode: true, string: true });
       }
       // tslint:disable-next-line: no-empty
-    } catch (e) {}
+    } catch (e) { }
   }
 
   return false;
@@ -104,4 +104,47 @@ export function normalizeContractSource(contractSrc: string): string {
     ${contractSrc};
     return handle;
   `;
+}
+
+/**
+ * Function that evaluates the `settings` key of the state and return a valid Map.
+ * @param state 
+ * @returns {Map} settings as a map
+ */
+export function evalSettings(state: any): Map<string, any> {
+  // default  - empty
+  let settings = new Map<string, any>();
+  if (state.settings) {
+    // for Iterable format
+    if (isIterable(state.settings)) {
+      settings = new Map<string, any>(state.settings);
+      // for Object format
+    } else if (isObject(state.settings)) {
+      settings = new Map<string, any>(Object.entries(state.settings));
+    }
+  }
+
+  return settings;
+}
+
+/**
+ * Checks if a variable is iterable.
+ * @param obj variable to if is iterable
+ * @returns 
+ */
+function isIterable(obj: unknown): boolean {
+  // checks for null and undefined
+  if (obj == null) {
+    return false;
+  }
+  return typeof obj[Symbol.iterator] === 'function';
+}
+
+/**
+ * Check wether the variable is an object.
+ * @param obj variable to check if it's an object
+ * @returns 
+ */
+function isObject(obj: unknown): boolean {
+  return typeof obj === 'object' && obj !== null && !Array.isArray(obj);
 }
