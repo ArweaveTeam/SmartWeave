@@ -1,5 +1,6 @@
 import Transaction from 'arweave/node/lib/transaction';
 import Arweave from 'arweave';
+import { GQLEdgeInterface } from './interfaces/gqlResult';
 
 interface UnformattedTag {
   name: string;
@@ -147,4 +148,13 @@ function isIterable(obj: unknown): boolean {
  */
 function isObject(obj: unknown): boolean {
   return typeof obj === 'object' && obj !== null && !Array.isArray(obj);
+}
+
+/**
+ * Checks if edge has multiple tags with the name 'Contract', which means multiple interactions.
+ * @param gqlResult 
+ * @returns {boolean} 
+ */
+export function hasMultipleinteractions(gqlResult: GQLEdgeInterface) {
+  return gqlResult.node.tags.filter((tag) => tag.name === 'Contract').length > 1;
 }

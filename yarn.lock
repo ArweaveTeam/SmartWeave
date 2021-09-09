@@ -687,6 +687,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/axios@^0.14.0":
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/@types/axios/-/axios-0.14.0.tgz#ec2300fbe7d7dddd7eb9d3abf87999964cafce46"
+  integrity sha1-7CMA++fX3d1+udOr+HmZlkyvzkY=
+  dependencies:
+    axios "*"
+
 "@types/babel__core@^7.0.0", "@types/babel__core@^7.1.14":
   version "7.1.15"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.15.tgz#2ccfb1ad55a02c83f8e0ad327cbc332f55eb1024"
@@ -1134,18 +1141,20 @@ ajv@^6.12.3:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-ans104@^0.5.4:
-  version "0.5.9"
-  resolved "https://registry.yarnpkg.com/ans104/-/ans104-0.5.9.tgz#ff7d3ceb7f3a275c07c85698041068d9b2eb0651"
-  integrity sha512-De04IiR4MnEOzn5OIBnAQXuIrkY2ylOkBkBuxy4vmeyUMWiBORKaTZ90ppoJ1f3oC1dvoyDIQABXRfkCSvs+eQ==
+ans104@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/ans104/-/ans104-1.0.0.tgz#5a957166e86376acd29ab0fff5511c9d978ac288"
+  integrity sha512-Gv5ikriIilfqMQ6+CuE3kKnv2y2/7L3FOcdSv+ydAqPamOj/hBePZCnpNEVEGV2xpnrUAyPpgCUpDcsvtdd2xA==
   dependencies:
     "@akiroz/size-chunker-stream" "^0.0.1"
+    "@types/axios" "^0.14.0"
     "@types/browser-or-node" "^1.3.0"
     "@types/multistream" "^2.1.1"
     "@types/tmp" "^0.2.1"
     arweave "^1.10.15"
-    arweave-stream "^0.1.3"
+    arweave-stream-tx "^1.0.2"
     avsc "^5.7.1"
+    axios "^0.21.3"
     base64url "^3.0.1"
     combined-stream2 "^1.1.2"
     multistream "^4.1.0"
@@ -1396,13 +1405,13 @@ argparse@^1.0.7:
   dependencies:
     sprintf-js "~1.0.2"
 
-arlocal@^1.0.33:
-  version "1.0.33"
-  resolved "https://registry.yarnpkg.com/arlocal/-/arlocal-1.0.33.tgz#b0ffcb3267288c29a7b483d4465cc21297ca726d"
-  integrity sha512-y1VKYzstUMb96HpcfFw2/PTI1RO8qjz0e6fXENZix031ONOEVwYRi3lC99jolho+6nsG3J+MRCnEKoxxrEzPNw==
+arlocal@^1.0.36:
+  version "1.0.36"
+  resolved "https://registry.yarnpkg.com/arlocal/-/arlocal-1.0.36.tgz#ddf184f045dbf2f9946d1ef979a58132d9c8e284"
+  integrity sha512-dmh1JHstuMwc8OqEzULIBOBuSq0UWsK2P6XzM5dya/tnSwJDy3Q5pTonIFQI/kv/nYRopUsth/WXA1MyTeeF0g==
   dependencies:
     "@koa/cors" "^3.1.0"
-    ans104 "^0.5.4"
+    ans104 "^1.0.0"
     apollo-server-koa "^2.25.1"
     arweave-bundles "^1.0.3"
     graphql "^15.5.0"
@@ -1437,20 +1446,16 @@ arweave-bundles@^1.0.3:
   dependencies:
     arweave "^1.10.5"
 
-arweave-stream@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/arweave-stream/-/arweave-stream-0.1.3.tgz#2873099ba71003d3bf1a31aa2f92df271856be8b"
-  integrity sha512-FQcwBg3W2c7tQwRArwG9GwAGBrFBQz63TpXoqgWv0eDLm0/CKIrf9pOnFCQSEooNNp/Dv1cYWwayz395h4gFtQ==
+arweave-stream-tx@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/arweave-stream-tx/-/arweave-stream-tx-1.0.2.tgz#eb056f962f73906f9bbb86d31a59ff0c6628ce27"
+  integrity sha512-tEMSkgFI+W6q3crWKbJwwfdt/cBwIL6FBp+R2Nt5+P/rDhDfc2Z8+eZ9wSOHEBGuIDwXpaij6jhlnp3Z+wdunw==
   dependencies:
-    "@akiroz/size-chunker-stream" "^0.0.1"
-    "@types/browser-or-node" "^1.3.0"
-    arweave "^1.10.15"
-    avsc "^5.7.1"
-    base64url "^3.0.1"
+    arweave "^1.10.0"
     exponential-backoff "^3.1.0"
     stream-chunker "^1.2.8"
 
-arweave@^1.10.13, arweave@^1.10.15, arweave@^1.10.16, arweave@^1.10.5:
+arweave@^1.10.0, arweave@^1.10.13, arweave@^1.10.15, arweave@^1.10.16, arweave@^1.10.5:
   version "1.10.16"
   resolved "https://registry.yarnpkg.com/arweave/-/arweave-1.10.16.tgz#b968590cb413242636196d2339562dd106840bb9"
   integrity sha512-j2UM7C/2MHO7Mv7wbzhihgVs8uN2+QltA+3cYaM82dNNEBBJylIClJUHHMqsK/2ejCnziQm4FofiUFbsQDdQDg==
@@ -1509,6 +1514,13 @@ aws4@^1.8.0:
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.11.0.tgz#d61f46d83b2519250e2784daf5b09479a8b41c59"
   integrity sha512-xh1Rl34h6Fi1DC2WWKfxUTVqRsNnr6LsKz2+hfwDxQJWmrx8+c7ylaqBMcHfl1U1r2dsifOvKX3LQuLNZ+XSvA==
+
+axios@*, axios@^0.21.3:
+  version "0.21.4"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.4.tgz#c67b90dc0568e5c1cf2b0b858c43ba28e2eda575"
+  integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==
+  dependencies:
+    follow-redirects "^1.14.0"
 
 axios@^0.21.1:
   version "0.21.1"
@@ -2636,6 +2648,11 @@ follow-redirects@^1.10.0:
   version "1.14.2"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.2.tgz#cecb825047c00f5e66b142f90fed4f515dec789b"
   integrity sha512-yLR6WaE2lbF0x4K2qE2p9PEXKLDjUjnR/xmjS3wHAYxtlsI9MLLBJUZirAHKzUZDGLxje7w/cXR49WOUo4rbsA==
+
+follow-redirects@^1.14.0:
+  version "1.14.3"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.3.tgz#6ada78118d8d24caee595595accdc0ac6abd022e"
+  integrity sha512-3MkHxknWMUtb23apkgz/83fDoe+y+qr0TdgacGIA7bew+QLBo3vdgEN2xEsuXNivpFy4CyDhBBZnNZOtalmenw==
 
 for-each@^0.3.3:
   version "0.3.3"

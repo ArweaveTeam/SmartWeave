@@ -110,7 +110,7 @@ export async function interactWriteDryRun(
   const latestState = myState || (await readContract(arweave, contractId));
   const from = fromParam || (await arweave.wallets.getAddress(wallet));
 
-  const settings = evalSettings(latestState.settings);
+  const settings = evalSettings(latestState);
   const evolve: string = latestState.evolve || settings.get('evolve');
   let canEvolve: boolean = latestState.canEvolve || settings.get('canEvolve');
 
@@ -178,7 +178,7 @@ export async function interactWriteDryRunCustom(
   const latestState = myState || (await readContract(arweave, contractId));
   const from = fromParam;
 
-  const settings = evalSettings(latestState.settings);
+  const settings = evalSettings(latestState);
   const evolve: string = latestState.evolve || settings.get('evolve');
   let canEvolve: boolean = latestState.canEvolve || settings.get('canEvolve');
 
@@ -244,7 +244,7 @@ export async function interactRead(
   const latestState = await readContract(arweave, contractId);
   const from = wallet ? await arweave.wallets.getAddress(wallet) : '';
 
-  const settings = evalSettings(latestState.settings);
+  const settings = evalSettings(latestState);
   const evolve: string = latestState.evolve || settings.get('evolve');
   let canEvolve: boolean = latestState.canEvolve || settings.get('canEvolve');
 

@@ -1,6 +1,6 @@
 import Arweave from 'arweave';
 import { loadContract } from './contract-load';
-import { arrayToHex, evalSettings, log } from './utils';
+import { arrayToHex, evalSettings, hasMultipleinteractions, log } from './utils';
 import { execute, ContractInteraction } from './contract-step';
 import { InteractionTx } from './interaction-tx';
 import GQLResultInterface, { GQLEdgeInterface, GQLTransactionsResultInterface } from './interfaces/gqlResult';
@@ -63,15 +63,19 @@ export async function readContract(
   for (const txInfo of txInfos) {
     const currentTx: InteractionTx = txInfo.node;
 
-    const contractIndex = txInfo.node.tags.findIndex((tag) => tag.name === 'Contract' && tag.value === contractId);
-    const inputTag = txInfo.node.tags[contractIndex + 1];
+    let input = txInfo.node.tags[txInfo.node.tags.findIndex((tag) => tag.name === 'Input')].value;
 
-    if (!inputTag || inputTag.name !== 'Input') {
-      log(arweave, `Skipping tx with missing or invalid Input tag - ${currentTx.id}`);
-      continue;
+    if (hasMultipleinteractions(txInfo)) {
+      const contractIndex = txInfo.node.tags.findIndex((tag) => tag.name === 'Contract' && tag.value === contractId);
+      const inputTag = txInfo.node.tags[contractIndex + 1];
+
+      if (!inputTag || inputTag.name !== 'Input') {
+        log(arweave, `Skipping tx with missing or invalid Input tag - ${currentTx.id}`);
+        continue;
+      }
+
+      input = inputTag.value;
     }
-
-    let input = inputTag.value;
 
     try {
       input = JSON.parse(input);
@@ -107,14 +111,12 @@ export async function readContract(
 
     state = result.state;
 
-    const settings = evalSettings(state.settings);
-
+    const settings = evalSettings(state);
     const evolve: string = state.evolve || settings.get('evolve');
-
     let canEvolve: boolean = state.canEvolve || settings.get('canEvolve');
 
     // By default, contracts can evolve if there's not an explicit `false`.
-    if (canEvolve === undefined || canEvolve === null) {
+    if (canEvolve == null) {
       canEvolve = true;
     }
 
