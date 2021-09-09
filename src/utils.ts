@@ -17,7 +17,7 @@ export function getTag(tx: Transaction, name: string) {
         return tag.get('value', { decode: true, string: true });
       }
       // tslint:disable-next-line: no-empty
-    } catch (e) { }
+    } catch (e) {}
   }
 
   return false;
@@ -109,7 +109,7 @@ export function normalizeContractSource(contractSrc: string): string {
 
 /**
  * Function that evaluates the `settings` key of the state and return a valid Map.
- * @param state 
+ * @param state
  * @returns {Map} settings as a map
  */
 export function evalSettings(state: any): Map<string, any> {
@@ -131,7 +131,7 @@ export function evalSettings(state: any): Map<string, any> {
 /**
  * Checks if a variable is iterable.
  * @param obj variable to if is iterable
- * @returns 
+ * @returns
  */
 function isIterable(obj: unknown): boolean {
   // checks for null and undefined
@@ -144,7 +144,7 @@ function isIterable(obj: unknown): boolean {
 /**
  * Check wether the variable is an object.
  * @param obj variable to check if it's an object
- * @returns 
+ * @returns
  */
 function isObject(obj: unknown): boolean {
   return typeof obj === 'object' && obj !== null && !Array.isArray(obj);
@@ -152,8 +152,8 @@ function isObject(obj: unknown): boolean {
 
 /**
  * Checks if edge has multiple tags with the name 'Contract', which means multiple interactions.
- * @param gqlResult 
- * @returns {boolean} 
+ * @param gqlResult
+ * @returns {boolean}
  */
 export function hasMultipleinteractions(gqlResult: GQLEdgeInterface) {
   return gqlResult.node.tags.filter((tag) => tag.name === 'Contract').length > 1;
