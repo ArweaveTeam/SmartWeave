@@ -33,7 +33,7 @@ export async function interactWrite(
   tags: { name: string; value: string }[] = [],
   target: string = '',
   winstonQty: string = '',
-  reward?: string
+  reward?: string,
 ): Promise<string> {
   const interactionTx = await createTx(arweave, wallet, contractId, input, tags, target, winstonQty, reward);
 
