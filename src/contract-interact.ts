@@ -23,6 +23,7 @@ import { SmartWeaveGlobal } from './smartweave-global';
  * @param tags          an array of tags with name/value as objects.
  * @param target        if needed to send AR to an address, this is the target.
  * @param winstonQty    amount of winston to send to the target, if needed.
+ * @param reward        custom reward for txs, if needed.
  */
 export async function interactWrite(
   arweave: Arweave,
@@ -32,8 +33,9 @@ export async function interactWrite(
   tags: { name: string; value: string }[] = [],
   target: string = '',
   winstonQty: string = '',
+  reward?: string
 ): Promise<string> {
-  const interactionTx = await createTx(arweave, wallet, contractId, input, tags, target, winstonQty);
+  const interactionTx = await createTx(arweave, wallet, contractId, input, tags, target, winstonQty, reward);
 
   const response = await arweave.transactions.post(interactionTx);
 
