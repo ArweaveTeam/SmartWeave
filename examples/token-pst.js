@@ -53,9 +53,9 @@ export function handle (state, action) {
     return { result: { target, ticker, balance: balances[target] } }
   }
 
-  if(input.function === 'evolve' && canEvolve) {
-    if(state.owner !== caller) {
-      throw new ContractError('Only the owner can evolve a contract.');
+  if (input.function === 'evolve' && canEvolve) {
+    if (state.owner !== caller) {
+      throw new ContractError('Only the owner can evolve a contract.')
     }
 
     state.evolve = input.value

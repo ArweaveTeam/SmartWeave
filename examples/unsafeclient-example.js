@@ -1,4 +1,4 @@
-// An example contract that uses the SmartWeave.unsafeClient interface to read a 
+// An example contract that uses the SmartWeave.unsafeClient interface to read a
 // large amount of data into the smart contract.
 //
 // This mechanism is inherently unsafe if you have no strong guarantee that the
@@ -8,9 +8,9 @@
 
 export async function handle (state, action) {
   if (action.input.function === 'loadState') {
-    let txid = action.input.txid
+    const txid = action.input.txid
 
-	state = await SmartWeave.unsafeClient.transactions.getData(txid, {decode: true, string: true})
+    state = await SmartWeave.unsafeClient.transactions.getData(txid, { decode: true, string: true })
 
     return { state }
   }
