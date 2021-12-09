@@ -49,6 +49,8 @@ When interacting with the contract, the value passed to --input must be valid js
 
 `--input '{ "function": "transfer", "qty": 1984 }'`
 
+WindowsCommandPrompt `--input "{\"function\":\"transfer\", \"qty\": 1984 }"` 
+
 To test a contract interaction without writing it to the network, append `--dry-run` to your `--interact` call.
 
 ## License
