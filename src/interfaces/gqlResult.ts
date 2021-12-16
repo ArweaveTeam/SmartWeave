@@ -43,6 +43,9 @@ export interface GQLNodeInterface {
   parent: {
     id: string;
   };
+  bundledIn: {
+    id: string;
+  };
 }
 
 export interface GQLEdgeInterface {
