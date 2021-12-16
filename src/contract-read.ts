@@ -204,7 +204,7 @@ async function fetchTransactions(arweave: Arweave, contractId: string, height: n
   let transactions = await getNextPage(arweave, variables);
 
   const txInfos: GQLEdgeInterface[] = transactions.edges.filter(
-    (tx) => !tx.node.bundledIn || !tx.node.bundledIn?.id || !tx.node.parent || !tx.node.parent?.id
+    (tx) => !tx.node.bundledIn || !tx.node.bundledIn?.id || !tx.node.parent || !tx.node.parent?.id,
   );
 
   while (transactions.pageInfo.hasNextPage) {
@@ -217,8 +217,10 @@ async function fetchTransactions(arweave: Arweave, contractId: string, height: n
 
     transactions = await getNextPage(arweave, variables);
 
-    txInfos.push(...transactions.edges.filter(
-      (tx) => !tx.node.bundledIn || !tx.node.bundledIn?.id || !tx.node.parent || !tx.node.parent?.id)
+    txInfos.push(
+      ...transactions.edges.filter(
+        (tx) => !tx.node.bundledIn || !tx.node.bundledIn?.id || !tx.node.parent || !tx.node.parent?.id,
+      ),
     );
   }
 
