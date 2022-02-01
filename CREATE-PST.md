@@ -17,7 +17,7 @@ PSTs (Profit Sharing Tokens) are made up of two parts:
 
 This guide will give an overview of how to create your PST token, and how to use the SmartWeave SDK in your app to distribute usage fees to the token holders.
 
-To follow along, a non-empty Arweave wallet is required. You can obtain one at [arweave.org/tokens](https://arweave.org/tokens), or generate one offline with the [arweave-deploy](https://github.com/ArweaveTeam/arweave-deploy#arweave-deploy) CLI tools.
+To follow along, a non-empty Arweave wallet is required. You can obtain one at [faucet.arweave.net](https://faucet.arweave.net), for example.
 
 You should also install the SmartWeave SDK. You can install it either globally — to have the CLI available everywhere — or locally — into your project folder:
 
