@@ -53,7 +53,10 @@ export async function readContract(
 
   log(arweave, `Replaying ${txInfos.length} confirmed interactions`);
 
-  await sortTransactions(arweave, txInfos);
+  txInfos.sort(
+    (a: { node: InteractionTx }, b: { node: InteractionTx }) =>
+      a.node.block.height - b.node.block.height || a.node.id.localeCompare(b.node.id),
+  );
 
   // tslint:disable-next-line: prefer-const
   let { handler, swGlobal } = contractInfo;
@@ -137,30 +140,6 @@ export async function readContract(
   }
 
   return returnValidity ? { state, validity } : state;
-}
-
-// Sort the transactions based on the sort key generated in addSortKey()
-async function sortTransactions(arweave: Arweave, txInfos: any[]) {
-  const addKeysFuncs = txInfos.map((tx) => addSortKey(arweave, tx));
-  await Promise.all(addKeysFuncs);
-
-  txInfos.sort((a, b) => a.sortKey.localeCompare(b.sortKey));
-}
-
-// Construct a string that will lexographically sort.
-// { block_height, sha256(block_indep_hash + txid) }
-// pad block height to 12 digits and convert hash value
-// to a hex string.
-async function addSortKey(arweave: Arweave, txInfo: any) {
-  const { node } = txInfo;
-
-  const blockHashBytes = arweave.utils.b64UrlToBuffer(node.block.id);
-  const txIdBytes = arweave.utils.b64UrlToBuffer(node.id);
-  const concatted = arweave.utils.concatBuffers([blockHashBytes, txIdBytes]);
-  const hashed = arrayToHex(await arweave.crypto.hash(concatted));
-  const blockHeight = `000000${node.block.height}`.slice(-12);
-
-  txInfo.sortKey = `${blockHeight},${hashed}`;
 }
 
 // the maximum number of transactions we can get from graphql at once
