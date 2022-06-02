@@ -157,7 +157,7 @@ async function addSortKey(arweave: Arweave, txInfo: any) {
   const blockHashBytes = arweave.utils.b64UrlToBuffer(node.block.id);
   const txIdBytes = arweave.utils.b64UrlToBuffer(node.id);
   const concatted = arweave.utils.concatBuffers([blockHashBytes, txIdBytes]);
-  const hashed = arrayToHex(await arweave.crypto.hash(concatted));
+  const hashed = arrayToHex(await Arweave.crypto.hash(concatted));
   const blockHeight = `000000${node.block.height}`.slice(-12);
 
   txInfo.sortKey = `${blockHeight},${hashed}`;
