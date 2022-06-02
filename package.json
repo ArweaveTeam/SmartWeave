@@ -39,11 +39,14 @@
     "url": "https://github.com/ArweaveTeam/SmartWeave/issues"
   },
   "homepage": "https://github.com/ArweaveTeam/SmartWeave#readme",
+  "resolutions": {
+    "**/arweave": "^1.11.4"
+  },
   "dependencies": {
     "@types/clui": "^0.3.1",
     "@types/inquirer": "^8.2.1",
     "@weavery/clarity": "^0.1.5",
-    "arweave": "^1.11.3",
+    "arweave": "^1.11.4",
     "bignumber.js": "^9.0.2",
     "chalk": "^4.x",
     "clui": "^0.3.6",
