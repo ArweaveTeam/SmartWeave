@@ -1,4 +1,5 @@
 import fs from 'fs';
+import fetch from 'node-fetch';
 
 import ArLocal from 'arlocal';
 import Arweave from 'arweave';
@@ -38,6 +39,7 @@ describe('Testing the evolve feature', () => {
     evolvedContractSrcFile = fs.readFileSync('examples/token-evolve.js', 'utf8');
     initialStateFile = JSON.parse(fs.readFileSync('examples/token-pst.json', 'utf8'));
 
+    await fetch(`http://localhost:1985/mint/${addy}/100`);
     initialStateFile['balances'][addy] = 100;
     initialStateFile['owner'] = addy;
 

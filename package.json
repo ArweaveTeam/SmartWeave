@@ -23,9 +23,7 @@
     "preset": "ts-jest",
     "testEnvironment": "node"
   },
-  "files": [
-    "lib/**/*"
-  ],
+  "files": ["lib/**/*"],
   "bin": {
     "smartweave-cli": "lib/bin/smartweave-cli.js",
     "smartweave": "lib/bin/smartweave.js"
@@ -45,7 +43,7 @@
     "@types/clui": "^0.3.1",
     "@types/inquirer": "^8.2.1",
     "@weavery/clarity": "^0.1.5",
-    "arweave": "^1.10.24",
+    "arweave": "^1.11.3",
     "bignumber.js": "^9.0.2",
     "chalk": "^5.0.1",
     "clui": "^0.3.6",
@@ -66,6 +64,7 @@
     "cp-cli": "^2.0.0",
     "esbuild": "^0.14.42",
     "jest": "^28.1.0",
+    "node-fetch": "^2.x",
     "prettier": "^2.6.2",
     "rimraf": "^3.0.2",
     "ts-jest": "^28.0.3",
