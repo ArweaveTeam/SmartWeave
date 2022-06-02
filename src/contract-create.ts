@@ -113,7 +113,7 @@ export async function createContract(
   if (response.status === 200 || response.status === 208) {
     return await createContractFromTx(arweave, wallet, srcTx.id, initState);
   } else {
-    throw new Error('Unable to write Contract Source.');
+    throw new Error(`Unable to write Contract Source: ${JSON.stringify(response?.statusText ?? '')}`);
   }
 }
 /**
