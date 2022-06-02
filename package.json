@@ -45,7 +45,7 @@
     "@weavery/clarity": "^0.1.5",
     "arweave": "^1.11.3",
     "bignumber.js": "^9.0.2",
-    "chalk": "^5.0.1",
+    "chalk": "^4.x",
     "clui": "^0.3.6",
     "figlet": "^1.5.2",
     "inquirer": "^8.2.4",
