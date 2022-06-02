@@ -2124,10 +2124,10 @@ arweave@^1.10.18, arweave@^1.10.23:
     bignumber.js "^9.0.1"
     util "^0.12.4"
 
-arweave@^1.10.24:
-  version "1.10.24"
-  resolved "https://registry.yarnpkg.com/arweave/-/arweave-1.10.24.tgz#500395c064f9497665c16c23688d828701337aaa"
-  integrity sha512-HSt9BwbMJC7Ntx5VvlHnuYyxMA7CJV1Yw6cyy0E+cf6+m1ytUeEGnd+zW2a259ptz3A+oJyRLA4zwHcC5R80gQ==
+arweave@^1.11.3:
+  version "1.11.3"
+  resolved "https://registry.yarnpkg.com/arweave/-/arweave-1.11.3.tgz#541a3c7a089b7fd443b75369441ce3d17fa5517b"
+  integrity sha512-mzJBEbKNCH5JMib3pyHezUtZWs1p64bNeGsiPoIJwuGx1jiKGnEqzR5hd9qNbswIu1PvRj3sbwSLoX3YN+qc6g==
   dependencies:
     arconnect "^0.4.2"
     asn1.js "^5.4.1"
@@ -5254,7 +5254,7 @@ node-cleanup@^2.1.2:
   resolved "https://registry.yarnpkg.com/node-cleanup/-/node-cleanup-2.1.2.tgz#7ac19abd297e09a7f72a71545d951b517e4dde2c"
   integrity sha1-esGavSl+Caf3KnFUXZUbUX5N3iw=
 
-node-fetch@2, node-fetch@^2.6.7:
+node-fetch@2, node-fetch@^2.6.7, node-fetch@^2.x:
   version "2.6.7"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
   integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==

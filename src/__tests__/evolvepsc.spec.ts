@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+
 import ArLocal from 'arlocal';
 import Arweave from 'arweave';
 
@@ -853,6 +855,12 @@ describe('contract source evolve', () => {
 
     wallet = await inst.wallets.generate();
     addy = await inst.wallets.jwkToAddress(wallet);
+
+    // await fetch(`http://localhost:1986/mint/${addy}/100000000`);
+    // await fetch(`http://localhost:1986/mine`);
+
+    await inst.api.get(`mint/${addy}/100000000000`);
+    await mine();
 
     contractState.balances[addy] = 100;
     contractState.vault[addy] = [
