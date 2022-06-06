@@ -1982,15 +1982,15 @@ apollo-server-types@^3.6.0:
   resolved "https://registry.yarnpkg.com/aproba/-/aproba-2.0.0.tgz#52520b8ae5b569215b354efc0caa3fe1e45a8adc"
   integrity sha512-lYe4Gx7QT+MKGbDsA+Z+he/Wtef0BiwDOlK/XkBrdfsh9J/jPPXbX0tE9x9cl27Tmu5gg3QUbUrQYa/y+KOHPQ==
 
-arbundles@^0.6.12:
-  version "0.6.18"
-  resolved "https://registry.yarnpkg.com/arbundles/-/arbundles-0.6.18.tgz#af279ad7262f3d70ba98e1adcca00ef55e7943f6"
-  integrity sha512-GUOII50Qd+2qr+x9rtpoYf6Qmc4zA6SKjNPhoebdmeruOeOEk/2UrY9tR/weCNKr7AYL4op7qLeTm/Osrfb00w==
+arbundles@^0.6.12, arbundles@^0.6.19:
+  version "0.6.19"
+  resolved "https://registry.yarnpkg.com/arbundles/-/arbundles-0.6.19.tgz#550f8835014ea7a4b4c51d6d22870db1108de99b"
+  integrity sha512-OenrPZOXuihEatKAT2R0ZtbHmkTcDV4Y0fsz28gHFeVP13cZl/eNR9UiWFCrvxA0hQIanmPYAX9tgfEmk4OJHw==
   dependencies:
     "@randlabs/myalgo-connect" "^1.1.2"
     "@solana/wallet-adapter-base" "^0.9.2"
     algosdk "^1.13.1"
-    arweave "^1.10.18"
+    arweave "^1.11.4"
     arweave-stream-tx "^1.1.0"
     avsc "https://github.com/Bundlr-Network/avsc#csp-fixes"
     axios "^0.21.3"
@@ -2094,7 +2094,7 @@ arweave-stream-tx@^1.1.0:
     exponential-backoff "^3.1.0"
     stream-chunker "^1.2.8"
 
-arweave@^1.10.13, arweave@^1.10.18, arweave@^1.10.23, arweave@^1.10.5, arweave@^1.11.4:
+arweave@^1.10.13, arweave@^1.10.23, arweave@^1.10.5, arweave@^1.11.4:
   version "1.11.4"
   resolved "https://registry.yarnpkg.com/arweave/-/arweave-1.11.4.tgz#19e5850d3b9f655cacb0953b36a12ac6596b195c"
   integrity sha512-EPUms1OMet/VFmYMefgxIpj17PIlIZzIteiHAn0tetN+d/LRV6N9CCsrg/t22hL6yLGdGRHrYlDEdsWqjwSSYg==

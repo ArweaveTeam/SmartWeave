@@ -40,7 +40,8 @@
   },
   "homepage": "https://github.com/ArweaveTeam/SmartWeave#readme",
   "resolutions": {
-    "**/arweave": "^1.11.4"
+    "**/arweave": "^1.11.4",
+    "**/arbundles": "^0.6.19"
   },
   "dependencies": {
     "@types/clui": "^0.3.1",
