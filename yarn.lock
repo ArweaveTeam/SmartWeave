@@ -1982,7 +1982,7 @@ apollo-server-types@^3.6.0:
   resolved "https://registry.yarnpkg.com/aproba/-/aproba-2.0.0.tgz#52520b8ae5b569215b354efc0caa3fe1e45a8adc"
   integrity sha512-lYe4Gx7QT+MKGbDsA+Z+he/Wtef0BiwDOlK/XkBrdfsh9J/jPPXbX0tE9x9cl27Tmu5gg3QUbUrQYa/y+KOHPQ==
 
-arbundles@^0.6.12, arbundles@^0.6.19:
+arbundles@^0.6.19:
   version "0.6.19"
   resolved "https://registry.yarnpkg.com/arbundles/-/arbundles-0.6.19.tgz#550f8835014ea7a4b4c51d6d22870db1108de99b"
   integrity sha512-OenrPZOXuihEatKAT2R0ZtbHmkTcDV4Y0fsz28gHFeVP13cZl/eNR9UiWFCrvxA0hQIanmPYAX9tgfEmk4OJHw==
@@ -2041,14 +2041,14 @@ argparse@^1.0.7:
   dependencies:
     sprintf-js "~1.0.2"
 
-arlocal@^1.1.38:
-  version "1.1.38"
-  resolved "https://registry.yarnpkg.com/arlocal/-/arlocal-1.1.38.tgz#6a1ccf28a828a8233f4a0d5acda77228c763eae0"
-  integrity sha512-bzy0e6Go7mHmTmnUI9edF5er9eUupKPm1pXjv2GSJ8/LgS4qrMD4BGZwSvNtSS21svafS2rKzjmxPnCRO3PMkA==
+arlocal@^1.1.40:
+  version "1.1.40"
+  resolved "https://registry.yarnpkg.com/arlocal/-/arlocal-1.1.40.tgz#0bd77f1b3aaa57e8c125916bbccab938d6efd839"
+  integrity sha512-gEkBt5T+o/Rd4ZKBvwRFtWANyoW447sZfmMGt/MAegHALLHzNofEIV//hb3peDV691E6bIkUa5hdUp2Psu2Etg==
   dependencies:
     "@koa/cors" "^3.1.0"
     apollo-server-koa "^3.6.2"
-    arbundles "^0.6.12"
+    arbundles "^0.6.19"
     arweave "^1.10.23"
     arweave-bundles "^1.0.3"
     bignumber.js "^9.0.2"
