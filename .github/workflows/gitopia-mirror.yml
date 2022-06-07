@@ -17,8 +17,8 @@ jobs:
           node-version: 12
           registry-url: https://registry.npmjs.org/
       - name: Gitopia Mirror Action
-        uses: gitopia/gitopia-mirror-action@v0.1.2
+        uses: gitopia/gitopia-mirror-action@v0.5.0
         with:
-          gitopiaWallet: "${{ secrets.GITOPIA_WALLET }}"
-          branch: "master"
-          remoteUrl: "gitopia://BPr7vrFduuQqqVMu_tftxsScTKUq9ke0rx4q5C9ieQU/smartweave"
+          gitopiaWallet: '${{ secrets.GITOPIA_WALLET }}'
+          branch: 'master'
+          remoteUrl: 'gitopia://BPr7vrFduuQqqVMu_tftxsScTKUq9ke0rx4q5C9ieQU/smartweave'
