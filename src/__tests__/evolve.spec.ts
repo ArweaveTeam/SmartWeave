@@ -12,6 +12,8 @@ import { readContract } from '../contract-read';
 let inst: Arweave;
 let arlocal: ArLocal;
 
+jest.setTimeout(50000);
+
 describe('Testing the evolve feature', () => {
   let contractSrcFile = '';
   let evolvedContractSrcFile = '';
@@ -39,7 +41,8 @@ describe('Testing the evolve feature', () => {
     evolvedContractSrcFile = fs.readFileSync('examples/token-evolve.js', 'utf8');
     initialStateFile = JSON.parse(fs.readFileSync('examples/token-pst.json', 'utf8'));
 
-    await fetch(`http://localhost:1985/mint/${addy}/1000000000`);
+    await inst.api.get(`/mint/${addy}/100000000000`);
+
     initialStateFile['balances'][addy] = 100;
     initialStateFile['owner'] = addy;
 
