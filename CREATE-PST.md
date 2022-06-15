@@ -57,7 +57,7 @@ To view the balance of a particular address/wallet, use the following command:
 
 ## Using the SmartWeave SDK in your app
 
-This section conveys the basics of using the Smartwweave SDK in a PST app (note: more complete SDK documentation can be found [here](SDK.md)).
+This section conveys the basics of using the Smartweave SDK in a PST app (note: more complete SDK documentation can be found [here](SDK.md)).
 
 An example of how to read the latest contract state:
 
