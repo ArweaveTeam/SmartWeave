@@ -32,7 +32,13 @@ export async function loadContract(arweave: Arweave, contractID: string, contrac
     state = contractTX.get('data', { decode: true, string: true });
   }
 
-  const { handler, swGlobal } = createContractExecutionEnvironment(arweave, contractSrc, contractID, contractOwner);
+  const { handler, swGlobal } = createContractExecutionEnvironment(
+    arweave,
+    contractSrc,
+    contractID,
+    contractSrcTXID,
+    contractOwner,
+  );
 
   return {
     id: contractID,
@@ -63,10 +69,11 @@ export function createContractExecutionEnvironment(
   arweave: Arweave,
   contractSrc: string,
   contractId: string,
+  contractSrcTxId: string,
   contractOwner: string,
 ) {
   const returningSrc = normalizeContractSource(contractSrc);
-  const swGlobal = new SmartWeaveGlobal(arweave, { id: contractId, owner: contractOwner });
+  const swGlobal = new SmartWeaveGlobal(arweave, { id: contractId, srcTxId: contractSrcTxId, owner: contractOwner });
   const getContractFunction = new Function(returningSrc); // eslint-disable-line
 
   return {
